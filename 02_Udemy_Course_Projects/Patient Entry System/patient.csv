@@ -1,0 +1,16 @@
+PatientID	Name	Age	Gender	Diagnosis	AdmissionDate	
+1	John Smith	45	Male	Fever	45667	10-01-2025
+2	Sarah Jones	32	Female	Diabetes	45668	11-01-2025
+3	David Lee	58	Male	Hypertension	45669	12-01-2025
+4	Emily Davis	27	Female	Asthma	45670	13-01-2025
+5	Michael Brown	50	Male	Covid-19	45671	14-01-2025
+6	Sophia Wilson	39	Female	Allergy	45672	15-01-2025
+7	Daniel Thomas	61	Male	Heart Disease	45673	16-01-2025
+8	Olivia Martin	29	Female	Migraine	45674	17-01-2025
+9	James Anderson	41	Male	Diabetes	45675	18-01-2025
+10	Ava Taylor	35	Female	Pneumonia	45676	19-01-2025
+11	William Moore	47	Male	Arthritis	45677	20-01-2025
+12	Isabella Jackson	31	Female	Fever	45678	21-01-2025
+13	Benjamin White	55	Male	Asthma	45679	22-01-2025
+14	Mia Harris	26	Female	Anemia	45680	23-01-2025
+15	Ethan Clark	44	Male	Hypertension	45681	24-01-2025

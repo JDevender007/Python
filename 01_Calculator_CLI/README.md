@@ -1,4 +1,4 @@
-# Python Calculator CLI
+# 01. Python Calculator CLI
 
 A modular command-line calculator built with Python.
 
