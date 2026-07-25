@@ -1,10 +1,6 @@
-# 01. Python Calculator CLI
+# 🧮 Calculator CLI
 
-A modular command-line calculator built with Python.
-
-This project demonstrates clean code organization, modular programming, exception handling, input validation, file handling, and unit testing.
-
----
+A command line calculator built with Python that performs basic arithmetic operations with input validation and calculation history. This project demonstrates modular programming by separating operations, validation, and history management into different modules.
 
 ## Features
 
@@ -15,99 +11,63 @@ This project demonstrates clean code organization, modular programming, exceptio
 - Modulus
 - Power
 - Input validation
-- Division by zero handling
 - Calculation history
-- Unit tests with pytest
+- Simple command line interface
 - Modular project structure
-
----
 
 ## Technologies Used
 
 - Python 3
-- Pytest
-- Git
-- GitHub
-
----
+- File Handling
+- Functions
+- Dictionaries
+- Exception Handling
+- Modular Programming
 
 ## Project Structure
 
-```
-python-calculator-cli/
+```text
+CalculatorCLI/
 │
 ├── calculator/
+│   ├── __init__.py
 │   ├── operations.py
 │   ├── validator.py
-│   ├── history.py
-│   └── __init__.py
+│   └── history.py
 │
-├── tests/
-│   └── test_operations.py
-│
+├── history.txt
 ├── main.py
+├── README.md
 ├── requirements.txt
-└── README.md
+└── .gitignore
 ```
-
----
 
 ## Installation
 
-Clone the repository
+Clone the repository.
 
 ```bash
-git clone https://github.com/yourusername/python-calculator-cli.git
+git clone https://github.com/JDevender007/Python.git
 ```
 
-Move into the project directory
+Navigate to the project.
 
 ```bash
-cd python-calculator-cli
+cd Python/01_Beginner_Level_Projects/CalculatorCLI
 ```
 
-Create a virtual environment
-
-```bash
-python -m venv venv
-```
-
-Activate the environment
-
-Windows
-
-```bash
-venv\Scripts\activate
-```
-
-Linux/macOS
-
-```bash
-source venv/bin/activate
-```
-
-Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## Usage
-
-Run the application
+Run the application.
 
 ```bash
 python main.py
 ```
 
-Example
+## Menu
 
-```
-===============================
-      PYTHON CLI CALCULATOR
-===============================
+```text
+===================================
+PYTHON CLI CALCULATOR
+===================================
 1. Addition
 2. Subtraction
 3. Multiplication
@@ -116,77 +76,66 @@ Example
 6. Power
 7. Show History
 8. Exit
+===================================
+```
 
+## Example
+
+```text
 Enter your choice: 1
 
 Enter first number: 25
 Enter second number: 15
 
 Result
--------------------------------
+-----------------------------------
 25.0 + 15.0 = 40.0
 ```
 
----
+## Project Modules
 
-## Running Tests
+### `main.py`
 
-```bash
-pytest
-```
+Controls the application flow and user interaction.
 
-Expected Output
+### `operations.py`
 
-```
-====================
-2 passed
-====================
-```
+Contains arithmetic functions including addition, subtraction, multiplication, division, modulus, and power.
 
----
+### `validator.py`
 
-## Future Improvements
+Validates numeric user input before calculations.
 
-- Scientific calculator
-- Square root
-- Factorial
-- Percentage calculations
-- Memory functions
-- Export history to CSV
-- Colored terminal interface
-- Command-line arguments
-- Logging
-- GitHub Actions CI
+### `history.py`
 
----
+Stores calculations in a history file and displays previous calculations.
 
 ## Learning Outcomes
 
-This project helped strengthen understanding of:
+This project helped me practice:
 
 - Python functions
-- Modular programming
+- Conditional statements
+- Dictionaries
+- File handling
 - Exception handling
-- File operations
 - Input validation
-- Unit testing
-- Git version control
-- GitHub project management
+- Modular programming
+- Command line applications
 
----
+## Future Improvements
+
+- Square root
+- Factorial
+- Percentage calculations
+- Scientific calculator mode
+- Memory operations
+- Colored terminal output
+- Calculation export to CSV
+- Graphical user interface using Tkinter
 
 ## Author
 
 **Devender J**
 
-Computer Science and Engineering Student
-
-GitHub: https://github.com/JDevender007/Devender
-
-LinkedIn: linkedin.com/in/devender-j
-
----
-
-## License
-
-This project is licensed under the MIT License.
+GitHub: https://github.com/JDevender007
