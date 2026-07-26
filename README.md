@@ -2,11 +2,11 @@
 
 # 🐍 Python
 
-### A curated collection of Python projects covering programming fundamentals, software engineering, automation, data analysis, artificial intelligence, networking, cybersecurity, and real world applications.
+### A curated collection of Python projects covering programming fundamentals, software engineering, automation, web development, data science, artificial intelligence, networking, cybersecurity, cloud computing, and enterprise applications.
 
 ![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Projects](https://img.shields.io/badge/Projects-125%2B_Planned-2ea44f?style=for-the-badge)
-![Completed](https://img.shields.io/badge/Completed-14_Projects-success?style=for-the-badge)
+![Completed](https://img.shields.io/badge/Completed-21_Projects-success?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Active-success?style=for-the-badge)
 ![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
 
@@ -18,42 +18,44 @@
 
 Welcome to my Python repository.
 
-This repository showcases my Python learning journey through self built projects and guided course projects. It is organized by domain, beginning with programming fundamentals and expanding into advanced areas such as software engineering, automation, web development, data analysis, machine learning, deep learning, computer vision, networking, cybersecurity, and cloud computing.
+This repository documents my Python learning journey through original projects and guided course projects. It is organized from beginner concepts to advanced software engineering topics, with every project designed to strengthen programming skills through practical implementation.
 
-The objective is to build production quality projects while following clean code principles, modular architecture, and software engineering best practices.
+The repository covers multiple domains including software engineering, automation, APIs, databases, networking, cybersecurity, cloud computing, data analysis, machine learning, deep learning, computer vision, natural language processing, and Generative AI.
+
+The goal is to build production quality projects while following clean architecture, modular programming, object oriented design, and software engineering best practices.
 
 ---
 
 # 📂 Repository Overview
 
-| Folder                                | Description                                                                                                         |
-| ------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
-| 📁 **01_Beginner_Level_Projects**     | Original Python projects built from scratch to strengthen programming fundamentals and problem solving skills.      |
-| 📁 **02_Udemy_Course_Projects**       | Projects completed while following professional Udemy courses to reinforce Python concepts through guided learning. |
-| 📁 **03_Object_Oriented_Programming** | Object oriented programming projects using classes, inheritance, abstraction, and polymorphism.                     |
-| 📁 **04_File_Handling**               | File management utilities using text, CSV, JSON, binary files, and directories.                                     |
-| 📁 **05_Data_Structures_Algorithms**  | Algorithm implementations and data structure based projects.                                                        |
-| 📁 **06_Automation**                  | Desktop automation, scripting, workflow automation, and productivity tools.                                         |
-| 📁 **07_Web_Scraping**                | Data extraction projects using BeautifulSoup, Scrapy, Selenium, and Playwright.                                     |
-| 📁 **08_API_Development**             | REST APIs, API clients, authentication, and backend services.                                                       |
-| 📁 **09_Desktop_Applications**        | Desktop GUI applications built with Python.                                                                         |
-| 📁 **10_Web_Development**             | Backend applications using Flask, Django, and FastAPI.                                                              |
-| 📁 **11_Database_Projects**           | Database driven applications using SQLite, MySQL, PostgreSQL, and MongoDB.                                          |
-| 📁 **12_Networking**                  | Socket programming, protocol implementation, monitoring, and automation.                                            |
-| 📁 **13_Cybersecurity**               | Security utilities, encryption, scanners, and ethical hacking tools.                                                |
-| 📁 **14_Cloud_Computing**             | Cloud based projects using AWS, Azure, and Google Cloud.                                                            |
-| 📁 **15_Data_Analysis**               | Data cleaning, reporting, business intelligence, and analytics projects.                                            |
-| 📁 **16_Data_Visualization**          | Interactive dashboards and visualization projects.                                                                  |
-| 📁 **17_Machine_Learning**            | Predictive models, classification, regression, and recommendation systems.                                          |
-| 📁 **18_Deep_Learning**               | Neural networks, CNNs, RNNs, transformers, and AI applications.                                                     |
-| 📁 **19_Computer_Vision**             | Image processing, OCR, object detection, and computer vision projects.                                              |
-| 📁 **20_Natural_Language_Processing** | Text analysis, sentiment analysis, summarization, and language processing.                                          |
-| 📁 **21_Generative_AI**               | LLM applications, RAG systems, AI assistants, and GenAI projects.                                                   |
-| 📁 **22_Internet_of_Things**          | IoT monitoring, embedded systems, and smart device applications.                                                    |
-| 📁 **23_Robotics**                    | Robotics simulation, control systems, and automation projects.                                                      |
-| 📁 **24_Image_Processing**            | Image enhancement, filtering, editing, and processing utilities.                                                    |
-| 📁 **25_DevOps**                      | Docker, CI/CD, monitoring, deployment, and infrastructure automation.                                               |
-| 📁 **26_Software_Engineering**        | Enterprise level Python applications following software engineering best practices.                                 |
+| Folder                                | Description                                                                               |
+| ------------------------------------- | ----------------------------------------------------------------------------------------- |
+| 📁 **01_Beginner_Level_Projects**     | Beginner Python projects focused on programming fundamentals and CLI applications.        |
+| 📁 **02_Udemy_Course_Projects**       | Projects completed while following professional Python courses.                           |
+| 📁 **03_Object_Oriented_Programming** | Database driven management systems using Python, SQLite, and SQLAlchemy.                  |
+| 📁 **04_File_Handling**               | Text, CSV, JSON, binary file, and directory management projects.                          |
+| 📁 **05_Data_Structures_Algorithms**  | Data structures, algorithms, searching, sorting, and visualization projects.              |
+| 📁 **06_Automation**                  | Desktop automation, scripting, workflow automation, and productivity tools.               |
+| 📁 **07_Web_Scraping**                | Data extraction using BeautifulSoup, Selenium, Scrapy, and Playwright.                    |
+| 📁 **08_API_Development**             | REST APIs, FastAPI, Flask APIs, authentication, and API clients.                          |
+| 📁 **09_Desktop_Applications**        | GUI applications using Python desktop frameworks.                                         |
+| 📁 **10_Web_Development**             | Backend and full stack web applications.                                                  |
+| 📁 **11_Database_Projects**           | Applications using SQLite, MySQL, PostgreSQL, and MongoDB.                                |
+| 📁 **12_Networking**                  | Socket programming, network automation, and monitoring tools.                             |
+| 📁 **13_Cybersecurity**               | Security utilities, encryption, vulnerability assessment, and ethical hacking tools.      |
+| 📁 **14_Cloud_Computing**             | Cloud applications using AWS, Azure, and Google Cloud.                                    |
+| 📁 **15_Data_Analysis**               | Data cleaning, reporting, dashboards, and business analytics.                             |
+| 📁 **16_Data_Visualization**          | Interactive charts, dashboards, and business intelligence.                                |
+| 📁 **17_Machine_Learning**            | Classification, regression, clustering, recommendation systems, and predictive analytics. |
+| 📁 **18_Deep_Learning**               | Neural networks, CNNs, RNNs, Transformers, and AI applications.                           |
+| 📁 **19_Computer_Vision**             | Image processing, OCR, object detection, segmentation, and recognition.                   |
+| 📁 **20_Natural_Language_Processing** | Text processing, sentiment analysis, summarization, and NLP applications.                 |
+| 📁 **21_Generative_AI**               | LLM applications, RAG systems, AI assistants, and GenAI projects.                         |
+| 📁 **22_Internet_of_Things**          | Smart devices, IoT dashboards, and monitoring systems.                                    |
+| 📁 **23_Robotics**                    | Robotics simulation and automation projects.                                              |
+| 📁 **24_Image_Processing**            | Image enhancement, editing, compression, and filtering.                                   |
+| 📁 **25_DevOps**                      | Docker, CI/CD, deployment, monitoring, and infrastructure automation.                     |
+| 📁 **26_Software_Engineering**        | Enterprise scale Python applications following modern software engineering principles.    |
 
 ---
 
@@ -63,10 +65,11 @@ The objective is to build production quality projects while following clean code
 - Git
 - GitHub
 - SQLite
+- SQLAlchemy
 - MySQL
 - PostgreSQL
 - MongoDB
-- Standard Python Libraries
+- Standard Python Library
 - Third Party Python Libraries
 
 ---
@@ -75,10 +78,14 @@ The objective is to build production quality projects while following clean code
 
 - Python Fundamentals
 - Object Oriented Programming
+- Modular Programming
 - File Handling
 - Exception Handling
-- Data Structures and Algorithms
-- Database Management
+- Database Design
+- SQLite
+- SQLAlchemy ORM
+- CRUD Operations
+- Data Structures & Algorithms
 - REST API Development
 - Web Scraping
 - Automation
@@ -137,86 +144,93 @@ Python/
 
 # 📚 Repository Roadmap
 
-The goal of this repository is to build a comprehensive Python portfolio consisting of original projects across major development domains while documenting additional learning through professional courses.
-
-| Category                     | Planned Projects |
-| ---------------------------- | ---------------: |
-| Beginner Python              |                5 |
-| Udemy Course Projects        |          Growing |
-| Object Oriented Programming  |                5 |
-| File Handling                |                5 |
-| Data Structures & Algorithms |                5 |
-| Automation                   |                5 |
-| Web Scraping                 |                5 |
-| API Development              |                5 |
-| Desktop Applications         |                5 |
-| Web Development              |                5 |
-| Database Projects            |                5 |
-| Networking                   |                5 |
-| Cybersecurity                |                5 |
-| Cloud Computing              |                5 |
-| Data Analysis                |                5 |
-| Data Visualization           |                5 |
-| Machine Learning             |                5 |
-| Deep Learning                |                5 |
-| Computer Vision              |                5 |
-| Natural Language Processing  |                5 |
-| Generative AI                |                5 |
-| Internet of Things           |                5 |
-| Robotics                     |                5 |
-| Image Processing             |                5 |
-| DevOps                       |                5 |
-| Software Engineering         |                5 |
+| Category                     | Projects |
+| ---------------------------- | -------: |
+| Beginner Python              |        5 |
+| Udemy Course Projects        |  Growing |
+| Object Oriented Programming  |        5 |
+| File Handling                |        5 |
+| Data Structures & Algorithms |        5 |
+| Automation                   |        5 |
+| Web Scraping                 |        5 |
+| API Development              |        5 |
+| Desktop Applications         |        5 |
+| Web Development              |        5 |
+| Database Projects            |        5 |
+| Networking                   |        5 |
+| Cybersecurity                |        5 |
+| Cloud Computing              |        5 |
+| Data Analysis                |        5 |
+| Data Visualization           |        5 |
+| Machine Learning             |        5 |
+| Deep Learning                |        5 |
+| Computer Vision              |        5 |
+| Natural Language Processing  |        5 |
+| Generative AI                |        5 |
+| Internet of Things           |        5 |
+| Robotics                     |        5 |
+| Image Processing             |        5 |
+| DevOps                       |        5 |
+| Software Engineering         |        5 |
 
 ---
 
-# 📌 Beginner Projects
+# 📌 Completed Repositories
 
-| No. | Project              | Status |
-| --: | -------------------- | :----: |
-|  01 | Calculator CLI       |   ✅   |
-|  02 | Password Generator   |   ✅   |
-|  03 | Number Guessing Game |   ✅   |
-|  04 | Expense Tracker      |   ⏳   |
-|  05 | Contact Book         |   ⏳   |
+## 🚀 Beginner Level Projects
+
+| Project              | Status |
+| -------------------- | :----: |
+| Calculator CLI       |   ✅   |
+| Password Generator   |   ✅   |
+| Number Guessing Game |   ✅   |
+| Expense Tracker      |   ✅   |
+| Contact Book         |   ✅   |
 
 ---
 
-# 🎓 Udemy Course Projects
+## 🎓 Udemy Course Projects
 
-The following projects were completed while learning Python through professional Udemy courses.
+| Project              | Status |
+| -------------------- | :----: |
+| Anagrams             |   ✅   |
+| Bank DB using SQLite |   ✅   |
+| Card Payment         |   ✅   |
+| Data Cleaning        |   ✅   |
+| Journal Manager      |   ✅   |
+| Library Management   |   ✅   |
+| Palindrome           |   ✅   |
+| Password Checker     |   ✅   |
+| Patient Entry System |   ✅   |
+| Restaurant Menu      |   ✅   |
+| URL Parsing          |   ✅   |
 
-| No. | Project              | Status |
-| --: | -------------------- | :----: |
-|  01 | Anagrams             |   ✅   |
-|  02 | Bank DB using SQLite |   ✅   |
-|  03 | Card Payment         |   ✅   |
-|  04 | Data Cleaning        |   ✅   |
-|  05 | Journal Manager      |   ✅   |
-|  06 | Library Management   |   ✅   |
-|  07 | Palindrome           |   ✅   |
-|  08 | Password Checker     |   ✅   |
-|  09 | Patient Entry System |   ✅   |
-|  10 | Restaurant Menu      |   ✅   |
-|  11 | URL Parsing          |   ✅   |
+---
 
-More guided projects will be added as additional courses are completed.
+## 🏗 Object Oriented Programming
+
+| Project                     | Status |
+| --------------------------- | :----: |
+| Library Management System   |   ✅   |
+| Student Management System   |   ✅   |
+| Inventory Management System |   ✅   |
+| Hotel Management System     |   ✅   |
+| Banking System              |   ✅   |
 
 ---
 
 # 🎯 Learning Goals
 
-- Build a strong foundation in Python
+- Build production quality Python applications
 - Master object oriented programming
-- Develop automation tools
+- Develop database driven software
+- Build automation tools
 - Learn backend development
-- Build data driven applications
-- Explore machine learning and deep learning
-- Develop AI powered solutions
+- Explore AI and machine learning
+- Develop cloud based applications
 - Learn networking and cybersecurity
-- Build cloud based applications
 - Follow software engineering best practices
-- Create a professional GitHub portfolio
+- Build a professional GitHub portfolio
 
 ---
 
@@ -224,18 +238,18 @@ More guided projects will be added as additional courses are completed.
 
 ### Original Projects
 
-- ✅ 3 / 125 Completed
+- ✅ **10 / 125+ Completed**
 
-### Guided Projects
+### Guided Course Projects
 
-- ✅ 11 Udemy Projects Completed
+- ✅ **11 Projects Completed**
 
 ### Overall Progress
 
-- 🚀 14 Python Projects Completed
-- 🎯 125+ Original Projects Planned
+- 🚀 **21 Python Projects Completed**
+- 🎯 **125+ Original Projects Planned**
 
-This repository is continuously updated with new projects, learning milestones, and improvements.
+This repository is continuously updated with new projects and learning milestones.
 
 ---
 

@@ -1,0 +1,25 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Environment
+.env
+
+# Game Data
+data/high_score.txt
+
+# OS Files
+.DS_Store
+Thumbs.db
+Desktop.ini
