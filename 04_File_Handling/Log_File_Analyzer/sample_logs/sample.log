@@ -1,0 +1,7 @@
+2026-01-10 10:00:11 INFO Application Started
+2026-01-10 10:00:15 INFO User Login
+2026-01-10 10:02:11 WARNING Low Memory
+2026-01-10 10:04:50 ERROR Database Connection Failed
+2026-01-10 10:05:12 INFO Retry Connection
+2026-01-10 10:05:45 CRITICAL Server Down
+2026-01-10 10:06:18 INFO Application Closed
