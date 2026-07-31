@@ -1,0 +1,51 @@
+"""Central configuration constants for Sorting Visualizer."""
+
+from src.colors import Palette
+
+APP_NAME = "Sorting Visualizer"
+APP_VERSION = "1.0.0"
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 760
+MIN_WINDOW_WIDTH = 960
+MIN_WINDOW_HEIGHT = 640
+
+TARGET_FPS = 60
+FRAME_INTERVAL_MS = max(1, round(1000 / TARGET_FPS))
+FPS_SAMPLE_SECONDS = 0.5
+
+DEFAULT_ARRAY_SIZE = 50
+MIN_ARRAY_SIZE = 10
+MAX_ARRAY_SIZE = 150
+DEFAULT_SPEED = 45
+MIN_SPEED = 1
+MAX_SPEED = 120
+MIN_VALUE = 10
+MAX_VALUE = 500
+
+CONTENT_PADDING = 14
+PANEL_PADDING = 12
+CANVAS_PADDING_X = 24
+CANVAS_PADDING_TOP = 24
+CANVAS_PADDING_BOTTOM = 34
+BAR_GAP = 2
+GRID_LINE_COUNT = 5
+VALUE_LABEL_LIMIT = 24
+SORTED_ANIMATION_SECONDS = 0.65
+MAX_STEPS_PER_FRAME = 8
+
+FONT_FAMILY = "Segoe UI"
+FONT_TITLE = (FONT_FAMILY, 18, "bold")
+FONT_HEADING = (FONT_FAMILY, 11, "bold")
+FONT_BODY = (FONT_FAMILY, 10)
+FONT_SMALL = (FONT_FAMILY, 9)
+FONT_MONOSPACE = ("Consolas", 10)
+
+THEME = {
+    "background": Palette.BACKGROUND,
+    "panel": Palette.PANEL,
+    "canvas": Palette.CANVAS,
+    "text": Palette.TEXT,
+    "muted_text": Palette.MUTED_TEXT,
+    "accent": Palette.ACCENT,
+    "border": Palette.BORDER,
+}
