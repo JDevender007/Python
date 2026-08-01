@@ -1,0 +1,3 @@
+# This project uses only the Python 3.13 standard library.
+# Tkinter is bundled with standard Python installers on Windows and macOS.
+# On some Linux distributions, install the OS package python3-tk separately.

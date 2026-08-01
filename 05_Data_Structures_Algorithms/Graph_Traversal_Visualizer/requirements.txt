@@ -1,0 +1,2 @@
+# No third-party dependencies are required.
+# Tkinter ships with standard CPython distributions.
