@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+*.pyo
+*.xlsx
+*.xls
+*.png
+*.pdf
+.venv/
+.vscode/
+.idea/
+logs/
