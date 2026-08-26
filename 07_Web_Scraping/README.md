@@ -45,7 +45,7 @@ Each project demonstrates practical web scraping techniques including HTTP reque
 | 02 | Job Listing Scraper | Scrape job listings with keyword/location filtering | Python, Tkinter, Requests, BeautifulSoup | ✅ |
 | 03 | Amazon Price Tracker | Track product prices with target alerts and history | Python, CustomTkinter, Requests, BeautifulSoup, SQLite | ✅ |
 | 04 | IMDb Movie Scraper | Scrape movie data from IMDb with ratings and details | Python, Tkinter, Requests, BeautifulSoup | ✅ |
-| 05 | GitHub Repository Scraper | Scrape GitHub repositories with stars, forks, languages | Python, Tkinter, Requests, BeautifulSoup | ⏳ |
+| 05 | GitHub Repository Scraper | Scrape GitHub repositories with stars, forks, languages | Python, Tkinter, Requests, BeautifulSoup | ✅ |
 
 ---
 
@@ -105,9 +105,9 @@ Each project demonstrates practical web scraping techniques including HTTP reque
 | Job Listing Scraper | ✅ |
 | Amazon Price Tracker | ✅ |
 | IMDb Movie Scraper | ✅ |
-| GitHub Repository Scraper | ⏳ Pending |
+| GitHub Repository Scraper | ✅ |
 
-**Completed: 4 / 5 Projects**
+**Completed: 5 / 5 Projects**
 
 ---
 
