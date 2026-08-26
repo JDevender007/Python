@@ -2,11 +2,11 @@
 
 Total planned projects: 136
 
-Completed projects: 42
+Completed projects: 43
 
-Remaining projects: 94
+Remaining projects: 93
 
-Progress: 30.9%
+Progress: 31.6%
 
 | Category | Total | Completed | Remaining |
 |---|---:|---:|---:|
@@ -17,7 +17,7 @@ Progress: 30.9%
 | 05 Data Structures & Algorithms | 5 | 5 | 0 |
 | 06 Automation | 5 | 5 | 0 |
 | 07 Web Scraping | 5 | 5 | 0 |
-| 08 API Development | 5 | 1 | 4 |
+| 08 API Development | 5 | 2 | 3 |
 | 09 Desktop Applications | 5 | 0 | 5 |
 | 10 Web Development | 5 | 0 | 5 |
 | 11 Database Projects | 5 | 0 | 5 |
@@ -40,6 +40,14 @@ Progress: 30.9%
 ---
 
 ## Recent Commits
+
+- **feat: add Currency Converter API** - Added 02_Currency_Converter_API to 08_API_Development
+  - Real-time conversion between 150+ currencies
+  - Primary API (ExchangeRate-API) with automatic fallback
+  - Conversion history with timestamps
+  - Modern dark theme Tkinter GUI with swap button
+  - CSV/JSON export for conversions, rates, and history
+  - Comprehensive test suite (43 tests passing)
 
 - **feat: add Weather API Client** - Added 01_Weather_API_Client to 08_API_Development
   - Current weather, 5-day forecast, city search with OpenWeatherMap
