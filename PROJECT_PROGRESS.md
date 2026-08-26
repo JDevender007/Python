@@ -2,11 +2,11 @@
 
 Total planned projects: 136
 
-Completed projects: 41
+Completed projects: 42
 
-Remaining projects: 95
+Remaining projects: 94
 
-Progress: 30.1%
+Progress: 30.9%
 
 | Category | Total | Completed | Remaining |
 |---|---:|---:|---:|
@@ -17,7 +17,7 @@ Progress: 30.1%
 | 05 Data Structures & Algorithms | 5 | 5 | 0 |
 | 06 Automation | 5 | 5 | 0 |
 | 07 Web Scraping | 5 | 5 | 0 |
-| 08 API Development | 5 | 0 | 5 |
+| 08 API Development | 5 | 1 | 4 |
 | 09 Desktop Applications | 5 | 0 | 5 |
 | 10 Web Development | 5 | 0 | 5 |
 | 11 Database Projects | 5 | 0 | 5 |
@@ -40,6 +40,13 @@ Progress: 30.1%
 ---
 
 ## Recent Commits
+
+- **feat: add Weather API Client** - Added 01_Weather_API_Client to 08_API_Development
+  - Current weather, 5-day forecast, city search with OpenWeatherMap
+  - Modern dark theme Tkinter GUI with temperature color coding
+  - Metric/Imperial units, caching, rate limiting, retry logic
+  - CSV/JSON export for weather, forecast, and search results
+  - Comprehensive test suite (55 tests passing)
 
 - **feat: add GitHub Repository Scraper** - Added 05_GitHub_Repository_Scraper to 07_Web_Scraping
   - Two modes: Trending (with language filter) and User repositories
