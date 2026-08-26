@@ -9,33 +9,52 @@
 ![Categories](https://img.shields.io/badge/Categories-26-success?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-In%20Progress-orange?style=for-the-badge)
 
+<p>
+  <a href="https://github.com/JDevender007"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white"/></a>
+  <a href="https://www.linkedin.com/in/devender-j"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white"/></a>
+</p>
+
 </div>
 
 ---
 
-# 📖 About
+## 📑 Table of Contents
 
-This repository documents my journey of building 136 Python projects, ranging from beginner programs to advanced AI and enterprise-level applications. Every project is designed to strengthen practical programming skills while following clean coding practices, Object-Oriented Programming principles, modular architecture, and Git version control.
-
-The repository serves as a structured roadmap for mastering Python across multiple domains, including desktop applications, automation, web development, networking, cybersecurity, cloud computing, machine learning, deep learning, computer vision, and Generative AI.
+- [About](#-about)
+- [Repository Statistics](#-repository-statistics)
+- [Categories](#-categories)
+- [Technologies](#-technologies)
+- [Repository Structure](#-repository-structure)
+- [Progress](#-progress)
+- [Skills Developed](#-skills-developed)
+- [Goal](#-goal)
+- [Author](#-author)
 
 ---
 
-# 📊 Repository Statistics
+## 📖 About
+
+This repository documents my journey of building **136 Python projects**, ranging from beginner programs to advanced AI and enterprise-level applications. Every project is designed to strengthen practical programming skills while following clean coding practices, Object-Oriented Programming principles, modular architecture, and Git version control.
+
+The repository serves as a structured roadmap for mastering Python across multiple domains — desktop applications, automation, web development, networking, cybersecurity, cloud computing, machine learning, deep learning, computer vision, and Generative AI.
+
+---
+
+## 📊 Repository Statistics
 
 | Item | Count |
-|------|------:|
+|---|---:|
 | Categories | 26 |
 | Main Projects | 125 |
 | Udemy Practice Projects | 11 |
-| Total Projects | 136 |
+| **Total Projects** | **136** |
 
 ---
 
-# 📂 Categories
+## 📂 Categories
 
 | No. | Category | Projects |
-|----:|-------------------------------|---------:|
+|---:|---|---:|
 | 01 | Beginner Level Projects | 5 |
 | 02 | Udemy Course Projects | 11 |
 | 03 | Object Oriented Programming | 5 |
@@ -65,85 +84,84 @@ The repository serves as a structured roadmap for mastering Python across multip
 
 ---
 
-# 🛠 Technologies
+## 🛠 Technologies
 
-### Programming
+<table>
+<tr>
+<td valign="top" width="33%">
 
+**Programming**
 - Python
 
-### Desktop Development
-
+**Desktop Development**
 - Tkinter
 - CustomTkinter
 
-### Data Science
-
+**Data Science**
 - NumPy
 - Pandas
 - Matplotlib
 
-### Machine Learning
-
+**Machine Learning**
 - Scikit-learn
 - XGBoost
 
-### Deep Learning
+</td>
+<td valign="top" width="33%">
 
+**Deep Learning**
 - TensorFlow
 - PyTorch
 
-### Computer Vision
-
+**Computer Vision**
 - OpenCV
 - MediaPipe
 - YOLO
 
-### Natural Language Processing
-
+**Natural Language Processing**
 - Transformers
 - LangChain
 - FAISS
 
-### Web Development
-
+**Web Development**
 - Flask
 - FastAPI
 - Django
 
-### Databases
+</td>
+<td valign="top" width="33%">
 
+**Databases**
 - SQLite
 - MySQL
 - PostgreSQL
 - MongoDB
 
-### Automation
-
+**Automation**
 - Selenium
 - BeautifulSoup
 - Requests
 - OpenPyXL
 - PyPDF2
 
-### Networking & Security
-
+**Networking & Security**
 - Socket Programming
 - Scapy
 - Paramiko
 - Cryptography
 
-### Cloud & DevOps
+**Cloud & DevOps**
+- Docker, Kubernetes
+- AWS, Azure
+- Git, GitHub
 
-- Docker
-- Kubernetes
-- AWS
-- Azure
-- Git
-- GitHub
+</td>
+</tr>
+</table>
 
 ---
 
-# 📁 Repository Structure
+## 📁 Repository Structure
 
 ```text
 Python/
@@ -154,24 +172,29 @@ Python/
 ├── 04_File_Handling/
 ├── 05_Data_Structures_Algorithms/
 ├── 06_Automation/
+├── 07_Web_Scraping/
+├── 08_API_Development/
+├── 09_Desktop_Applications/
+├── 10_Web_Development/
 ├── ...
+├── 26_Software_Engineering/
 │
 └── README.md
 ```
 
 ---
 
-# 📈 Progress
+## 📈 Progress
 
 | Category | Status |
-|----------|--------|
+|---|---|
 | 01. Beginner Level Projects | ✅ Completed |
 | 02. Udemy Course Projects | ⏳ Pending |
 | 03. Object Oriented Programming | ✅ Completed |
 | 04. File Handling | ✅ Completed |
 | 05. Data Structures & Algorithms | ✅ Completed |
 | 06. Automation | ✅ Completed |
-| 07. Web Scraping | ⏳ Not Started |
+| 07. Web Scraping | 🔄 In Progress (4/5) |
 | 08. API Development | ⏳ Not Started |
 | 09. Desktop Applications | ⏳ Not Started |
 | 10. Web Development | ⏳ Not Started |
@@ -195,13 +218,19 @@ Python/
 ### Current Progress
 
 - Completed Categories: **5 / 26**
-- Completed Main Projects: **25 / 125**
+- Completed Main Projects: **29 / 125**
 - Udemy Practice Projects: **11**
 - Total Projects: **136**
 
+![Progress Bar](https://progress-bar.xyz/23/?title=Main%20Projects&width=400)
+
 ---
 
-# 🎯 Skills Developed
+## 🎯 Skills Developed
+
+<table>
+<tr>
+<td valign="top" width="33%">
 
 - Python Programming
 - Object-Oriented Programming
@@ -211,6 +240,10 @@ Python/
 - Data Structures & Algorithms
 - Web Development
 - API Development
+
+</td>
+<td valign="top" width="33%">
+
 - Database Management
 - Networking
 - Cybersecurity
@@ -219,6 +252,10 @@ Python/
 - Data Visualization
 - Machine Learning
 - Deep Learning
+
+</td>
+<td valign="top" width="33%">
+
 - Computer Vision
 - Natural Language Processing
 - Generative AI
@@ -229,21 +266,27 @@ Python/
 - Software Engineering
 - Git & GitHub
 
+</td>
+</tr>
+</table>
+
 ---
 
-# 🚀 Goal
+## 🚀 Goal
 
 Build and publish **136 Python projects** that demonstrate practical programming skills, clean architecture, and real-world problem solving while creating a professional GitHub portfolio.
 
 ---
 
-# 👨‍💻 Author
+## 👨‍💻 Author
 
 **Devender J**
+Data Analyst • Python Developer • AI & Machine Learning Enthusiast
 
-Data Analyst | Python Developer | AI & Machine Learning Enthusiast
-
-GitHub: https://github.com/JDevender007
+<p>
+  <a href="https://github.com/JDevender007"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white"/></a>
+  <a href="https://www.linkedin.com/in/devender-j"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white"/></a>
+</p>
 
 ---
 

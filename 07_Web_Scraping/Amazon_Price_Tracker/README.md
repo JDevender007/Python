@@ -1,50 +1,61 @@
+<div align="center">
+
 # 🛒 Amazon Price Tracker
 
-### A Python desktop application for tracking product prices, monitoring target prices, viewing price history, and managing tracked products through a modern dashboard.
+### A Python desktop application for tracking product prices from supported shopping websites and exporting the results to CSV and JSON.
+
+![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Requests](https://img.shields.io/badge/Requests-HTTP-blue?style=for-the-badge)
+![BeautifulSoup](https://img.shields.io/badge/BeautifulSoup-HTML%20Parser-success?style=for-the-badge)
+![CustomTkinter](https://img.shields.io/badge/CustomTkinter-GUI-orange?style=for-the-badge)
+![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
+
+</div>
 
 ---
 
 # 📖 About
 
-Amazon Price Tracker is a Python desktop application designed to monitor product prices from supported product websites.
+Amazon Price Tracker is a Python desktop application designed to collect and monitor product price information from supported shopping websites.
 
-The application accepts a product URL, retrieves available product information, extracts the product name and current price, stores product details, records price history, and compares the current price with a user-defined target price.
+The application accepts a product URL, downloads the webpage, parses available product information, displays the results, allows users to set target prices, stores price history, and exports collected data to CSV or JSON.
 
-The project uses a modular architecture with separate components for scraping, parsing, tracking, database management, exporting, configuration, logging, utilities, controls, and the graphical interface.
+The project uses a modular architecture with separate components for scraping, parsing, price tracking, database management, exporting, configuration, logging, and the graphical interface.
 
 ---
 
 # ✨ Features
 
-- Enter product URL
-- Fetch product information
-- Extract product name
-- Extract current price
+- Enter a product website URL
+- Fetch webpage content
+- Extract product names
+- Extract current prices
 - Extract product availability
-- Set target price
-- Track current price
-- Track lowest recorded price
+- Extract product links
+- Set target prices
+- Track current prices
+- Track lowest recorded prices
 - Record price history
-- Calculate price changes
-- Monitor target prices
+- Compare current price with target price
 - Display tracked products
 - View price history
 - Delete tracked products
-- Export data to CSV
-- Export data to JSON
+- Export results to CSV
+- Export results to JSON
 - SQLite database storage
 - Request timeout handling
 - HTTP error handling
 - Activity logging
-- Modern dark dashboard
+- Dashboard interface
 - Status indicators
 - Fullscreen mode
 - Keyboard shortcuts
-- Modular project architecture
+- Modular Python architecture
 
 ---
 
-# 🛠 Technologies
+# 🛠 Technologies Used
 
 - Python 3.13
 - CustomTkinter
@@ -80,7 +91,9 @@ Amazon_Price_Tracker/
 │   └── utils.py
 │
 ├── data/
+│
 ├── logs/
+│
 ├── exports/
 │
 ├── README.md
@@ -92,13 +105,13 @@ Amazon_Price_Tracker/
 
 # ⚙️ Environment Setup
 
-Create the virtual environment:
+Create a virtual environment:
 
 ```bash
 python -m venv .venv
 ```
 
-Activate it on Windows:
+Activate the environment on Windows:
 
 ```bash
 .venv\Scripts\activate
@@ -107,7 +120,7 @@ Activate it on Windows:
 Install dependencies:
 
 ```bash
-python -m pip install -r requirements.txt
+pip install -r requirements.txt
 ```
 
 ---
@@ -122,25 +135,25 @@ python -m src.app
 
 ---
 
-# 🌐 Test Websites
+# 🌐 Test Website
 
-The application is designed for supported product websites.
-
-Example:
+The application is configured for:
 
 ```text
 https://www.amazon.in/
 ```
 
-Other websites might use different HTML structures or restrict automated requests.
+You can enter a supported product URL through the application.
 
-A website returning HTTP 403 means the server refused the request. This does not indicate a Python installation problem.
+Different shopping websites use different HTML structures and might restrict automated requests. Extraction results depend on the HTML structure available on the target webpage.
+
+An HTTP 403 response means the server refused the request. This does not indicate a Python installation problem.
 
 ---
 
-# 🔎 Price Tracking
+# 💰 Price Tracking
 
-The application allows you to define a target price for each tracked product.
+The application allows users to set a target price for a tracked product.
 
 Example:
 
@@ -151,90 +164,53 @@ Target Price:  ₹40,000
 
 The application compares the current price with the target price.
 
-When:
+When the current price reaches or falls below the target price, the product receives a target-price status.
 
-```text
-Current Price <= Target Price
-```
-
-the product receives a target-price status.
-
-The application also stores the lowest recorded price for each product.
+The application also records the lowest price found during tracking.
 
 ---
 
 # 📈 Price History
 
-Each successful price check is stored in the SQLite database.
+The application stores successful price checks in the SQLite database.
 
-The history contains:
+Each price history record contains:
 
-```text
-price
-checked_at
-product_id
-```
+- Product ID
+- Product price
+- Checked date and time
 
-This allows the application to maintain historical price records for tracked products.
+This allows users to monitor price changes for tracked products.
 
 ---
 
 # 📤 Export
 
+The application supports:
+
 ### CSV
 
-The CSV export contains:
+Exports:
 
-```text
-name
-url
-current_price
-target_price
-lowest_price
-availability
-last_checked
-created_at
-```
+- Product name
+- Product URL
+- Current price
+- Target price
+- Lowest price
+- Availability
+- Last checked date
+- Created date
 
 ### JSON
 
-The JSON export stores the same product information in structured JSON format.
-
----
-
-# 🗄️ Database
-
-The application uses SQLite for local data storage.
-
-### Products
-
-```text
-id
-name
-url
-current_price
-target_price
-lowest_price
-availability
-last_checked
-created_at
-```
-
-### Price History
-
-```text
-id
-product_id
-price
-checked_at
-```
+Exports the same product information in structured JSON format.
 
 ---
 
 # ⌨️ Keyboard Shortcuts
 
 | Shortcut | Action |
-|---|---|
+|----------|--------|
 | Ctrl + R | Refresh Data |
 | Ctrl + N | Add Product |
 | Ctrl + P | Open Products |
@@ -243,12 +219,50 @@ checked_at
 
 ---
 
+# 📋 Requirements
+
+```text
+customtkinter
+requests
+beautifulsoup4
+```
+
+SQLite, CSV, JSON, and Logging are provided through the Python standard library.
+
+Install all requirements:
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+# 🎯 Learning Outcomes
+
+- Web scraping with Python
+- HTTP requests
+- HTML parsing
+- BeautifulSoup
+- Product data extraction
+- Price tracking
+- Price history management
+- SQLite database management
+- CRUD operations
+- File exporting
+- CSV generation
+- JSON generation
+- CustomTkinter GUI development
+- Exception handling
+- Logging
+- Modular application architecture
+- Object-Oriented Programming
+
+---
+
 # 🔄 Application Workflow
 
 ```text
 Enter Product URL
-        ↓
-Validate URL
         ↓
 Fetch Webpage
         ↓
@@ -258,11 +272,11 @@ Extract Product Information
         ↓
 Store Product
         ↓
+Set Target Price
+        ↓
 Record Price
         ↓
-Compare Target Price
-        ↓
-Display Dashboard
+Display Results
         ↓
 View Price History
         ↓
@@ -271,48 +285,26 @@ Export CSV / JSON
 
 ---
 
-# 🎯 Learning Outcomes
-
-- HTTP requests with Python
-- Web scraping
-- HTML parsing
-- BeautifulSoup
-- CSS selectors
-- Product data extraction
-- Price tracking
-- Price history management
-- SQLite database management
-- CRUD operations
-- CSV generation
-- JSON generation
-- CustomTkinter GUI development
-- Exception handling
-- Logging
-- Modular application architecture
-- Object-Oriented Programming
-- UI/UX design principles
-
----
-
 # 🚀 Future Improvements
 
-- Automated scheduled price checks
-- Email notifications
-- Telegram notifications
-- Desktop notifications
-- Price history charts
-- Multiple marketplace support
+- Support for more shopping websites
 - Site-specific parsers
+- Automated price checking
+- Scheduled price tracking
+- Email notifications
+- Desktop notifications
+- Telegram notifications
+- Price history charts
 - Product image extraction
 - Duplicate product detection
 - Product search
-- Price-drop percentage alerts
-- Background monitoring
-- Currency conversion
+- Price-drop notifications
 - Multiple currency support
+- Currency conversion
 - Database backup
+- More export formats
+- API support
 - Automated testing
-- API integration
 
 ---
 
@@ -323,3 +315,11 @@ Export CSV / JSON
 Data Analyst | Python Developer | AI & Machine Learning Enthusiast
 
 GitHub: https://github.com/JDevender007
+
+---
+
+<div align="center">
+
+⭐ Python Web Scraping Project
+
+</div>
