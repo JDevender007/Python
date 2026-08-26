@@ -195,7 +195,7 @@ Python/
 | 05. Data Structures & Algorithms | ✅ Completed |
 | 06. Automation | ✅ Completed |
 | 07. Web Scraping | ✅ Completed |
-| 08. API Development | ⏳ Not Started |
+| 08. API Development | 🔄 In Progress (1/5) |
 | 09. Desktop Applications | ⏳ Not Started |
 | 10. Web Development | ⏳ Not Started |
 | 11. Database Projects | ⏳ Not Started |
@@ -218,11 +218,11 @@ Python/
 ### Current Progress
 
 - Completed Categories: **6 / 26**
-- Completed Main Projects: **30 / 125**
+- Completed Main Projects: **31 / 125**
 - Udemy Practice Projects: **11**
 - Total Projects: **136**
 
-![Progress Bar](https://progress-bar.xyz/24/?title=Main%20Projects&width=400)
+![Progress Bar](https://progress-bar.xyz/25/?title=Main%20Projects&width=400)
 
 ---
 
