@@ -2,11 +2,11 @@
 
 Total planned projects: 136
 
-Completed projects: 40
+Completed projects: 41
 
-Remaining projects: 96
+Remaining projects: 95
 
-Progress: 29.4%
+Progress: 30.1%
 
 | Category | Total | Completed | Remaining |
 |---|---:|---:|---:|
@@ -16,7 +16,7 @@ Progress: 29.4%
 | 04 File Handling | 5 | 5 | 0 |
 | 05 Data Structures & Algorithms | 5 | 5 | 0 |
 | 06 Automation | 5 | 5 | 0 |
-| 07 Web Scraping | 5 | 4 | 1 |
+| 07 Web Scraping | 5 | 5 | 0 |
 | 08 API Development | 5 | 0 | 5 |
 | 09 Desktop Applications | 5 | 0 | 5 |
 | 10 Web Development | 5 | 0 | 5 |
@@ -40,6 +40,13 @@ Progress: 29.4%
 ---
 
 ## Recent Commits
+
+- **feat: add GitHub Repository Scraper** - Added 05_GitHub_Repository_Scraper to 07_Web_Scraping
+  - Two modes: Trending (with language filter) and User repositories
+  - GitHub-inspired dark theme
+  - CSV/JSON export capabilities
+  - Comprehensive test suite (43 tests passing)
+  - Rate limiting and polite scraping
 
 - **feat: add IMDb Movie Scraper** - Added 04_IMDb_Movie_Scraper to 07_Web_Scraping
   - Modular architecture with scraper, parser, tracker, exporter
