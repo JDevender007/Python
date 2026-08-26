@@ -42,7 +42,7 @@ Projects cover weather services, currency conversion, GitHub API integration, ne
 | --: | ------- | ----------- | ------------ | :----: |
 | 01 | Weather API Client | Current weather, forecasts, city search with OpenWeatherMap | Python, Requests, Tkinter | ✅ |
 | 02 | Currency Converter API | Real-time currency conversion with exchange rates | Python, Requests, Tkinter | ✅ |
-| 03 | GitHub Profile Analyzer | GitHub user/repo statistics via GitHub API | Python, Requests, Tkinter | ⏳ |
+| 03 | GitHub Profile Analyzer | GitHub user/repo statistics via GitHub API | Python, Requests, Tkinter | ✅ |
 | 04 | News API Dashboard | News aggregation with category/country filtering | Python, Requests, Tkinter | ⏳ |
 | 05 | REST API with FastAPI | Complete CRUD API with SQLite, Pydantic, Swagger | Python, FastAPI, SQLite, Pydantic | ⏳ |
 
@@ -100,11 +100,11 @@ Projects cover weather services, currency conversion, GitHub API integration, ne
 | ------- | :----: |
 | Weather API Client | ✅ |
 | Currency Converter API | ✅ |
-| GitHub Profile Analyzer | ⏳ Pending |
+| GitHub Profile Analyzer | ✅ |
 | News API Dashboard | ⏳ Pending |
 | REST API with FastAPI | ⏳ Pending |
 
-**Completed: 2 / 5 Projects**
+**Completed: 3 / 5 Projects**
 
 ---
 
