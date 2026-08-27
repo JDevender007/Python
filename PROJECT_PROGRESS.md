@@ -2,11 +2,11 @@
 
 Total planned projects: 136
 
-Completed projects: 44
+Completed projects: 46
 
-Remaining projects: 92
+Remaining projects: 90
 
-Progress: 32.4%
+Progress: 33.8%
 
 | Category | Total | Completed | Remaining |
 |---|---:|---:|---:|
@@ -17,7 +17,7 @@ Progress: 32.4%
 | 05 Data Structures & Algorithms | 5 | 5 | 0 |
 | 06 Automation | 5 | 5 | 0 |
 | 07 Web Scraping | 5 | 5 | 0 |
-| 08 API Development | 5 | 3 | 2 |
+| 08 API Development | 5 | 5 | 0 |
 | 09 Desktop Applications | 5 | 0 | 5 |
 | 10 Web Development | 5 | 0 | 5 |
 | 11 Database Projects | 5 | 0 | 5 |
@@ -40,6 +40,23 @@ Progress: 32.4%
 ---
 
 ## Recent Commits
+
+- **feat: add REST API with FastAPI** - Added 05_REST_API_with_FastAPI to 08_API_Development
+  - Complete CRUD API for task management with JWT authentication
+  - SQLite database with SQLAlchemy ORM
+  - Automatic OpenAPI documentation (Swagger UI + ReDoc)
+  - Role-based access control (admin/user)
+  - Pagination, filtering, statistics
+  - Comprehensive test suite (43 tests passing)
+
+- **feat: add News API Dashboard** - Added 04_News_API_Dashboard to 08_API_Development
+  - Top headlines by country/category with NewsAPI
+  - Search everything with filters (date, language, sort)
+  - Sources browser with country/category filters
+  - Article cards with reading time, relative time
+  - Modern dark theme with category colors
+  - CSV/JSON export for articles and sources
+  - Comprehensive test suite (36 tests passing)
 
 - **feat: add GitHub Profile Analyzer** - Added 03_GitHub_Profile_Analyzer to 08_API_Development
   - Comprehensive GitHub profile analysis with repos, languages, activity
