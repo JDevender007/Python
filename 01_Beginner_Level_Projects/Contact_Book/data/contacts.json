@@ -1,0 +1,50 @@
+[
+  {
+    "id": "C-001",
+    "name": "Ana Silva",
+    "email": "ana.silva@example.com",
+    "phone": "+351 912 345 678",
+    "company": "Northwind",
+    "tags": ["friend", "lisbon"]
+  },
+  {
+    "id": "C-002",
+    "name": "Bruno Costa",
+    "email": "bruno@example.com",
+    "phone": "912-345-679",
+    "company": "Northwind",
+    "tags": ["work"]
+  },
+  {
+    "id": "C-003",
+    "name": "Carla Mendes",
+    "email": "carla@example.org",
+    "phone": "(21) 98765-4321",
+    "company": "Acme",
+    "tags": ["work", "vip"]
+  },
+  {
+    "id": "C-004",
+    "name": "Diogo Alves",
+    "email": "diogo@example.net",
+    "phone": "+1 415 555 0100",
+    "company": "Acme",
+    "tags": ["vendor"]
+  },
+  {
+    "id": "C-005",
+    "name": "Elena Rossi",
+    "email": "elena@example.com",
+    "phone": "+39 06 1234 5678",
+    "company": "Studio",
+    "tags": ["friend"]
+  },
+  {
+    "id": "C-006",
+    "name": "Ana Ferreira",
+    "email": "ana.ferreira@example.com",
+    "phone": "967654321",
+    "company": "Northwind",
+    "tags": ["friend", "work"]
+  }
+]

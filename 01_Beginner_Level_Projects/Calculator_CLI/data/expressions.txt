@@ -1,0 +1,24 @@
+# Bundled expressions for Calculator_CLI
+# Lines starting with '#' and blank lines are ignored.
+2 + 3 * 4
+(2 + 3) * 4
+2 ^ 3 ^ 2
+-2 ^ 2
+(-2) ^ 2
+10 / 4
+
+sqrt(16) + abs(-3)
+max(2, 7) - min(2, 7)
+round(pi * 100) / 100
+7 % 4
+1e-3 * 1000
+pow(2, 10)
+log(e)
+2 * -3
+-2 * 3
+2 - -3
+abs(abs(-5))
+(1 + 2) * (3 + 4)
+100 / 8 + 2 ^ 3 - sqrt(81)
+# the next line is deliberately broken so the runner can show a failure
+max(1)
