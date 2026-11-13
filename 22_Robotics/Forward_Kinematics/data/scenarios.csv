@@ -1,0 +1,9 @@
+scenario,arm,q0,q1,q2
+home,planar2,0,0,
+quarter,planar2,90,0,
+elbow_up,planar2,45,-90,
+rest,planar3,0,0,0
+stretched,planar3,20,-40,30
+base_turn,spatial3,30,45,-45
+shoulder,spatial3,-60,30,60
+lift,prism2,45,0.35,

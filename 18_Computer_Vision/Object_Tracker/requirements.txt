@@ -1,0 +1,5 @@
+numpy==2.5.2
+opencv-python==5.0.0.93
+
+# Test dependency:
+pytest==9.1.1

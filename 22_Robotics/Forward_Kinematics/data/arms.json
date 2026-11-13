@@ -1,0 +1,40 @@
+{
+  "planar2": {
+    "description": "2R planar arm, links 1.00 + 0.80 m",
+    "joints": ["R", "R"],
+    "dh": [
+      {"theta_offset": 0.0, "d": 0.0, "a": 1.0, "alpha": 0.0},
+      {"theta_offset": 0.0, "d": 0.0, "a": 0.8, "alpha": 0.0}
+    ],
+    "limits": [[-180.0, 180.0], [-180.0, 180.0]]
+  },
+  "planar3": {
+    "description": "3R planar arm, links 0.60 + 0.50 + 0.30 m",
+    "joints": ["R", "R", "R"],
+    "dh": [
+      {"theta_offset": 0.0, "d": 0.0, "a": 0.6, "alpha": 0.0},
+      {"theta_offset": 0.0, "d": 0.0, "a": 0.5, "alpha": 0.0},
+      {"theta_offset": 0.0, "d": 0.0, "a": 0.3, "alpha": 0.0}
+    ],
+    "limits": [[-180.0, 180.0], [-180.0, 180.0], [-180.0, 180.0]]
+  },
+  "spatial3": {
+    "description": "3R spatial arm: base yaw + shoulder + elbow",
+    "joints": ["R", "R", "R"],
+    "dh": [
+      {"theta_offset": 0.0, "d": 0.3, "a": 0.0, "alpha": 90.0},
+      {"theta_offset": 0.0, "d": 0.0, "a": 0.5, "alpha": 0.0},
+      {"theta_offset": 0.0, "d": 0.0, "a": 0.4, "alpha": 0.0}
+    ],
+    "limits": [[-180.0, 180.0], [-120.0, 120.0], [-150.0, 150.0]]
+  },
+  "prism2": {
+    "description": "Revolute shoulder + prismatic lift (m)",
+    "joints": ["R", "P"],
+    "dh": [
+      {"theta_offset": 0.0, "d": 0.2, "a": 0.5, "alpha": 0.0},
+      {"theta_offset": 0.0, "d": 0.0, "a": 0.0, "alpha": 0.0}
+    ],
+    "limits": [[-180.0, 180.0], [0.0, 0.6]]
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "input": [
+    {"id": "R-1", "text": "alpha", "qty": 3},
+    {"id": "R-2", "text": "bravo", "qty": 5},
+    {"id": "R-3", "text": "charlie", "qty": 2},
+    {"id": "R-4", "text": "delta", "qty": 7}
+  ],
+  "enable": ["echo", "upper", "stats", "faulty", "orphan"],
+  "disable": []
+}

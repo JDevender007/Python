@@ -1,0 +1,29 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Tests
+.pytest_cache/
+
+# Rendered animations
+output/
+*.gif
+
+# Logs
+logs/*.log
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# OS Files
+Thumbs.db
+.DS_Store

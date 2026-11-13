@@ -1,0 +1,60 @@
+2025-03-10 09:00:00 INFO service=api-gateway msg="GET /health 200 ok" duration=12ms
+2025-03-10 09:00:13 INFO service=billing msg="invoice generated for account" duration=12ms
+2025-03-10 09:00:26 INFO service=auth msg="login succeeded" duration=12ms
+2025-03-10 09:00:39 INFO service=worker msg="job picked from queue" duration=12ms
+2025-03-10 09:00:52 INFO service=api-gateway msg="GET /api/v1/users 200 ok" duration=34ms
+2025-03-10 09:01:05 INFO service=billing msg="payment captured" duration=34ms
+2025-03-10 09:01:18 INFO service=auth msg="token refreshed" duration=34ms
+2025-03-10 09:01:31 INFO service=worker msg="job finished" duration=34ms
+2025-03-10 09:01:44 INFO service=api-gateway msg="POST /api/v1/orders 201 created" duration=56ms
+2025-03-10 09:01:57 INFO service=billing msg="chargeback notice received" duration=56ms
+2025-03-10 09:02:10 INFO service=auth msg="session created" duration=56ms
+2025-03-10 09:02:23 INFO service=worker msg="queue drained" duration=56ms
+2025-03-10 09:02:36 INFO service=api-gateway msg="GET /api/v1/orders 200 ok" duration=78ms
+2025-03-10 09:02:49 INFO service=billing msg="ledger entry written" duration=78ms
+2025-03-10 09:03:02 INFO service=auth msg="logout succeeded" duration=78ms
+2025-03-10 09:03:15 INFO service=worker msg="heartbeat written" duration=78ms
+2025-03-10 09:03:28 INFO service=api-gateway msg="upstream latency within budget" duration=21ms
+2025-03-10 09:03:41 INFO service=billing msg="invoice pdf rendered" duration=21ms
+2025-03-10 09:03:54 INFO service=auth msg="mfa challenge passed" duration=21ms
+2025-03-10 09:04:07 INFO service=worker msg="reindex batch finished" duration=21ms
+2025-03-10 09:04:20 INFO service=api-gateway msg="cache warm, hit ratio 0.92" duration=45ms
+2025-03-10 09:04:33 INFO service=billing msg="settlement batch closed" duration=45ms
+2025-03-10 09:04:46 INFO service=auth msg="login succeeded" duration=45ms
+2025-03-10 09:04:59 INFO service=worker msg="job picked from queue" duration=45ms
+2025-03-10 09:05:12 INFO service=api-gateway msg="GET /health 200 ok" duration=12ms
+2025-03-10 09:05:25 INFO service=billing msg="invoice generated for account" duration=12ms
+2025-03-10 09:05:38 INFO service=auth msg="token refreshed" duration=12ms
+2025-03-10 09:05:51 INFO service=worker msg="job finished" duration=12ms
+2025-03-10 09:06:04 INFO service=api-gateway msg="GET /api/v1/users 200 ok" duration=34ms
+2025-03-10 09:06:17 WARNING service=billing msg="retrying settlement call" duration=34ms
+2025-03-10 09:06:30 INFO service=auth msg="session created" duration=34ms
+2025-03-10 09:06:43 INFO service=worker msg="queue drained" duration=34ms
+2025-03-10 09:06:56 INFO service=api-gateway msg="POST /api/v1/orders 201 created" duration=56ms
+2025-03-10 09:07:09 ERROR service=billing msg="card declined: insufficient_funds" duration=56ms
+2025-03-10 09:07:22 WARNING service=auth msg="token expires in 30s" duration=56ms
+2025-03-10 09:07:35 INFO service=worker msg="heartbeat written" duration=56ms
+2025-03-10 09:07:48 INFO service=api-gateway msg="GET /api/v1/orders 200 ok" duration=78ms
+2025-03-10 09:08:01 ERROR service=billing msg="gateway returned 502" duration=78ms
+2025-03-10 09:08:14 ERROR service=auth msg="failed login: bad password" duration=78ms
+2025-03-10 09:08:27 INFO service=worker msg="reindex batch finished" duration=78ms
+2025-03-10 09:08:40 INFO service=api-gateway msg="upstream latency within budget" duration=21ms
+2025-03-10 09:08:53 ERROR service=billing msg="card declined: insufficient_funds" duration=21ms
+2025-03-10 09:09:06 ERROR service=auth msg="failed login: bad password" duration=21ms
+2025-03-10 09:09:19 INFO service=worker msg="job picked from queue" duration=21ms
+2025-03-10 09:09:32 INFO service=api-gateway msg="cache warm, hit ratio 0.92" duration=45ms
+2025-03-10 09:09:45 ERROR service=billing msg="gateway returned 502" duration=45ms
+2025-03-10 09:09:58 ERROR service=auth msg="failed login: bad password" duration=45ms
+2025-03-10 09:10:11 WARNING service=worker msg="queue depth above soft limit" duration=45ms
+2025-03-10 09:10:24 INFO service=api-gateway msg="GET /health 200 ok" duration=12ms
+2025-03-10 09:10:37 ERROR service=billing msg="card declined: insufficient_funds" duration=12ms
+2025-03-10 09:10:50 WARNING service=worker msg="queue depth above soft limit" duration=12ms
+2025-03-10 09:11:03 INFO service=api-gateway msg="GET /api/v1/users 200 ok" duration=34ms
+2025-03-10 09:11:16 ERROR service=billing msg="gateway returned 502" duration=34ms
+2025-03-10 09:11:29 INFO service=api-gateway msg="POST /api/v1/orders 201 created" duration=56ms
+2025-03-10 09:11:42 CRITICAL service=billing msg="card declined: insufficient_funds" duration=56ms
+2025-03-10 09:11:55 INFO service=api-gateway msg="GET /api/v1/orders 200 ok" duration=78ms
+2025-03-10 09:12:08 WARNING service=api-gateway msg="slow request: 1450ms" duration=21ms
+2025-03-10 09:12:21 WARNING service=api-gateway msg="slow request: 1450ms" duration=45ms
+2025-03-10 09:12:34 ERROR service=api-gateway msg="upstream timeout after 2000ms" duration=12ms
+2025-03-10 09:12:47 ERROR service=api-gateway msg="upstream timeout after 2000ms" duration=34ms

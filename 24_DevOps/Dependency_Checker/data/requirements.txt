@@ -1,0 +1,11 @@
+# Bundled sample requirements — parsed and checked fully OFFLINE.
+# Nothing is installed from this file; installed versions are read from
+# local package metadata only (importlib.metadata), never from an index.
+
+numpy>=1.24              # satisfied by any modern local numpy
+pytest>=6                # satisfied by the local test runner
+pandas<1.0               # installed but violates the range -> conflict
+scipy==0.1.0             # installed but wrong exact pin -> conflict (high)
+acme-widget==1.0.0       # never installed -> missing (high)
+sample-lib>=2.0          # never installed -> missing (medium)
+pyyaml                   # installed but unpinned -> low

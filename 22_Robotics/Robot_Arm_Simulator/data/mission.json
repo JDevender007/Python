@@ -1,0 +1,20 @@
+{
+  "name": "pick_and_place",
+  "arm": "bench3",
+  "home": [0.55, 0.35, 90.0],
+  "dwell": 0.3,
+  "steps": 40,
+  "waypoints": [
+    {"name": "approach", "x": 0.70, "y": 0.28, "yaw": 60.0},
+    {"name": "pick", "x": 0.76, "y": 0.18, "yaw": 30.0},
+    {"name": "lift", "x": 0.76, "y": 0.18, "yaw": 90.0},
+    {"name": "carry", "x": 0.45, "y": 0.65, "yaw": 120.0},
+    {"name": "place", "x": 0.36, "y": 0.78, "yaw": 150.0},
+    {"name": "retreat", "x": 0.30, "y": 0.80, "yaw": 90.0}
+  ],
+  "obstacles": [
+    {"name": "back_wall", "x": 1.32, "y": 0.0, "radius": 0.1},
+    {"name": "side_post", "x": -0.52, "y": 1.24, "radius": 0.15},
+    {"name": "floor_mark", "x": 0.1, "y": -1.35, "radius": 0.2}
+  ]
+}

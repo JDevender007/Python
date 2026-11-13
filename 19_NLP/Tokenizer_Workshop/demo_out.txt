@@ -1,0 +1,34 @@
+
+========================================
+ TOKENIZER WORKSHOP
+   Regex tokens, stems, n-grams, offline
+========================================
+
+====================================================================
+ TOKENIZER WORKSHOP - offline demo
+ Bundled corpus + stopwords; pure Python; no network.
+====================================================================
+
+TOKENIZER WORKSHOP (regex tokens, stems, n-grams)
+====================================================================
+Input          : 2170 characters, 2170 normalized
+Raw tokens     : 339 (224 unique)
+After stopwords: 229 (110 removed)
+N-grams (n=2)       : 228
+Avg length     : 5.2271  longest 'state-of-the-art'  digits 1
+
+Top tokens: and(17)  the(12)  a(11)  of(8)  words(8)
+
+Token -> stem:
+  natural        -> natural
+  language       -> language
+  processing     -> proces
+  begins         -> begin
+  tokenization   -> tokenization
+  tokenizer      -> tokenizer
+  splits         -> split
+  running        -> run
+
+Cross-checks OK: 339 tokens, 110 stopwords removed, 228 bigrams, 176 unique stems, deterministic re-run
+
+Demo completed successfully.

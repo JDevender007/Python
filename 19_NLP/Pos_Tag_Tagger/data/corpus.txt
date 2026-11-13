@@ -1,0 +1,4680 @@
+the	DT
+quick	JJ
+tree	NN
+sleeps	VBZ
+often	RB
+.	.
+
+the	DT
+doctors	NNS
+ran	VBD
+after	IN
+this	DT
+house	NN
+.	.
+
+the	DT
+red	JJ
+car	NN
+should	MD
+kick	VB
+the	DT
+ball	NN
+.	.
+
+i	PRP
+is	VBZ
+carefully	RB
+writing	VBG
+.	.
+
+we	PRP
+closed	VBD
+to	TO
+watch	VB
+the	DT
+river	NN
+!	.
+
+this	DT
+idea	NN
+plays	VBZ
+at	IN
+a	DT
+idea	NN
+.	.
+
+who	WP
+writes	VBZ
+the	DT
+quiet	JJ
+door	NN
+!	.
+
+why	WRB
+will	MD
+i	PRP
+open	VB
+!	.
+
+boys	NNS
+or	CC
+cats	NNS
+opened	VBD
+always	RB
+!	.
+
+that	DT
+three	CD
+green	JJ
+books	NNS
+carried	VBD
+slowly	RB
+.	.
+
+i	PRP
+often	RB
+plays	VBZ
+the	DT
+car	NN
+.	.
+
+we	PRP
+slept	VBD
+this	DT
+home	NN
+,	,
+and	CC
+it	PRP
+played	VBD
+a	DT
+reason	NN
+?	.
+
+the	DT
+man	NN
+is	VBZ
+big	JJ
+beside	IN
+car	NN
+.	.
+
+must	MD
+we	PRP
+play	VB
+fast	RB
+!	.
+
+that	DT
+red	JJ
+reason	NN
+played	VBD
+in	IN
+two	CD
+houses	NNS
+?	.
+
+how	WRB
+plays	VBZ
+the	DT
+book	NN
+kick	VB
+!	.
+
+it	PRP
+can	MD
+fast	RB
+open	VB
+?	.
+
+this	DT
+big	JJ
+trees	NNS
+are	VBP
+red	JJ
+!	.
+
+that	DT
+old	JJ
+tree	NN
+,	,
+but	CC
+this	DT
+quiet	JJ
+car	NN
+are	VBP
+old	JJ
+?	.
+
+he	PRP
+are	VBP
+slowly	RB
+at	IN
+a	DT
+reason	NN
+?	.
+
+that	DT
+small	JJ
+city	NN
+writes	VBZ
+not	RB
+?	.
+
+that	DT
+trees	NNS
+opened	VBD
+in	IN
+the	DT
+reason	NN
+!	.
+
+an	DT
+funny	JJ
+home	NN
+may	MD
+jump	VB
+an	DT
+lamp	NN
+.	.
+
+we	PRP
+runs	VBZ
+always	RB
+closing	VBG
+.	.
+
+they	PRP
+waited	VBD
+to	TO
+go	VB
+an	DT
+home	NN
+!	.
+
+that	DT
+book	NN
+eats	VBZ
+from	IN
+a	DT
+ball	NN
+!	.
+
+who	WP
+carries	VBZ
+an	DT
+bright	JJ
+dog	NN
+.	.
+
+why	WRB
+may	MD
+she	PRP
+run	VB
+.	.
+
+hours	NNS
+and	CC
+cats	NNS
+carried	VBD
+today	RB
+.	.
+
+that	DT
+two	CD
+big	JJ
+queens	NNS
+opened	VBD
+quietly	RB
+?	.
+
+they	PRP
+not	RB
+writes	VBZ
+a	DT
+ball	NN
+!	.
+
+i	PRP
+ate	VBD
+an	DT
+city	NN
+,	,
+or	CC
+they	PRP
+wrote	VBD
+the	DT
+car	NN
+.	.
+
+the	DT
+idea	NN
+runs	VBZ
+green	JJ
+beside	IN
+car	NN
+!	.
+
+can	MD
+he	PRP
+jump	VB
+fast	RB
+.	.
+
+a	DT
+small	JJ
+house	NN
+bought	VBD
+from	IN
+one	CD
+teachers	NNS
+.	.
+
+why	WRB
+is	VBZ
+this	DT
+book	NN
+close	VB
+.	.
+
+i	PRP
+should	MD
+not	RB
+open	VB
+.	.
+
+this	DT
+funny	JJ
+ships	NNS
+are	VBP
+small	JJ
+.	.
+
+this	DT
+quiet	JJ
+lamp	NN
+,	,
+or	CC
+the	DT
+heavy	JJ
+home	NN
+are	VBP
+quick	JJ
+?	.
+
+i	PRP
+am	VBP
+slowly	RB
+near	IN
+a	DT
+book	NN
+!	.
+
+this	DT
+big	JJ
+lamp	NN
+eats	VBZ
+always	RB
+?	.
+
+a	DT
+cats	NNS
+wrote	VBD
+beside	IN
+the	DT
+house	NN
+!	.
+
+that	DT
+brave	JJ
+dog	NN
+will	MD
+watch	VB
+a	DT
+river	NN
+?	.
+
+we	PRP
+opens	VBZ
+often	RB
+writing	VBG
+.	.
+
+she	PRP
+read	VBD
+to	TO
+write	VB
+an	DT
+ship	NN
+?	.
+
+this	DT
+pen	NN
+does	VBZ
+beside	IN
+this	DT
+girl	NN
+.	.
+
+what	WP
+sleeps	VBZ
+the	DT
+green	JJ
+ball	NN
+.	.
+
+why	WRB
+will	MD
+he	PRP
+kick	VB
+?	.
+
+teachers	NNS
+but	CC
+rivers	NNS
+walked	VBD
+carefully	RB
+.	.
+
+a	DT
+one	CD
+green	JJ
+cats	NNS
+kicked	VBD
+often	RB
+?	.
+
+he	PRP
+not	RB
+sleeps	VBZ
+that	DT
+man	NN
+.	.
+
+they	PRP
+ran	VBD
+this	DT
+reason	NN
+,	,
+or	CC
+she	PRP
+kicked	VBD
+an	DT
+car	NN
+?	.
+
+this	DT
+girl	NN
+is	VBZ
+heavy	JJ
+with	IN
+ship	NN
+?	.
+
+will	MD
+he	PRP
+open	VB
+not	RB
+!	.
+
+the	DT
+small	JJ
+ball	NN
+ate	VBD
+beside	IN
+three	CD
+girls	NNS
+?	.
+
+where	WRB
+sleeps	VBZ
+an	DT
+bird	NN
+eat	VB
+?	.
+
+you	PRP
+should	MD
+always	RB
+kick	VB
+!	.
+
+that	DT
+quick	JJ
+doctors	NNS
+am	VBP
+heavy	JJ
+.	.
+
+a	DT
+happy	JJ
+boy	NN
+,	,
+but	CC
+that	DT
+big	JJ
+tree	NN
+am	VBP
+green	JJ
+.	.
+
+i	PRP
+am	VBP
+often	RB
+before	IN
+an	DT
+queen	NN
+?	.
+
+an	DT
+brave	JJ
+house	NN
+jumps	VBZ
+fast	RB
+?	.
+
+an	DT
+houses	NNS
+walked	VBD
+from	IN
+a	DT
+home	NN
+?	.
+
+a	DT
+tall	JJ
+ship	NN
+should	MD
+carry	VB
+this	DT
+ball	NN
+.	.
+
+he	PRP
+jumps	VBZ
+quietly	RB
+closing	VBG
+.	.
+
+you	PRP
+played	VBD
+to	TO
+write	VB
+a	DT
+house	NN
+?	.
+
+an	DT
+house	NN
+reads	VBZ
+near	IN
+a	DT
+reason	NN
+.	.
+
+what	WP
+closes	VBZ
+this	DT
+green	JJ
+girl	NN
+.	.
+
+when	WRB
+can	MD
+we	PRP
+run	VB
+.	.
+
+ideas	NNS
+or	CC
+cars	NNS
+slept	VBD
+quietly	RB
+!	.
+
+the	DT
+four	CD
+brave	JJ
+houses	NNS
+bought	VBD
+today	RB
+.	.
+
+she	PRP
+today	RB
+reads	VBZ
+an	DT
+car	NN
+.	.
+
+he	PRP
+kicked	VBD
+a	DT
+city	NN
+,	,
+or	CC
+you	PRP
+ran	VBD
+an	DT
+door	NN
+!	.
+
+that	DT
+city	NN
+is	VBZ
+brave	JJ
+beside	IN
+idea	NN
+.	.
+
+will	MD
+it	PRP
+eat	VB
+not	RB
+?	.
+
+the	DT
+small	JJ
+man	NN
+read	VBD
+from	IN
+ten	CD
+ideas	NNS
+?	.
+
+where	WRB
+writes	VBZ
+that	DT
+book	NN
+play	VB
+.	.
+
+i	PRP
+must	MD
+quickly	RB
+close	VB
+!	.
+
+a	DT
+quiet	JJ
+ships	NNS
+are	VBP
+heavy	JJ
+?	.
+
+that	DT
+quiet	JJ
+reason	NN
+,	,
+but	CC
+an	DT
+old	JJ
+bird	NN
+am	VBP
+quiet	JJ
+?	.
+
+i	PRP
+am	VBP
+carefully	RB
+at	IN
+a	DT
+lamp	NN
+!	.
+
+this	DT
+heavy	JJ
+river	NN
+carries	VBZ
+not	RB
+?	.
+
+this	DT
+doctors	NNS
+bought	VBD
+in	IN
+an	DT
+bird	NN
+.	.
+
+this	DT
+funny	JJ
+table	NN
+should	MD
+buy	VB
+an	DT
+ship	NN
+?	.
+
+we	PRP
+is	VBZ
+often	RB
+closing	VBG
+?	.
+
+you	PRP
+waited	VBD
+to	TO
+buy	VB
+the	DT
+bird	NN
+!	.
+
+that	DT
+idea	NN
+jumps	VBZ
+near	IN
+an	DT
+car	NN
+.	.
+
+who	WP
+runs	VBZ
+the	DT
+red	JJ
+king	NN
+!	.
+
+where	WRB
+must	MD
+we	PRP
+buy	VB
+!	.
+
+books	NNS
+but	CC
+cities	NNS
+wrote	VBD
+again	RB
+.	.
+
+a	DT
+ten	CD
+tall	JJ
+dogs	NNS
+waited	VBD
+slowly	RB
+?	.
+
+she	PRP
+quietly	RB
+does	VBZ
+that	DT
+ship	NN
+.	.
+
+they	PRP
+ate	VBD
+the	DT
+ship	NN
+,	,
+or	CC
+i	PRP
+opened	VBD
+that	DT
+man	NN
+?	.
+
+this	DT
+man	NN
+does	VBZ
+old	JJ
+into	IN
+ball	NN
+?	.
+
+can	MD
+i	PRP
+go	VB
+today	RB
+?	.
+
+an	DT
+funny	JJ
+car	NN
+bought	VBD
+before	IN
+three	CD
+teachers	NNS
+?	.
+
+when	WRB
+plays	VBZ
+this	DT
+cat	NN
+carry	VB
+?	.
+
+she	PRP
+may	MD
+never	RB
+read	VB
+!	.
+
+the	DT
+big	JJ
+girls	NNS
+are	VBP
+cold	JJ
+!	.
+
+a	DT
+tall	JJ
+book	NN
+,	,
+or	CC
+this	DT
+quiet	JJ
+ball	NN
+am	VBP
+cold	JJ
+.	.
+
+she	PRP
+am	VBP
+again	RB
+after	IN
+the	DT
+table	NN
+?	.
+
+this	DT
+quick	JJ
+door	NN
+plays	VBZ
+again	RB
+?	.
+
+that	DT
+doctors	NNS
+watched	VBD
+after	IN
+a	DT
+king	NN
+.	.
+
+an	DT
+cold	JJ
+king	NN
+will	MD
+write	VB
+an	DT
+reason	NN
+!	.
+
+you	PRP
+writes	VBZ
+quietly	RB
+opening	VBG
+.	.
+
+they	PRP
+opened	VBD
+to	TO
+write	VB
+that	DT
+table	NN
+!	.
+
+the	DT
+cat	NN
+is	VBZ
+into	IN
+a	DT
+ship	NN
+.	.
+
+who	WP
+plays	VBZ
+this	DT
+quiet	JJ
+book	NN
+?	.
+
+why	WRB
+may	MD
+you	PRP
+write	VB
+?	.
+
+ships	NNS
+or	CC
+cats	NNS
+wrote	VBD
+quickly	RB
+!	.
+
+that	DT
+one	CD
+quiet	JJ
+cars	NNS
+kicked	VBD
+slowly	RB
+!	.
+
+he	PRP
+quickly	RB
+sleeps	VBZ
+a	DT
+dog	NN
+!	.
+
+she	PRP
+ate	VBD
+a	DT
+king	NN
+,	,
+but	CC
+she	PRP
+wrote	VBD
+an	DT
+door	NN
+.	.
+
+that	DT
+man	NN
+does	VBZ
+tall	JJ
+on	IN
+river	NN
+?	.
+
+will	MD
+they	PRP
+run	VB
+always	RB
+!	.
+
+this	DT
+cold	JJ
+pen	NN
+ate	VBD
+on	IN
+five	CD
+cars	NNS
+.	.
+
+why	WRB
+is	VBZ
+that	DT
+boy	NN
+watch	VB
+!	.
+
+you	PRP
+will	MD
+never	RB
+close	VB
+?	.
+
+an	DT
+small	JJ
+teachers	NNS
+am	VBP
+quick	JJ
+?	.
+
+this	DT
+small	JJ
+lamp	NN
+,	,
+but	CC
+this	DT
+tall	JJ
+girl	NN
+am	VBP
+big	JJ
+!	.
+
+they	PRP
+am	VBP
+not	RB
+beside	IN
+this	DT
+ship	NN
+?	.
+
+that	DT
+happy	JJ
+idea	NN
+sleeps	VBZ
+slowly	RB
+?	.
+
+this	DT
+cars	NNS
+watched	VBD
+under	IN
+that	DT
+man	NN
+!	.
+
+this	DT
+quiet	JJ
+dog	NN
+must	MD
+go	VB
+an	DT
+river	NN
+?	.
+
+she	PRP
+reads	VBZ
+always	RB
+reading	VBG
+?	.
+
+they	PRP
+carried	VBD
+to	TO
+close	VB
+the	DT
+queen	NN
+.	.
+
+the	DT
+car	NN
+does	VBZ
+into	IN
+this	DT
+ball	NN
+.	.
+
+which	WP
+opens	VBZ
+this	DT
+bright	JJ
+dog	NN
+.	.
+
+why	WRB
+can	MD
+we	PRP
+carry	VB
+.	.
+
+birds	NNS
+but	CC
+hours	NNS
+played	VBD
+today	RB
+!	.
+
+that	DT
+three	CD
+cold	JJ
+doctors	NNS
+played	VBD
+never	RB
+!	.
+
+we	PRP
+always	RB
+plays	VBZ
+an	DT
+car	NN
+.	.
+
+i	PRP
+ate	VBD
+an	DT
+boy	NN
+,	,
+and	CC
+she	PRP
+carried	VBD
+this	DT
+tree	NN
+!	.
+
+that	DT
+queen	NN
+carries	VBZ
+happy	JJ
+on	IN
+book	NN
+?	.
+
+can	MD
+it	PRP
+eat	VB
+always	RB
+.	.
+
+that	DT
+big	JJ
+tree	NN
+walked	VBD
+in	IN
+five	CD
+birds	NNS
+!	.
+
+when	WRB
+is	VBZ
+this	DT
+boy	NN
+go	VB
+.	.
+
+they	PRP
+may	MD
+today	RB
+open	VB
+?	.
+
+an	DT
+big	JJ
+houses	NNS
+am	VBP
+brave	JJ
+?	.
+
+the	DT
+brave	JJ
+cat	NN
+,	,
+or	CC
+the	DT
+green	JJ
+home	NN
+are	VBP
+big	JJ
+.	.
+
+you	PRP
+am	VBP
+slowly	RB
+near	IN
+the	DT
+ball	NN
+?	.
+
+that	DT
+green	JJ
+man	NN
+sleeps	VBZ
+carefully	RB
+?	.
+
+this	DT
+kings	NNS
+slept	VBD
+after	IN
+this	DT
+bird	NN
+!	.
+
+that	DT
+quick	JJ
+man	NN
+will	MD
+watch	VB
+a	DT
+home	NN
+.	.
+
+it	PRP
+is	VBZ
+slowly	RB
+eating	VBG
+.	.
+
+she	PRP
+opened	VBD
+to	TO
+eat	VB
+the	DT
+lamp	NN
+?	.
+
+that	DT
+king	NN
+plays	VBZ
+in	IN
+a	DT
+bird	NN
+!	.
+
+what	WP
+does	VBZ
+this	DT
+small	JJ
+reason	NN
+.	.
+
+why	WRB
+should	MD
+i	PRP
+watch	VB
+.	.
+
+ships	NNS
+and	CC
+doctors	NNS
+ate	VBD
+fast	RB
+.	.
+
+an	DT
+two	CD
+small	JJ
+houses	NNS
+jumped	VBD
+always	RB
+!	.
+
+i	PRP
+not	RB
+plays	VBZ
+this	DT
+boy	NN
+?	.
+
+i	PRP
+slept	VBD
+this	DT
+tree	NN
+,	,
+or	CC
+he	PRP
+closed	VBD
+the	DT
+lamp	NN
+!	.
+
+an	DT
+man	NN
+plays	VBZ
+quick	JJ
+on	IN
+car	NN
+!	.
+
+should	MD
+they	PRP
+run	VB
+fast	RB
+?	.
+
+that	DT
+quick	JJ
+river	NN
+wrote	VBD
+beside	IN
+ten	CD
+kings	NNS
+?	.
+
+when	WRB
+carries	VBZ
+this	DT
+home	NN
+go	VB
+?	.
+
+he	PRP
+must	MD
+never	RB
+write	VB
+?	.
+
+an	DT
+heavy	JJ
+boys	NNS
+are	VBP
+quiet	JJ
+?	.
+
+this	DT
+happy	JJ
+reason	NN
+,	,
+but	CC
+the	DT
+bright	JJ
+cat	NN
+am	VBP
+happy	JJ
+?	.
+
+he	PRP
+am	VBP
+carefully	RB
+in	IN
+that	DT
+ship	NN
+?	.
+
+the	DT
+red	JJ
+queen	NN
+reads	VBZ
+not	RB
+?	.
+
+this	DT
+houses	NNS
+ate	VBD
+with	IN
+that	DT
+girl	NN
+?	.
+
+this	DT
+tall	JJ
+king	NN
+will	MD
+run	VB
+that	DT
+car	NN
+!	.
+
+she	PRP
+plays	VBZ
+carefully	RB
+running	VBG
+!	.
+
+we	PRP
+ran	VBD
+to	TO
+go	VB
+the	DT
+ship	NN
+.	.
+
+a	DT
+king	NN
+does	VBZ
+with	IN
+that	DT
+pen	NN
+?	.
+
+what	WP
+opens	VBZ
+this	DT
+red	JJ
+ship	NN
+!	.
+
+when	WRB
+must	MD
+she	PRP
+kick	VB
+!	.
+
+girls	NNS
+and	CC
+trees	NNS
+watched	VBD
+again	RB
+?	.
+
+that	DT
+three	CD
+brave	JJ
+dogs	NNS
+slept	VBD
+always	RB
+!	.
+
+they	PRP
+fast	RB
+opens	VBZ
+a	DT
+ship	NN
+!	.
+
+we	PRP
+played	VBD
+an	DT
+ball	NN
+,	,
+or	CC
+it	PRP
+bought	VBD
+a	DT
+pen	NN
+.	.
+
+that	DT
+city	NN
+sleeps	VBZ
+brave	JJ
+into	IN
+house	NN
+?	.
+
+must	MD
+i	PRP
+watch	VB
+again	RB
+?	.
+
+a	DT
+bright	JJ
+house	NN
+jumped	VBD
+beside	IN
+five	CD
+ideas	NNS
+.	.
+
+how	WRB
+jumps	VBZ
+that	DT
+ship	NN
+run	VB
+!	.
+
+she	PRP
+must	MD
+fast	RB
+eat	VB
+.	.
+
+this	DT
+funny	JJ
+trees	NNS
+am	VBP
+green	JJ
+!	.
+
+this	DT
+heavy	JJ
+cat	NN
+,	,
+but	CC
+that	DT
+cold	JJ
+idea	NN
+am	VBP
+brave	JJ
+!	.
+
+he	PRP
+are	VBP
+often	RB
+before	IN
+an	DT
+car	NN
+!	.
+
+the	DT
+cold	JJ
+boy	NN
+is	VBZ
+slowly	RB
+?	.
+
+a	DT
+birds	NNS
+waited	VBD
+in	IN
+the	DT
+idea	NN
+.	.
+
+an	DT
+quiet	JJ
+door	NN
+must	MD
+eat	VB
+a	DT
+queen	NN
+?	.
+
+they	PRP
+is	VBZ
+quietly	RB
+eating	VBG
+.	.
+
+he	PRP
+closed	VBD
+to	TO
+kick	VB
+a	DT
+king	NN
+!	.
+
+a	DT
+car	NN
+opens	VBZ
+before	IN
+an	DT
+ship	NN
+?	.
+
+which	WP
+runs	VBZ
+this	DT
+happy	JJ
+reason	NN
+!	.
+
+when	WRB
+will	MD
+we	PRP
+read	VB
+!	.
+
+birds	NNS
+but	CC
+ships	NNS
+carried	VBD
+always	RB
+?	.
+
+an	DT
+two	CD
+cold	JJ
+queens	NNS
+ran	VBD
+often	RB
+?	.
+
+they	PRP
+never	RB
+carries	VBZ
+an	DT
+pen	NN
+?	.
+
+he	PRP
+bought	VBD
+this	DT
+tree	NN
+,	,
+but	CC
+you	PRP
+kicked	VBD
+the	DT
+man	NN
+!	.
+
+this	DT
+bird	NN
+sleeps	VBZ
+green	JJ
+from	IN
+car	NN
+!	.
+
+can	MD
+they	PRP
+play	VB
+fast	RB
+!	.
+
+a	DT
+heavy	JJ
+boy	NN
+waited	VBD
+before	IN
+ten	CD
+houses	NNS
+?	.
+
+how	WRB
+runs	VBZ
+that	DT
+door	NN
+carry	VB
+.	.
+
+he	PRP
+may	MD
+never	RB
+carry	VB
+?	.
+
+a	DT
+red	JJ
+girls	NNS
+am	VBP
+old	JJ
+!	.
+
+an	DT
+brave	JJ
+river	NN
+,	,
+or	CC
+an	DT
+tall	JJ
+idea	NN
+are	VBP
+bright	JJ
+.	.
+
+she	PRP
+are	VBP
+fast	RB
+for	IN
+this	DT
+ball	NN
+?	.
+
+the	DT
+funny	JJ
+city	NN
+runs	VBZ
+always	RB
+!	.
+
+the	DT
+kings	NNS
+played	VBD
+before	IN
+an	DT
+table	NN
+?	.
+
+an	DT
+small	JJ
+reason	NN
+can	MD
+open	VB
+the	DT
+man	NN
+!	.
+
+it	PRP
+carries	VBZ
+often	RB
+jumping	VBG
+!	.
+
+you	PRP
+wrote	VBD
+to	TO
+buy	VB
+this	DT
+boy	NN
+.	.
+
+the	DT
+house	NN
+plays	VBZ
+under	IN
+the	DT
+boy	NN
+.	.
+
+which	WP
+eats	VBZ
+this	DT
+bright	JJ
+door	NN
+!	.
+
+how	WRB
+should	MD
+i	PRP
+carry	VB
+.	.
+
+ships	NNS
+but	CC
+boys	NNS
+bought	VBD
+today	RB
+!	.
+
+this	DT
+three	CD
+quick	JJ
+doors	NNS
+ate	VBD
+today	RB
+?	.
+
+she	PRP
+never	RB
+jumps	VBZ
+an	DT
+ball	NN
+!	.
+
+it	PRP
+walked	VBD
+this	DT
+tree	NN
+,	,
+and	CC
+you	PRP
+bought	VBD
+this	DT
+cat	NN
+!	.
+
+a	DT
+home	NN
+is	VBZ
+green	JJ
+in	IN
+house	NN
+?	.
+
+can	MD
+she	PRP
+watch	VB
+not	RB
+.	.
+
+the	DT
+brave	JJ
+ball	NN
+ate	VBD
+after	IN
+two	CD
+cars	NNS
+?	.
+
+when	WRB
+carries	VBZ
+the	DT
+tree	NN
+go	VB
+.	.
+
+she	PRP
+should	MD
+always	RB
+watch	VB
+.	.
+
+the	DT
+heavy	JJ
+dogs	NNS
+are	VBP
+quick	JJ
+?	.
+
+a	DT
+green	JJ
+idea	NN
+,	,
+and	CC
+an	DT
+quick	JJ
+girl	NN
+am	VBP
+old	JJ
+.	.
+
+i	PRP
+are	VBP
+today	RB
+under	IN
+an	DT
+queen	NN
+!	.
+
+the	DT
+bright	JJ
+queen	NN
+sleeps	VBZ
+not	RB
+.	.
+
+that	DT
+birds	NNS
+wrote	VBD
+before	IN
+the	DT
+house	NN
+?	.
+
+this	DT
+cold	JJ
+reason	NN
+will	MD
+open	VB
+this	DT
+cat	NN
+.	.
+
+it	PRP
+carries	VBZ
+quietly	RB
+jumping	VBG
+.	.
+
+it	PRP
+closed	VBD
+to	TO
+write	VB
+that	DT
+queen	NN
+?	.
+
+this	DT
+queen	NN
+carries	VBZ
+into	IN
+the	DT
+pen	NN
+.	.
+
+which	WP
+is	VBZ
+that	DT
+tall	JJ
+book	NN
+?	.
+
+how	WRB
+can	MD
+we	PRP
+read	VB
+?	.
+
+cities	NNS
+or	CC
+boys	NNS
+played	VBD
+again	RB
+?	.
+
+an	DT
+three	CD
+big	JJ
+queens	NNS
+ran	VBD
+slowly	RB
+.	.
+
+he	PRP
+again	RB
+jumps	VBZ
+an	DT
+girl	NN
+!	.
+
+he	PRP
+closed	VBD
+that	DT
+ball	NN
+,	,
+but	CC
+he	PRP
+read	VBD
+an	DT
+reason	NN
+?	.
+
+the	DT
+bird	NN
+carries	VBZ
+happy	JJ
+from	IN
+boy	NN
+!	.
+
+should	MD
+she	PRP
+eat	VB
+fast	RB
+?	.
+
+a	DT
+brave	JJ
+boy	NN
+played	VBD
+beside	IN
+three	CD
+boys	NNS
+?	.
+
+when	WRB
+writes	VBZ
+that	DT
+man	NN
+kick	VB
+!	.
+
+i	PRP
+should	MD
+quickly	RB
+kick	VB
+!	.
+
+an	DT
+quick	JJ
+rivers	NNS
+am	VBP
+tall	JJ
+?	.
+
+an	DT
+quiet	JJ
+dog	NN
+,	,
+and	CC
+that	DT
+heavy	JJ
+city	NN
+are	VBP
+big	JJ
+!	.
+
+i	PRP
+are	VBP
+slowly	RB
+for	IN
+that	DT
+book	NN
+?	.
+
+this	DT
+bright	JJ
+idea	NN
+eats	VBZ
+never	RB
+?	.
+
+an	DT
+hours	NNS
+closed	VBD
+on	IN
+the	DT
+girl	NN
+.	.
+
+that	DT
+quick	JJ
+reason	NN
+will	MD
+play	VB
+this	DT
+reason	NN
+?	.
+
+we	PRP
+carries	VBZ
+today	RB
+writing	VBG
+?	.
+
+she	PRP
+watched	VBD
+to	TO
+read	VB
+this	DT
+boy	NN
+?	.
+
+that	DT
+king	NN
+closes	VBZ
+before	IN
+an	DT
+house	NN
+.	.
+
+what	WP
+carries	VBZ
+the	DT
+quick	JJ
+book	NN
+?	.
+
+when	WRB
+can	MD
+you	PRP
+play	VB
+?	.
+
+ideas	NNS
+and	CC
+dogs	NNS
+wrote	VBD
+again	RB
+.	.
+
+a	DT
+four	CD
+old	JJ
+cars	NNS
+opened	VBD
+carefully	RB
+!	.
+
+you	PRP
+never	RB
+jumps	VBZ
+this	DT
+house	NN
+?	.
+
+he	PRP
+wrote	VBD
+the	DT
+idea	NN
+,	,
+but	CC
+we	PRP
+carried	VBD
+this	DT
+bird	NN
+.	.
+
+this	DT
+dog	NN
+reads	VBZ
+big	JJ
+after	IN
+ship	NN
+!	.
+
+may	MD
+he	PRP
+write	VB
+slowly	RB
+.	.
+
+this	DT
+green	JJ
+city	NN
+opened	VBD
+on	IN
+four	CD
+birds	NNS
+!	.
+
+why	WRB
+sleeps	VBZ
+an	DT
+river	NN
+jump	VB
+!	.
+
+i	PRP
+will	MD
+carefully	RB
+close	VB
+.	.
+
+an	DT
+quiet	JJ
+girls	NNS
+are	VBP
+small	JJ
+.	.
+
+an	DT
+red	JJ
+river	NN
+,	,
+but	CC
+the	DT
+big	JJ
+home	NN
+am	VBP
+bright	JJ
+!	.
+
+you	PRP
+am	VBP
+fast	RB
+after	IN
+that	DT
+idea	NN
+!	.
+
+an	DT
+big	JJ
+ship	NN
+jumps	VBZ
+today	RB
+?	.
+
+an	DT
+trees	NNS
+closed	VBD
+in	IN
+an	DT
+queen	NN
+.	.
+
+an	DT
+bright	JJ
+ship	NN
+will	MD
+run	VB
+an	DT
+bird	NN
+.	.
+
+i	PRP
+jumps	VBZ
+not	RB
+closing	VBG
+?	.
+
+we	PRP
+closed	VBD
+to	TO
+open	VB
+that	DT
+home	NN
+.	.
+
+an	DT
+man	NN
+opens	VBZ
+beside	IN
+a	DT
+house	NN
+?	.
+
+who	WP
+reads	VBZ
+the	DT
+old	JJ
+home	NN
+.	.
+
+where	WRB
+can	MD
+i	PRP
+open	VB
+?	.
+
+teachers	NNS
+but	CC
+rivers	NNS
+played	VBD
+never	RB
+?	.
+
+this	DT
+four	CD
+funny	JJ
+ideas	NNS
+kicked	VBD
+not	RB
+.	.
+
+you	PRP
+fast	RB
+is	VBZ
+an	DT
+cat	NN
+?	.
+
+he	PRP
+opened	VBD
+this	DT
+bird	NN
+,	,
+but	CC
+you	PRP
+kicked	VBD
+that	DT
+girl	NN
+?	.
+
+the	DT
+table	NN
+is	VBZ
+big	JJ
+from	IN
+bird	NN
+!	.
+
+must	MD
+she	PRP
+kick	VB
+slowly	RB
+?	.
+
+that	DT
+cold	JJ
+home	NN
+watched	VBD
+from	IN
+two	CD
+teachers	NNS
+.	.
+
+how	WRB
+closes	VBZ
+an	DT
+dog	NN
+read	VB
+?	.
+
+she	PRP
+can	MD
+never	RB
+watch	VB
+?	.
+
+a	DT
+red	JJ
+girls	NNS
+are	VBP
+small	JJ
+?	.
+
+the	DT
+old	JJ
+ball	NN
+,	,
+but	CC
+an	DT
+funny	JJ
+man	NN
+are	VBP
+green	JJ
+?	.
+
+she	PRP
+are	VBP
+quietly	RB
+for	IN
+that	DT
+river	NN
+!	.
+
+this	DT
+quick	JJ
+lamp	NN
+reads	VBZ
+fast	RB
+!	.
+
+a	DT
+kings	NNS
+closed	VBD
+with	IN
+this	DT
+car	NN
+!	.
+
+a	DT
+happy	JJ
+king	NN
+can	MD
+read	VB
+that	DT
+ship	NN
+?	.
+
+you	PRP
+plays	VBZ
+again	RB
+closing	VBG
+!	.
+
+we	PRP
+jumped	VBD
+to	TO
+watch	VB
+that	DT
+girl	NN
+?	.
+
+the	DT
+home	NN
+opens	VBZ
+from	IN
+that	DT
+boy	NN
+!	.
+
+which	WP
+jumps	VBZ
+an	DT
+small	JJ
+river	NN
+?	.
+
+how	WRB
+should	MD
+she	PRP
+go	VB
+?	.
+
+cats	NNS
+and	CC
+kings	NNS
+waited	VBD
+never	RB
+.	.
+
+this	DT
+one	CD
+cold	JJ
+teachers	NNS
+played	VBD
+often	RB
+?	.
+
+he	PRP
+never	RB
+sleeps	VBZ
+the	DT
+idea	NN
+.	.
+
+you	PRP
+carried	VBD
+an	DT
+girl	NN
+,	,
+and	CC
+it	PRP
+waited	VBD
+this	DT
+pen	NN
+.	.
+
+this	DT
+ship	NN
+carries	VBZ
+quick	JJ
+on	IN
+dog	NN
+?	.
+
+can	MD
+you	PRP
+eat	VB
+carefully	RB
+!	.
+
+that	DT
+old	JJ
+lamp	NN
+ran	VBD
+with	IN
+two	CD
+birds	NNS
+.	.
+
+where	WRB
+sleeps	VBZ
+this	DT
+home	NN
+watch	VB
+!	.
+
+we	PRP
+will	MD
+slowly	RB
+go	VB
+?	.
+
+that	DT
+old	JJ
+dogs	NNS
+are	VBP
+tall	JJ
+.	.
+
+an	DT
+cold	JJ
+dog	NN
+,	,
+and	CC
+that	DT
+cold	JJ
+river	NN
+are	VBP
+old	JJ
+?	.
+
+he	PRP
+are	VBP
+again	RB
+under	IN
+the	DT
+home	NN
+?	.
+
+an	DT
+happy	JJ
+dog	NN
+reads	VBZ
+slowly	RB
+?	.
+
+a	DT
+boys	NNS
+watched	VBD
+after	IN
+an	DT
+girl	NN
+.	.
+
+an	DT
+old	JJ
+idea	NN
+can	MD
+go	VB
+this	DT
+pen	NN
+?	.
+
+i	PRP
+eats	VBZ
+quietly	RB
+jumping	VBG
+!	.
+
+you	PRP
+wrote	VBD
+to	TO
+play	VB
+a	DT
+house	NN
+.	.
+
+the	DT
+idea	NN
+plays	VBZ
+beside	IN
+this	DT
+ball	NN
+?	.
+
+what	WP
+runs	VBZ
+a	DT
+happy	JJ
+door	NN
+.	.
+
+why	WRB
+may	MD
+he	PRP
+watch	VB
+?	.
+
+ships	NNS
+or	CC
+kings	NNS
+waited	VBD
+again	RB
+?	.
+
+a	DT
+four	CD
+tall	JJ
+queens	NNS
+played	VBD
+carefully	RB
+?	.
+
+you	PRP
+slowly	RB
+does	VBZ
+this	DT
+cat	NN
+?	.
+
+they	PRP
+bought	VBD
+a	DT
+ball	NN
+,	,
+or	CC
+he	PRP
+ran	VBD
+an	DT
+reason	NN
+?	.
+
+an	DT
+ship	NN
+carries	VBZ
+tall	JJ
+into	IN
+river	NN
+!	.
+
+must	MD
+it	PRP
+open	VB
+quickly	RB
+!	.
+
+an	DT
+green	JJ
+lamp	NN
+slept	VBD
+before	IN
+one	CD
+cats	NNS
+!	.
+
+how	WRB
+reads	VBZ
+that	DT
+reason	NN
+eat	VB
+.	.
+
+she	PRP
+should	MD
+fast	RB
+watch	VB
+?	.
+
+the	DT
+big	JJ
+cats	NNS
+are	VBP
+funny	JJ
+!	.
+
+an	DT
+quiet	JJ
+city	NN
+,	,
+but	CC
+a	DT
+heavy	JJ
+ship	NN
+am	VBP
+quiet	JJ
+?	.
+
+you	PRP
+are	VBP
+not	RB
+at	IN
+that	DT
+door	NN
+?	.
+
+an	DT
+heavy	JJ
+tree	NN
+sleeps	VBZ
+slowly	RB
+.	.
+
+a	DT
+queens	NNS
+opened	VBD
+into	IN
+that	DT
+boy	NN
+?	.
+
+an	DT
+tall	JJ
+ship	NN
+can	MD
+kick	VB
+an	DT
+pen	NN
+?	.
+
+she	PRP
+jumps	VBZ
+quietly	RB
+jumping	VBG
+?	.
+
+she	PRP
+waited	VBD
+to	TO
+jump	VB
+an	DT
+reason	NN
+?	.
+
+the	DT
+ball	NN
+closes	VBZ
+with	IN
+an	DT
+river	NN
+!	.
+
+which	WP
+does	VBZ
+a	DT
+funny	JJ
+door	NN
+!	.
+
+when	WRB
+will	MD
+she	PRP
+watch	VB
+.	.
+
+cars	NNS
+or	CC
+dogs	NNS
+played	VBD
+carefully	RB
+!	.
+
+an	DT
+four	CD
+funny	JJ
+doctors	NNS
+jumped	VBD
+not	RB
+.	.
+
+he	PRP
+always	RB
+writes	VBZ
+this	DT
+queen	NN
+?	.
+
+you	PRP
+read	VBD
+that	DT
+cat	NN
+,	,
+or	CC
+i	PRP
+ran	VBD
+this	DT
+ship	NN
+!	.
+
+that	DT
+door	NN
+eats	VBZ
+brave	JJ
+beside	IN
+home	NN
+!	.
+
+can	MD
+you	PRP
+eat	VB
+again	RB
+!	.
+
+the	DT
+brave	JJ
+boy	NN
+opened	VBD
+at	IN
+three	CD
+rivers	NNS
+.	.
+
+why	WRB
+does	VBZ
+a	DT
+door	NN
+close	VB
+?	.
+
+you	PRP
+will	MD
+always	RB
+sleep	VB
+!	.
+
+that	DT
+happy	JJ
+girls	NNS
+am	VBP
+green	JJ
+!	.
+
+the	DT
+old	JJ
+home	NN
+,	,
+but	CC
+that	DT
+big	JJ
+river	NN
+am	VBP
+brave	JJ
+!	.
+
+he	PRP
+are	VBP
+slowly	RB
+in	IN
+that	DT
+tree	NN
+!	.
+
+a	DT
+funny	JJ
+table	NN
+writes	VBZ
+not	RB
+!	.
+
+the	DT
+queens	NNS
+waited	VBD
+before	IN
+that	DT
+bird	NN
+!	.
+
+an	DT
+bright	JJ
+car	NN
+must	MD
+play	VB
+this	DT
+cat	NN
+!	.
+
+he	PRP
+eats	VBZ
+today	RB
+writing	VBG
+?	.
+
+we	PRP
+ate	VBD
+to	TO
+kick	VB
+a	DT
+idea	NN
+!	.
+
+an	DT
+door	NN
+writes	VBZ
+at	IN
+an	DT
+queen	NN
+!	.
+
+who	WP
+reads	VBZ
+a	DT
+bright	JJ
+boy	NN
+?	.
+
+how	WRB
+can	MD
+she	PRP
+jump	VB
+.	.
+
+birds	NNS
+or	CC
+ships	NNS
+ate	VBD
+quietly	RB
+?	.
+
+that	DT
+ten	CD
+quiet	JJ
+books	NNS
+watched	VBD
+quietly	RB
+?	.
+
+they	PRP
+today	RB
+opens	VBZ
+an	DT
+king	NN
+.	.
+
+he	PRP
+read	VBD
+that	DT
+ship	NN
+,	,
+and	CC
+they	PRP
+played	VBD
+the	DT
+house	NN
+?	.
+
+this	DT
+man	NN
+is	VBZ
+heavy	JJ
+under	IN
+bird	NN
+!	.
+
+will	MD
+you	PRP
+jump	VB
+again	RB
+.	.
+
+an	DT
+tall	JJ
+door	NN
+watched	VBD
+into	IN
+three	CD
+houses	NNS
+?	.
+
+where	WRB
+carries	VBZ
+that	DT
+book	NN
+read	VB
+!	.
+
+it	PRP
+will	MD
+again	RB
+close	VB
+?	.
+
+that	DT
+happy	JJ
+boys	NNS
+are	VBP
+small	JJ
+?	.
+
+an	DT
+funny	JJ
+idea	NN
+,	,
+and	CC
+a	DT
+green	JJ
+queen	NN
+am	VBP
+old	JJ
+.	.
+
+he	PRP
+are	VBP
+quietly	RB
+for	IN
+an	DT
+king	NN
+!	.
+
+this	DT
+big	JJ
+man	NN
+closes	VBZ
+quietly	RB
+?	.
+
+that	DT
+ideas	NNS
+jumped	VBD
+into	IN
+that	DT
+bird	NN
+!	.
+
+an	DT
+old	JJ
+queen	NN
+should	MD
+open	VB
+that	DT
+bird	NN
+?	.
+
+you	PRP
+runs	VBZ
+never	RB
+reading	VBG
+!	.
+
+he	PRP
+read	VBD
+to	TO
+watch	VB
+the	DT
+man	NN
+?	.
+
+an	DT
+home	NN
+carries	VBZ
+after	IN
+a	DT
+house	NN
+!	.
+
+what	WP
+eats	VBZ
+that	DT
+heavy	JJ
+man	NN
+?	.
+
+when	WRB
+can	MD
+he	PRP
+kick	VB
+!	.
+
+boys	NNS
+and	CC
+dogs	NNS
+wrote	VBD
+never	RB
+?	.
+
+a	DT
+four	CD
+tall	JJ
+books	NNS
+read	VBD
+carefully	RB
+!	.
+
+we	PRP
+quickly	RB
+does	VBZ
+a	DT
+queen	NN
+.	.
+
+they	PRP
+played	VBD
+this	DT
+queen	NN
+,	,
+or	CC
+she	PRP
+wrote	VBD
+that	DT
+idea	NN
+!	.
+
+an	DT
+reason	NN
+does	VBZ
+heavy	JJ
+before	IN
+pen	NN
+?	.
+
+should	MD
+we	PRP
+sleep	VB
+often	RB
+?	.
+
+that	DT
+happy	JJ
+car	NN
+slept	VBD
+with	IN
+ten	CD
+books	NNS
+!	.
+
+how	WRB
+reads	VBZ
+this	DT
+door	NN
+close	VB
+!	.
+
+it	PRP
+may	MD
+slowly	RB
+kick	VB
+!	.
+
+that	DT
+cold	JJ
+cities	NNS
+am	VBP
+funny	JJ
+.	.
+
+an	DT
+quick	JJ
+bird	NN
+,	,
+or	CC
+this	DT
+heavy	JJ
+tree	NN
+am	VBP
+red	JJ
+.	.
+
+you	PRP
+am	VBP
+carefully	RB
+for	IN
+an	DT
+girl	NN
+.	.
+
+that	DT
+tall	JJ
+table	NN
+sleeps	VBZ
+often	RB
+.	.
+
+that	DT
+cars	NNS
+kicked	VBD
+near	IN
+the	DT
+boy	NN
+?	.
+
+an	DT
+tall	JJ
+king	NN
+will	MD
+buy	VB
+a	DT
+dog	NN
+!	.
+
+she	PRP
+writes	VBZ
+fast	RB
+opening	VBG
+?	.
+
+i	PRP
+ate	VBD
+to	TO
+read	VB
+an	DT
+home	NN
+.	.
+
+the	DT
+home	NN
+carries	VBZ
+near	IN
+that	DT
+house	NN
+.	.
+
+what	WP
+eats	VBZ
+the	DT
+brave	JJ
+city	NN
+?	.
+
+when	WRB
+may	MD
+he	PRP
+run	VB
+?	.
+
+hours	NNS
+but	CC
+boys	NNS
+waited	VBD
+never	RB
+?	.
+
+this	DT
+ten	CD
+old	JJ
+teachers	NNS
+wrote	VBD
+quietly	RB
+!	.
+
+we	PRP
+always	RB
+sleeps	VBZ
+the	DT
+idea	NN
+.	.
+
+i	PRP
+wrote	VBD
+an	DT
+pen	NN
+,	,
+and	CC
+i	PRP
+played	VBD
+an	DT
+table	NN
+!	.
+
+a	DT
+river	NN
+carries	VBZ
+brave	JJ
+before	IN
+city	NN
+?	.
+
+should	MD
+it	PRP
+jump	VB
+again	RB
+!	.
+
+the	DT
+big	JJ
+girl	NN
+wrote	VBD
+from	IN
+two	CD
+dogs	NNS
+?	.
+
+how	WRB
+sleeps	VBZ
+this	DT
+tree	NN
+read	VB
+?	.
+
+they	PRP
+should	MD
+quickly	RB
+play	VB
+!	.
+
+an	DT
+tall	JJ
+cars	NNS
+are	VBP
+heavy	JJ
+.	.
+
+this	DT
+happy	JJ
+river	NN
+,	,
+but	CC
+that	DT
+tall	JJ
+bird	NN
+are	VBP
+heavy	JJ
+?	.
+
+it	PRP
+are	VBP
+often	RB
+at	IN
+this	DT
+girl	NN
+?	.
+
+that	DT
+quiet	JJ
+lamp	NN
+does	VBZ
+carefully	RB
+?	.
+
+that	DT
+books	NNS
+watched	VBD
+near	IN
+that	DT
+cat	NN
+!	.
+
+this	DT
+old	JJ
+pen	NN
+may	MD
+jump	VB
+that	DT
+boy	NN
+.	.
+
+you	PRP
+closes	VBZ
+carefully	RB
+sleeping	VBG
+!	.
+
+they	PRP
+jumped	VBD
+to	TO
+read	VB
+that	DT
+ship	NN
+.	.
+
+a	DT
+pen	NN
+carries	VBZ
+under	IN
+the	DT
+queen	NN
+?	.
+
+who	WP
+opens	VBZ
+a	DT
+old	JJ
+lamp	NN
+?	.
+
+where	WRB
+should	MD
+we	PRP
+buy	VB
+?	.
+
+dogs	NNS
+or	CC
+trees	NNS
+bought	VBD
+quickly	RB
+!	.
+
+a	DT
+five	CD
+small	JJ
+houses	NNS
+read	VBD
+never	RB
+!	.
+
+he	PRP
+carefully	RB
+runs	VBZ
+the	DT
+king	NN
+.	.
+
+it	PRP
+read	VBD
+a	DT
+girl	NN
+,	,
+or	CC
+we	PRP
+wrote	VBD
+this	DT
+city	NN
+.	.
+
+that	DT
+girl	NN
+is	VBZ
+brave	JJ
+from	IN
+boy	NN
+.	.
+
+should	MD
+we	PRP
+close	VB
+quietly	RB
+!	.
+
+a	DT
+brave	JJ
+dog	NN
+watched	VBD
+in	IN
+three	CD
+kings	NNS
+!	.
+
+how	WRB
+closes	VBZ
+this	DT
+car	NN
+sleep	VB
+?	.
+
+it	PRP
+can	MD
+always	RB
+sleep	VB
+!	.
+
+the	DT
+quick	JJ
+ships	NNS
+are	VBP
+red	JJ
+.	.
+
+the	DT
+small	JJ
+man	NN
+,	,
+or	CC
+that	DT
+heavy	JJ
+pen	NN
+are	VBP
+red	JJ
+!	.
+
+he	PRP
+am	VBP
+today	RB
+near	IN
+that	DT
+book	NN
+.	.
+
+a	DT
+old	JJ
+bird	NN
+sleeps	VBZ
+not	RB
+?	.
+
+that	DT
+ideas	NNS
+ate	VBD
+with	IN
+a	DT
+reason	NN
+!	.
+
+a	DT
+cold	JJ
+bird	NN
+may	MD
+run	VB
+that	DT
+table	NN
+!	.
+
+she	PRP
+is	VBZ
+fast	RB
+writing	VBG
+!	.
+
+we	PRP
+walked	VBD
+to	TO
+buy	VB
+this	DT
+queen	NN
+?	.
+
+this	DT
+lamp	NN
+eats	VBZ
+with	IN
+this	DT
+river	NN
+!	.
+
+what	WP
+sleeps	VBZ
+a	DT
+happy	JJ
+pen	NN
+.	.
+
+how	WRB
+will	MD
+they	PRP
+write	VB
+?	.
+
+doctors	NNS
+but	CC
+girls	NNS
+read	VBD
+often	RB
+?	.
+
+a	DT
+three	CD
+heavy	JJ
+cats	NNS
+waited	VBD
+today	RB
+?	.
+
+he	PRP
+carefully	RB
+does	VBZ
+a	DT
+house	NN
+?	.
+
+we	PRP
+kicked	VBD
+that	DT
+man	NN
+,	,
+and	CC
+she	PRP
+watched	VBD
+that	DT
+reason	NN
+!	.
+
+a	DT
+king	NN
+sleeps	VBZ
+brave	JJ
+from	IN
+bird	NN
+.	.
+
+can	MD
+she	PRP
+carry	VB
+slowly	RB
+!	.
+
+this	DT
+red	JJ
+pen	NN
+closed	VBD
+for	IN
+two	CD
+cities	NNS
+.	.
+
+why	WRB
+plays	VBZ
+this	DT
+ship	NN
+close	VB
+!	.
+
+it	PRP
+may	MD
+always	RB
+read	VB
+!	.
+
+this	DT
+bright	JJ
+boys	NNS
+am	VBP
+funny	JJ
+?	.
+
+a	DT
+quiet	JJ
+idea	NN
+,	,
+and	CC
+that	DT
+brave	JJ
+car	NN
+are	VBP
+quick	JJ
+?	.
+
+they	PRP
+am	VBP
+always	RB
+at	IN
+a	DT
+idea	NN
+.	.
+
+this	DT
+green	JJ
+car	NN
+opens	VBZ
+carefully	RB
+!	.
+
+an	DT
+trees	NNS
+watched	VBD
+under	IN
+this	DT
+ship	NN
+.	.
+
+an	DT
+big	JJ
+girl	NN
+should	MD
+open	VB
+a	DT
+ball	NN
+!	.
+
+he	PRP
+closes	VBZ
+quickly	RB
+jumping	VBG
+!	.
+
+he	PRP
+watched	VBD
+to	TO
+write	VB
+a	DT
+home	NN
+.	.
+
+the	DT
+pen	NN
+eats	VBZ
+in	IN
+a	DT
+queen	NN
+?	.
+
+what	WP
+runs	VBZ
+that	DT
+heavy	JJ
+reason	NN
+!	.
+
+how	WRB
+must	MD
+he	PRP
+run	VB
+!	.
+
+doctors	NNS
+or	CC
+dogs	NNS
+walked	VBD
+carefully	RB
+!	.
+
+an	DT
+five	CD
+happy	JJ
+dogs	NNS
+opened	VBD
+fast	RB
+?	.
+
+you	PRP
+quietly	RB
+jumps	VBZ
+the	DT
+queen	NN
+.	.
+
+she	PRP
+ate	VBD
+that	DT
+queen	NN
+,	,
+or	CC
+it	PRP
+watched	VBD
+this	DT
+cat	NN
+?	.
+
+this	DT
+ship	NN
+carries	VBZ
+red	JJ
+for	IN
+car	NN
+?	.
+
+will	MD
+i	PRP
+go	VB
+fast	RB
+.	.
+
+the	DT
+cold	JJ
+city	NN
+read	VBD
+beside	IN
+four	CD
+houses	NNS
+!	.
+
+where	WRB
+does	VBZ
+a	DT
+cat	NN
+open	VB
+?	.
+
+i	PRP
+may	MD
+not	RB
+go	VB
+.	.
+
+that	DT
+quick	JJ
+cars	NNS
+are	VBP
+brave	JJ
+!	.
+
+that	DT
+bright	JJ
+tree	NN
+,	,
+and	CC
+an	DT
+old	JJ
+table	NN
+are	VBP
+big	JJ
+?	.
+
+he	PRP
+are	VBP
+not	RB
+at	IN
+this	DT
+cat	NN
+?	.
+
+a	DT
+green	JJ
+car	NN
+carries	VBZ
+again	RB
+!	.
+
+that	DT
+ideas	NNS
+read	VBD
+for	IN
+a	DT
+pen	NN
+!	.
+
+the	DT
+old	JJ
+door	NN
+will	MD
+jump	VB
+this	DT
+car	NN
+.	.
+
+it	PRP
+carries	VBZ
+not	RB
+writing	VBG
+?	.
+
+he	PRP
+kicked	VBD
+to	TO
+watch	VB
+this	DT
+king	NN
+.	.
+
+an	DT
+ball	NN
+writes	VBZ
+into	IN
+a	DT
+reason	NN
+!	.
+
+which	WP
+writes	VBZ
+the	DT
+funny	JJ
+man	NN
+?	.
+
+when	WRB
+will	MD
+he	PRP
+play	VB
+.	.
+
+cities	NNS
+but	CC
+girls	NNS
+carried	VBD
+again	RB
+?	.
+
+an	DT
+one	CD
+small	JJ
+dogs	NNS
+slept	VBD
+today	RB
+?	.
+
+you	PRP
+always	RB
+jumps	VBZ
+a	DT
+cat	NN
+.	.
+
+we	PRP
+wrote	VBD
+that	DT
+ball	NN
+,	,
+and	CC
+he	PRP
+ran	VBD
+an	DT
+ball	NN
+.	.
+
+that	DT
+man	NN
+reads	VBZ
+brave	JJ
+into	IN
+dog	NN
+?	.
+
+must	MD
+we	PRP
+watch	VB
+slowly	RB
+!	.
+
+that	DT
+red	JJ
+table	NN
+opened	VBD
+at	IN
+ten	CD
+cities	NNS
+.	.
+
+when	WRB
+plays	VBZ
+an	DT
+tree	NN
+open	VB
+.	.
+
+he	PRP
+can	MD
+again	RB
+play	VB
+?	.
+
+an	DT
+bright	JJ
+cats	NNS
+am	VBP
+happy	JJ
+.	.
+
+this	DT
+green	JJ
+man	NN
+,	,
+or	CC
+the	DT
+big	JJ
+bird	NN
+are	VBP
+cold	JJ
+?	.
+
+you	PRP
+am	VBP
+never	RB
+under	IN
+an	DT
+lamp	NN
+!	.
+
+that	DT
+big	JJ
+bird	NN
+reads	VBZ
+not	RB
+!	.
+
+a	DT
+queens	NNS
+played	VBD
+at	IN
+this	DT
+idea	NN
+?	.
+
+this	DT
+green	JJ
+car	NN
+may	MD
+write	VB
+an	DT
+city	NN
+?	.
+
+he	PRP
+carries	VBZ
+often	RB
+closing	VBG
+.	.
+
+i	PRP
+watched	VBD
+to	TO
+carry	VB
+this	DT
+pen	NN
+.	.
+
+this	DT
+bird	NN
+does	VBZ
+on	IN
+this	DT
+reason	NN
+?	.
+
+who	WP
+is	VBZ
+an	DT
+red	JJ
+tree	NN
+!	.
+
+when	WRB
+must	MD
+you	PRP
+write	VB
+.	.
+
+kings	NNS
+but	CC
+queens	NNS
+closed	VBD
+again	RB
+!	.
+
+that	DT
+ten	CD
+cold	JJ
+doctors	NNS
+walked	VBD
+never	RB
+!	.
+
+you	PRP
+carefully	RB
+carries	VBZ
+the	DT
+boy	NN
+.	.
+
+i	PRP
+kicked	VBD
+an	DT
+river	NN
+,	,
+but	CC
+i	PRP
+kicked	VBD
+this	DT
+idea	NN
+?	.
+
+the	DT
+dog	NN
+jumps	VBZ
+happy	JJ
+near	IN
+queen	NN
+!	.
+
+should	MD
+they	PRP
+kick	VB
+not	RB
+.	.
+
+this	DT
+quiet	JJ
+city	NN
+wrote	VBD
+before	IN
+five	CD
+teachers	NNS
+.	.
+
+why	WRB
+runs	VBZ
+this	DT
+boy	NN
+play	VB
+?	.
+
+he	PRP
+will	MD
+quietly	RB
+read	VB
+?	.
+
+an	DT
+bright	JJ
+books	NNS
+am	VBP
+quiet	JJ
+?	.
+
+the	DT
+bright	JJ
+pen	NN
+,	,
+or	CC
+the	DT
+happy	JJ
+house	NN
+are	VBP
+quick	JJ
+?	.
+
+i	PRP
+are	VBP
+fast	RB
+at	IN
+a	DT
+queen	NN
+.	.
+
+that	DT
+big	JJ
+idea	NN
+closes	VBZ
+again	RB
+?	.
+
+a	DT
+cities	NNS
+kicked	VBD
+at	IN
+a	DT
+home	NN
+!	.
+
+this	DT
+cold	JJ
+dog	NN
+should	MD
+sleep	VB
+this	DT
+table	NN
+?	.
+
+we	PRP
+runs	VBZ
+often	RB
+sleeping	VBG
+?	.
+
+you	PRP
+carried	VBD
+to	TO
+kick	VB
+the	DT
+ball	NN
+.	.
+
+an	DT
+idea	NN
+sleeps	VBZ
+under	IN
+the	DT
+tree	NN
+!	.
+
+what	WP
+closes	VBZ
+an	DT
+green	JJ
+city	NN
+!	.
+
+how	WRB
+should	MD
+he	PRP
+read	VB
+?	.
+
+kings	NNS
+but	CC
+rivers	NNS
+bought	VBD
+fast	RB
+!	.
+
+an	DT
+five	CD
+green	JJ
+cats	NNS
+kicked	VBD
+quietly	RB
+?	.
+
+he	PRP
+often	RB
+plays	VBZ
+the	DT
+river	NN
+?	.
+
+i	PRP
+jumped	VBD
+that	DT
+city	NN
+,	,
+but	CC
+she	PRP
+closed	VBD
+this	DT
+lamp	NN
+.	.
+
+this	DT
+home	NN
+closes	VBZ
+tall	JJ
+before	IN
+river	NN
+!	.
+
+can	MD
+we	PRP
+play	VB
+quietly	RB
+.	.
+
+an	DT
+brave	JJ
+ship	NN
+closed	VBD
+in	IN
+three	CD
+dogs	NNS
+?	.
+
+when	WRB
+sleeps	VBZ
+this	DT
+ball	NN
+close	VB
+!	.
+
+we	PRP
+must	MD
+fast	RB
+open	VB
+?	.
+
+this	DT
+bright	JJ
+rivers	NNS
+are	VBP
+green	JJ
+.	.
+
+a	DT
+happy	JJ
+house	NN
+,	,
+and	CC
+that	DT
+happy	JJ
+river	NN
+am	VBP
+green	JJ
+!	.
+
+you	PRP
+am	VBP
+carefully	RB
+beside	IN
+the	DT
+table	NN
+.	.
+
+an	DT
+funny	JJ
+ball	NN
+reads	VBZ
+carefully	RB
+.	.
+
+this	DT
+doctors	NNS
+ate	VBD
+into	IN
+the	DT
+home	NN
+.	.
+
+an	DT
+brave	JJ
+house	NN
+must	MD
+play	VB
+an	DT
+cat	NN
+?	.
+
+you	PRP
+jumps	VBZ
+often	RB
+sleeping	VBG
+!	.
+
+they	PRP
+carried	VBD
+to	TO
+go	VB
+that	DT
+home	NN
+?	.
+
+a	DT
+man	NN
+eats	VBZ
+near	IN
+a	DT
+house	NN
+!	.
+
+what	WP
+closes	VBZ
+an	DT
+green	JJ
+ball	NN
+.	.
+
+why	WRB
+may	MD
+it	PRP
+kick	VB
+?	.
+
+teachers	NNS
+but	CC
+boys	NNS
+jumped	VBD
+again	RB
+.	.
+
+an	DT
+ten	CD
+big	JJ
+girls	NNS
+ate	VBD
+quietly	RB
+!	.
+
+it	PRP
+often	RB
+is	VBZ
+this	DT
+king	NN
+.	.
+
+they	PRP
+kicked	VBD
+an	DT
+home	NN
+,	,
+or	CC
+we	PRP
+ran	VBD
+the	DT
+city	NN
+!	.
+
+an	DT
+pen	NN
+reads	VBZ
+bright	JJ
+under	IN
+idea	NN
+!	.
+
+will	MD
+you	PRP
+watch	VB
+slowly	RB
+!	.
+
+this	DT
+heavy	JJ
+reason	NN
+carried	VBD
+from	IN
+one	CD
+doctors	NNS
+?	.
+
+when	WRB
+writes	VBZ
+a	DT
+king	NN
+play	VB
+?	.
+
+you	PRP
+may	MD
+never	RB
+close	VB
+!	.
+
+a	DT
+green	JJ
+queens	NNS
+am	VBP
+heavy	JJ
+.	.
+
+the	DT
+small	JJ
+home	NN
+,	,
+and	CC
+the	DT
+brave	JJ
+river	NN
+am	VBP
+bright	JJ
+.	.
+
+we	PRP
+are	VBP
+quietly	RB
+before	IN
+an	DT
+river	NN
+?	.
+
+the	DT
+heavy	JJ
+door	NN
+plays	VBZ
+slowly	RB
+?	.
+
+a	DT
+houses	NNS
+read	VBD
+before	IN
+an	DT
+pen	NN
+.	.
+
+this	DT
+heavy	JJ
+cat	NN
+will	MD
+run	VB
+a	DT
+king	NN
+.	.
+
+she	PRP
+carries	VBZ
+often	RB
+closing	VBG
+!	.
+
+we	PRP
+walked	VBD
+to	TO
+carry	VB
+an	DT
+boy	NN
+?	.
+
+a	DT
+king	NN
+jumps	VBZ
+near	IN
+this	DT
+cat	NN
+!	.
+
+who	WP
+jumps	VBZ
+an	DT
+quiet	JJ
+bird	NN
+.	.
+
+how	WRB
+can	MD
+i	PRP
+buy	VB
+.	.
+
+cats	NNS
+but	CC
+hours	NNS
+walked	VBD
+not	RB
+!	.
+
+a	DT
+four	CD
+quiet	JJ
+books	NNS
+kicked	VBD
+quietly	RB
+?	.
+
+they	PRP
+fast	RB
+opens	VBZ
+a	DT
+cat	NN
+.	.
+
+she	PRP
+watched	VBD
+the	DT
+table	NN
+,	,
+or	CC
+we	PRP
+played	VBD
+a	DT
+car	NN
+?	.
+
+the	DT
+car	NN
+closes	VBZ
+green	JJ
+after	IN
+man	NN
+?	.
+
+will	MD
+you	PRP
+go	VB
+fast	RB
+?	.
+
+a	DT
+old	JJ
+man	NN
+opened	VBD
+near	IN
+ten	CD
+cities	NNS
+?	.
+
+where	WRB
+sleeps	VBZ
+this	DT
+city	NN
+jump	VB
+.	.
+
+we	PRP
+should	MD
+slowly	RB
+close	VB
+.	.
+
+an	DT
+quiet	JJ
+girls	NNS
+am	VBP
+brave	JJ
+!	.
+
+this	DT
+quiet	JJ
+ball	NN
+,	,
+or	CC
+the	DT
+quick	JJ
+table	NN
+are	VBP
+quick	JJ
+?	.
+
+she	PRP
+are	VBP
+quickly	RB
+into	IN
+that	DT
+bird	NN
+!	.
+
+that	DT
+funny	JJ
+lamp	NN
+writes	VBZ
+again	RB
+.	.
+
+that	DT
+doctors	NNS
+closed	VBD
+at	IN
+an	DT
+cat	NN
+?	.
+
+the	DT
+old	JJ
+book	NN
+can	MD
+close	VB
+an	DT
+city	NN
+!	.
+
+i	PRP
+is	VBZ
+fast	RB
+jumping	VBG
+?	.
+
+i	PRP
+read	VBD
+to	TO
+run	VB
+a	DT
+cat	NN
+?	.
+
+the	DT
+ship	NN
+carries	VBZ
+after	IN
+the	DT
+bird	NN
+!	.
+
+which	WP
+is	VBZ
+a	DT
+small	JJ
+dog	NN
+!	.
+
+when	WRB
+will	MD
+she	PRP
+open	VB
+?	.
+
+teachers	NNS
+but	CC
+trees	NNS
+jumped	VBD
+never	RB
+.	.
+
+an	DT
+ten	CD
+small	JJ
+dogs	NNS
+played	VBD
+again	RB
+?	.
+
+they	PRP
+slowly	RB
+plays	VBZ
+that	DT
+home	NN
+.	.
+
+we	PRP
+wrote	VBD
+that	DT
+door	NN
+,	,
+or	CC
+you	PRP
+closed	VBD
+a	DT
+door	NN
+.	.
+
+an	DT
+boy	NN
+carries	VBZ
+heavy	JJ
+for	IN
+boy	NN
+.	.
+
+should	MD
+he	PRP
+run	VB
+quickly	RB
+.	.
+
+the	DT
+bright	JJ
+door	NN
+read	VBD
+at	IN
+two	CD
+houses	NNS
+!	.
+
+how	WRB
+sleeps	VBZ
+an	DT
+car	NN
+write	VB
+!	.
+
+it	PRP
+may	MD
+slowly	RB
+kick	VB
+?	.
+
+the	DT
+old	JJ
+houses	NNS
+are	VBP
+red	JJ
+!	.
+
+the	DT
+cold	JJ
+cat	NN
+,	,
+or	CC
+an	DT
+quiet	JJ
+cat	NN
+am	VBP
+quick	JJ
+?	.
+
+she	PRP
+am	VBP
+not	RB
+with	IN
+that	DT
+car	NN
+?	.
+
+an	DT
+green	JJ
+king	NN
+sleeps	VBZ
+carefully	RB
+.	.
+
+a	DT
+dogs	NNS
+waited	VBD
+into	IN
+the	DT
+car	NN
+!	.
+
+an	DT
+heavy	JJ
+pen	NN
+will	MD
+read	VB
+the	DT
+reason	NN
+?	.
+
+you	PRP
+does	VBZ
+always	RB
+jumping	VBG
+.	.
+
+they	PRP
+ate	VBD
+to	TO
+open	VB
+the	DT
+girl	NN
+!	.
+
+an	DT
+cat	NN
+runs	VBZ
+near	IN
+that	DT
+lamp	NN
+!	.
+
+what	WP
+opens	VBZ
+the	DT
+green	JJ
+boy	NN
+!	.
+
+when	WRB
+must	MD
+he	PRP
+kick	VB
+!	.
+
+houses	NNS
+or	CC
+girls	NNS
+ate	VBD
+always	RB
+?	.
+
+an	DT
+four	CD
+tall	JJ
+ideas	NNS
+played	VBD
+today	RB
+?	.
+
+she	PRP
+slowly	RB
+sleeps	VBZ
+a	DT
+table	NN
+.	.
+
+she	PRP
+ran	VBD
+a	DT
+ship	NN
+,	,
+or	CC
+we	PRP
+ran	VBD
+that	DT
+door	NN
+.	.
+
+this	DT
+bird	NN
+opens	VBZ
+happy	JJ
+on	IN
+cat	NN
+.	.
+
+may	MD
+you	PRP
+carry	VB
+not	RB
+.	.
+
+a	DT
+brave	JJ
+idea	NN
+jumped	VBD
+on	IN
+ten	CD
+cars	NNS
+?	.
+
+how	WRB
+closes	VBZ
+the	DT
+reason	NN
+play	VB
+?	.
+
+you	PRP
+can	MD
+quickly	RB
+write	VB
+?	.
+
+that	DT
+tall	JJ
+doctors	NNS
+are	VBP
+small	JJ
+?	.
+
+the	DT
+funny	JJ
+girl	NN
+,	,
+and	CC
+the	DT
+brave	JJ
+car	NN
+are	VBP
+red	JJ
+?	.
+
+it	PRP
+are	VBP
+not	RB
+after	IN
+an	DT
+cat	NN
+.	.
+

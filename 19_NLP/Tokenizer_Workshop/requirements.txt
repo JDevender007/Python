@@ -1,0 +1,4 @@
+# Runtime dependencies: none (Python standard library only).
+
+# Test dependency:
+pytest==9.1.1

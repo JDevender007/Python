@@ -1,0 +1,4 @@
+psutil==7.1.3
+
+# Test dependency:
+pytest==9.1.1

@@ -1,0 +1,12 @@
+# Base configuration — the lowest layer. Everything here can be overridden
+# by the file layer (settings.yaml) and then by the environment layer.
+app_name: devops-demo
+port: 8080
+debug: false
+log_level: INFO
+timeout_seconds: 5.0
+retries: 3
+db:
+  host: localhost
+  port: 5432
+  name: appdb

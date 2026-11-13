@@ -1,0 +1,27 @@
+{
+  "name": "status-panel",
+  "pins": [
+    {"number": 17, "mode": "output"},
+    {"number": 18, "mode": "input", "pull": "up"},
+    {"number": 22, "mode": "output"},
+    {"number": 23, "mode": "input", "pull": "down"}
+  ],
+  "steps": [
+    {"op": "read", "pin": 17},
+    {"op": "read", "pin": 18},
+    {"op": "read", "pin": 23},
+    {"op": "write", "pin": 17, "level": 1},
+    {"op": "advance", "ms": 500},
+    {"op": "pwm", "pin": 22, "frequency": 8.0, "duty": 50.0},
+    {"op": "advance", "ms": 250},
+    {"op": "set_input", "pin": 18, "level": 0},
+    {"op": "advance", "ms": 100},
+    {"op": "set_input", "pin": 23, "level": 1},
+    {"op": "read", "pin": 23},
+    {"op": "set_input", "pin": 18, "level": 1},
+    {"op": "set_input", "pin": 23, "level": 0},
+    {"op": "write", "pin": 17, "level": 0},
+    {"op": "clear_pwm", "pin": 22},
+    {"op": "read", "pin": 17}
+  ]
+}

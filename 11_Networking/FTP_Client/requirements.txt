@@ -1,0 +1,4 @@
+# Standard library only (ftplib, pathlib, argparse, logging)
+
+# Test dependency:
+pytest==9.1.1

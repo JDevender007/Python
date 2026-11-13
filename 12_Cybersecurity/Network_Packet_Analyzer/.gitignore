@@ -1,0 +1,38 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Tests
+.pytest_cache/
+
+# Captures - may contain sensitive traffic
+*.pcap
+*.pcapng
+
+# Demo artifacts
+data/
+
+# Reports
+report.json
+
+# Secrets
+.env
+
+# Logs
+logs/*.log
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# OS Files
+Thumbs.db
+.DS_Store

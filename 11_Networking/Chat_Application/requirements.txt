@@ -1,0 +1,4 @@
+# Standard library only (socket, threading, argparse, logging)
+
+# Test dependency:
+pytest==9.1.1

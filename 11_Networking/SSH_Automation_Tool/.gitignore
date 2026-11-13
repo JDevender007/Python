@@ -1,0 +1,35 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Tests
+.pytest_cache/
+
+# Demo artifacts
+data/
+
+# Secrets - never commit private keys or passwords
+*.pem
+*.key
+id_rsa
+id_ed25519
+.env
+
+# Logs
+logs/*.log
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# OS Files
+Thumbs.db
+.DS_Store

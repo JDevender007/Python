@@ -1,0 +1,10 @@
+# Bundled pyproject-style dependency list for the checker demo.
+[project]
+name = "devops-demo"
+version = "0.1.0"
+description = "Bundled pyproject sample parsed with tomllib (stdlib)"
+dependencies = [
+    "numpy>=1.24",
+    "pandas>=2.0",
+    "acme-widget==1.0.0",
+]

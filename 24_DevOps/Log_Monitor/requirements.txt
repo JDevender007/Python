@@ -1,0 +1,5 @@
+# This project uses only the Python standard library (re, datetime,
+# dataclasses, argparse, json) — no third-party runtime dependencies.
+
+# Test dependency:
+pytest==9.1.1

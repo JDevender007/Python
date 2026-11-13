@@ -1,0 +1,34 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Tests
+.pytest_cache/
+
+# Codec outputs
+output/
+rebuilt.png
+*_out.png
+
+# JSON reports
+stats.json
+sweep.json
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# OS Files
+Thumbs.db
+.DS_Store

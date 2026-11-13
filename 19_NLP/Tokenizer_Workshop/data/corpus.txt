@@ -1,0 +1,12 @@
+Natural language processing begins with tokenization. A tokenizer splits running text into words, sentences, or smaller units called tokens. Careful tokenization decides everything that follows, because bad tokens produce bad statistics.
+Normalization comes next: lowercasing, unicode cleanup, and whitespace collapsing keep the analysis reproducible. The same sentence written twice must always produce the same list of tokens, run after run.
+Stopwords are the tiny glue words of a language. Words like the, of, and, and to appear everywhere, so removing them leaves the content words that actually carry meaning.
+Stemming reduces inflected forms to a common root. Running, ran, and runner are related, and a simple stemmer folds cats to cat and studies to study with a handful of suffix rules.
+N-grams capture local word order. Bigrams like state of the art remember neighbouring words that unigrams throw away, which is why spell checkers study them closely.
+Token statistics describe a corpus at a glance: total tokens, unique types, average length, and the most frequent words. Type-token ratios tell us whether a vocabulary is rich or repetitive.
+In 2025, text pipelines still avoid downloads whenever possible. A workshop that ships its own corpus and stopwords needs no network, no api keys, and no model files to run.
+Regex patterns do the heavy lifting. A pattern like a-z finds letter runs while apostrophes and hyphens glue related fragments together, for example don't and state-of-the-art.
+Curators of dictionaries read thousands of sentences daily. They study usage, mark rare forms, and publish notes so editors can quickly verify tricky words.
+Deterministic tools are testable tools. When every step is fixed and seeded, running the demo twice yields identical counts, and regressions are caught before they ship.
+The pipelined stages never mutate the raw text. Normalization builds a new string, tokenization reads it, and stemming maps each token independently, so parallel workers stay consistent.
+Short words matter too. Of, to, and it are removed as stopwords, yet at, in, and on show how tiny tokens still shape sentence rhythm when they are kept.

@@ -1,0 +1,16 @@
+{
+  "devices": [
+    {"id": "gw-hall", "name": "Hallway Gateway", "kind": "gateway", "room": "hallway", "firmware": "2.4.1"},
+    {"id": "cam-front", "name": "Front Door Camera", "kind": "camera", "room": "entrance", "firmware": "3.1.0"},
+    {"id": "cam-garden", "name": "Garden Camera", "kind": "camera", "room": "garden", "firmware": "3.1.0"},
+    {"id": "tmp-living", "name": "Living Room Thermostat", "kind": "sensor", "room": "living_room", "firmware": "1.8.2"},
+    {"id": "tmp-bedroom", "name": "Bedroom Thermometer", "kind": "sensor", "room": "bedroom", "firmware": "1.8.2"},
+    {"id": "hum-bath", "name": "Bathroom Humidity Sensor", "kind": "sensor", "room": "bathroom", "firmware": "1.7.5"},
+    {"id": "mot-hall", "name": "Hallway Motion Sensor", "kind": "sensor", "room": "hallway", "firmware": "1.2.0"},
+    {"id": "lit-living", "name": "Living Room Lights", "kind": "actuator", "room": "living_room", "firmware": "4.0.3"},
+    {"id": "lit-hall", "name": "Hallway Light", "kind": "actuator", "room": "hallway", "firmware": "4.0.3"},
+    {"id": "fan-bath", "name": "Extractor Fan", "kind": "actuator", "room": "bathroom", "firmware": "2.0.0"},
+    {"id": "lock-front", "name": "Front Door Lock", "kind": "actuator", "room": "entrance", "firmware": "5.2.1"},
+    {"id": "plug-study", "name": "Study Smart Plug", "kind": "actuator", "room": "study", "firmware": "1.4.4"}
+  ]
+}

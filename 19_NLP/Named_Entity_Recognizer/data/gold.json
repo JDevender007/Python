@@ -1,0 +1,147 @@
+[
+  {
+    "text": "On March 5, 1994, the World Health Organization met in Geneva to review the report.",
+    "entities": [
+      {
+        "text": "March 5, 1994",
+        "label": "DATE",
+        "start": 3,
+        "end": 16
+      },
+      {
+        "text": "World Health Organization",
+        "label": "ORG",
+        "start": 22,
+        "end": 47
+      },
+      {
+        "text": "Geneva",
+        "label": "PLACE",
+        "start": 55,
+        "end": 61
+      }
+    ]
+  },
+  {
+    "text": "Acme Corporation paid $4.5 million for the factory near London last October.",
+    "entities": [
+      {
+        "text": "Acme Corporation",
+        "label": "ORG",
+        "start": 0,
+        "end": 16
+      },
+      {
+        "text": "$4.5 million",
+        "label": "MONEY",
+        "start": 22,
+        "end": 34
+      },
+      {
+        "text": "London",
+        "label": "PLACE",
+        "start": 56,
+        "end": 62
+      }
+    ]
+  },
+  {
+    "text": "The agreement signed on 2023-07-14 in Toronto will send 12 million dollars to Stanford University by 12/31/2025.",
+    "entities": [
+      {
+        "text": "2023-07-14",
+        "label": "DATE",
+        "start": 24,
+        "end": 34
+      },
+      {
+        "text": "Toronto",
+        "label": "PLACE",
+        "start": 38,
+        "end": 45
+      },
+      {
+        "text": "12 million dollars",
+        "label": "MONEY",
+        "start": 56,
+        "end": 74
+      },
+      {
+        "text": "Stanford University",
+        "label": "ORG",
+        "start": 78,
+        "end": 97
+      },
+      {
+        "text": "12/31/2025",
+        "label": "DATE",
+        "start": 101,
+        "end": 111
+      }
+    ]
+  },
+  {
+    "text": "Meanwhile, in New York City, officials from Acme Corp and the Bank of England announced €2,000 grants on 2024-01-05.",
+    "entities": [
+      {
+        "text": "New York City",
+        "label": "PLACE",
+        "start": 14,
+        "end": 27
+      },
+      {
+        "text": "Acme Corp",
+        "label": "ORG",
+        "start": 44,
+        "end": 53
+      },
+      {
+        "text": "Bank of England",
+        "label": "ORG",
+        "start": 62,
+        "end": 77
+      },
+      {
+        "text": "€2,000",
+        "label": "MONEY",
+        "start": 88,
+        "end": 94
+      },
+      {
+        "text": "2024-01-05",
+        "label": "DATE",
+        "start": 105,
+        "end": 115
+      }
+    ]
+  },
+  {
+    "text": "Dr. Chen flew from San Francisco to Paris on 15 June 2019 and bought gifts worth £75.",
+    "entities": [
+      {
+        "text": "San Francisco",
+        "label": "PLACE",
+        "start": 19,
+        "end": 32
+      },
+      {
+        "text": "Paris",
+        "label": "PLACE",
+        "start": 36,
+        "end": 41
+      },
+      {
+        "text": "15 June 2019",
+        "label": "DATE",
+        "start": 45,
+        "end": 57
+      },
+      {
+        "text": "£75",
+        "label": "MONEY",
+        "start": 81,
+        "end": 84
+      }
+    ]
+  }
+]

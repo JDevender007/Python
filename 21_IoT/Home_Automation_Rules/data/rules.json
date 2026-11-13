@@ -1,0 +1,41 @@
+{
+  "rules": [
+    {
+      "id": "heat_living_room",
+      "sensor": "living_room",
+      "metric": "temperature",
+      "condition": {"op": "<", "threshold": 19.0},
+      "min_duration_s": 120,
+      "action": {"actuator": "thermostat", "command": "heat_on"},
+      "release": {"command": "heat_off"}
+    },
+    {
+      "id": "cool_living_room",
+      "sensor": "living_room",
+      "metric": "temperature",
+      "condition": {"op": ">", "threshold": 25.0},
+      "hysteresis": 2.0,
+      "min_duration_s": 180,
+      "action": {"actuator": "thermostat", "command": "cool_on"},
+      "release": {"command": "cool_off"}
+    },
+    {
+      "id": "fan_humidity",
+      "sensor": "bathroom",
+      "metric": "humidity",
+      "condition": {"op": ">", "threshold": 60.0},
+      "min_duration_s": 120,
+      "action": {"actuator": "extractor_fan", "command": "fan_on"},
+      "release": {"command": "fan_off"}
+    },
+    {
+      "id": "lights_hallway",
+      "sensor": "hallway",
+      "metric": "motion",
+      "condition": {"op": ">", "threshold": 0.0},
+      "min_duration_s": 0,
+      "action": {"actuator": "hallway_light", "command": "light_on"},
+      "release": {"command": "light_off"}
+    }
+  ]
+}

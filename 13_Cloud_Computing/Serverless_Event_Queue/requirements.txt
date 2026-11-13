@@ -1,0 +1,4 @@
+# Standard library only (uuid, json, time, dataclasses, argparse, logging)
+
+# Test dependency:
+pytest==9.1.1

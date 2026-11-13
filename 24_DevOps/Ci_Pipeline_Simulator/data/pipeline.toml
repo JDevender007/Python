@@ -1,0 +1,46 @@
+# The same pipeline as pipeline.json, expressed in TOML. The demo parses
+# both and asserts they are identical, so the two files must stay in sync.
+
+name = "demo"
+
+[[stages]]
+name = "checkout"
+duration = 12
+
+[[stages]]
+name = "lint"
+needs = ["checkout"]
+duration = 20
+
+[[stages]]
+name = "unit"
+needs = ["checkout"]
+duration = 45
+retries = 1
+
+[stages.matrix]
+python = ["3.11", "3.12"]
+os = ["ubuntu", "windows"]
+
+[[stages]]
+name = "integration"
+needs = ["unit"]
+duration = 30
+
+[stages.matrix]
+shard = ["1", "2", "3"]
+
+[[stages]]
+name = "docs"
+needs = ["checkout"]
+duration = 15
+
+[[stages]]
+name = "package"
+needs = ["lint", "integration"]
+duration = 25
+
+[[stages]]
+name = "deploy"
+needs = ["package", "docs"]
+duration = 18

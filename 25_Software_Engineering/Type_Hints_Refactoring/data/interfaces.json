@@ -1,0 +1,12 @@
+{
+  "SaleRecord": {
+    "revenue": {"params": [], "annotated": true},
+    "as_payload": {"params": [], "annotated": true}
+  },
+  "SaleRepository": {
+    "load": {"params": ["path"], "annotated": true},
+    "all": {"params": [], "annotated": true},
+    "count": {"params": [], "annotated": true},
+    "total": {"params": [], "annotated": true}
+  }
+}

@@ -1,0 +1,4 @@
+# Standard library only (math, re, string, argparse, json)
+
+# Test dependency:
+pytest==9.1.1

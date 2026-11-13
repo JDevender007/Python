@@ -1,0 +1,36 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Tests
+.pytest_cache/
+
+# Demo artifacts
+data/
+
+# Local configs may contain org details or secrets
+*.merged.yaml
+
+# Secrets
+.env
+*.pem
+*.key
+
+# Logs
+logs/*.log
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# OS Files
+Thumbs.db
+.DS_Store

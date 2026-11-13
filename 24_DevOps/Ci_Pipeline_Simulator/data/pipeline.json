@@ -1,0 +1,47 @@
+{
+  "name": "demo",
+  "stages": [
+    {
+      "name": "checkout",
+      "duration": 12
+    },
+    {
+      "name": "lint",
+      "needs": ["checkout"],
+      "duration": 20
+    },
+    {
+      "name": "unit",
+      "needs": ["checkout"],
+      "duration": 45,
+      "retries": 1,
+      "matrix": {
+        "python": ["3.11", "3.12"],
+        "os": ["ubuntu", "windows"]
+      }
+    },
+    {
+      "name": "integration",
+      "needs": ["unit"],
+      "duration": 30,
+      "matrix": {
+        "shard": ["1", "2", "3"]
+      }
+    },
+    {
+      "name": "docs",
+      "needs": ["checkout"],
+      "duration": 15
+    },
+    {
+      "name": "package",
+      "needs": ["lint", "integration"],
+      "duration": 25
+    },
+    {
+      "name": "deploy",
+      "needs": ["package", "docs"],
+      "duration": 18
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "sentences": [
+    {
+      "id": "s1",
+      "text": "The sailor watched the distant lighthouse."
+    },
+    {
+      "id": "s2",
+      "text": "A patient gardener watered every green seed."
+    },
+    {
+      "id": "s3",
+      "text": "Small models learn patterns from simple text."
+    },
+    {
+      "id": "s4",
+      "text": "Attention heads compare each word with every other word."
+    }
+  ]
+}

@@ -1,0 +1,7 @@
+# File layer — overrides defaults.yaml for selected keys.
+port: 8000
+log_level: WARNING
+retries: 5
+db:
+  host: 127.0.0.1
+  name: appdb_staging

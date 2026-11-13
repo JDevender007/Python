@@ -1,0 +1,23 @@
+{
+  "planar2": {
+    "description": "2R planar arm, links 1.00 + 0.80 m",
+    "links": [1.0, 0.8],
+    "limits": [[-180.0, 180.0], [-180.0, 180.0]]
+  },
+  "planar3": {
+    "description": "3R planar arm, links 0.60 + 0.50 + 0.30 m",
+    "links": [0.6, 0.5, 0.3],
+    "limits": [[-180.0, 180.0], [-180.0, 180.0], [-180.0, 180.0]]
+  },
+  "long2": {
+    "description": "2R arm with a hole: links 1.20 + 0.40 m",
+    "links": [1.2, 0.4],
+    "limits": [[-180.0, 180.0], [-180.0, 180.0]]
+  },
+  "wrist4": {
+    "description": "4R planar chain, links 0.50 + 0.40 + 0.30 + 0.20 m",
+    "links": [0.5, 0.4, 0.3, 0.2],
+    "limits": [[-180.0, 180.0], [-180.0, 180.0], [-180.0, 180.0],
+               [-180.0, 180.0]]
+  }
+}

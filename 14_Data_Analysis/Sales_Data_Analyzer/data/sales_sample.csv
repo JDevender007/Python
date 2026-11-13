@@ -1,0 +1,705 @@
+order_id,date,region,category,product,quantity,unit_price,revenue
+ORD-1001,2024-01-03,North,Furniture,Office Chair,4,121.56,486.24
+ORD-1002,2024-01-03,North,Grocery,Green Tea 100pc,2,11.36,22.72
+ORD-1003,2024-01-06,West,Furniture,Office Chair,1,130.26,130.26
+ORD-1004,2024-01-06,North,Furniture,Office Chair,8,130.84,1046.72
+ORD-1005,2024-01-07,South,Toys,Building Blocks,7,24.35,170.45
+ORD-1006,2024-01-07,West,Furniture,Office Chair,6,120.79,724.74
+ORD-1007,2024-01-09,West,Furniture,Bookshelf,5,83.41,417.05
+ORD-1008,2024-01-09,West,Clothing,Sneakers,2,63.47,126.94
+ORD-1009,2024-01-11,North,Grocery,Green Tea 100pc,6,11.34,68.04
+ORD-1010,2024-01-11,North,Electronics,Wireless Mouse,4,20.86,83.44
+ORD-1011,2024-01-12,East,Electronics,USB-C Cable,7,9.16,64.12
+ORD-1012,2024-01-13,East,Furniture,Bookshelf,6,75.8,454.8
+ORD-1013,2024-01-13,South,Toys,Building Blocks,2,25.43,50.86
+ORD-1014,2024-01-14,South,Electronics,Webcam HD,8,43.15,345.2
+ORD-1015,2024-01-14,North,Grocery,Green Tea 100pc,6,11.81,70.86
+ORD-1016,2024-01-15,North,Electronics,Wireless Mouse,6,19.67,118.02
+ORD-1017,2024-01-16,West,Grocery,Coffee Beans 1kg,6,17.89,107.34
+ORD-1018,2024-01-17,South,Grocery,Green Tea 100pc,8,10.56,84.48
+ORD-1019,2024-01-17,West,Furniture,Office Chair,5,134.1,670.5
+ORD-1020,2024-01-17,South,Grocery,Coffee Beans 1kg,7,18.34,128.38
+ORD-1021,2024-01-18,South,Electronics,USB-C Cable,1,10.05,10.05
+ORD-1022,2024-01-18,West,Grocery,Green Tea 100pc,3,11.72,35.16
+ORD-1023,2024-01-18,West,Grocery,Coffee Beans 1kg,2,18.4,36.8
+ORD-1024,2024-01-19,North,Clothing,Sneakers,1,60.7,60.7
+ORD-1025,2024-01-19,East,Grocery,Green Tea 100pc,5,11.68,58.4
+ORD-1026,2024-01-20,North,Furniture,Standing Desk,7,235.38,1647.66
+ORD-1027,2024-01-21,North,Clothing,Sneakers,3,59.07,177.21
+ORD-1028,2024-01-21,South,Grocery,Green Tea 100pc,5,11.81,59.05
+ORD-1029,2024-01-21,North,Electronics,Webcam HD,6,45.85,275.1
+ORD-1030,2024-01-22,East,Clothing,Hoodie,1,32.36,32.36
+ORD-1031,2024-01-22,South,Toys,Puzzle 1000pc,5,15.81,79.05
+ORD-1032,2024-01-25,West,Electronics,USB-C Cable,3,8.94,26.82
+ORD-1033,2024-01-25,West,Clothing,Sneakers,3,56.78,170.34
+ORD-1034,2024-01-25,West,Furniture,Office Chair,4,133.4,533.6
+ORD-1035,2024-01-26,South,Clothing,Hoodie,8,32.41,259.28
+ORD-1036,2024-01-26,South,Electronics,USB-C Cable,6,8.77,52.62
+ORD-1037,2024-01-27,North,Electronics,Wireless Mouse,2,20.65,41.3
+ORD-1038,2024-01-27,East,Furniture,Office Chair,2,137.37,274.74
+ORD-1039,2024-01-28,West,Clothing,Sneakers,4,56.91,227.64
+ORD-1040,2024-01-29,West,Clothing,Sneakers,3,61.11,183.33
+ORD-1041,2024-01-30,South,Toys,Puzzle 1000pc,8,17.31,138.48
+ORD-1042,2024-02-02,North,Furniture,Bookshelf,7,78.37,548.59
+ORD-1043,2024-02-02,East,Grocery,Green Tea 100pc,2,10.41,20.82
+ORD-1044,2024-02-02,South,Toys,Puzzle 1000pc,2,15.84,31.68
+ORD-1045,2024-02-03,West,Electronics,Webcam HD,7,41.77,292.39
+ORD-1046,2024-02-03,North,Furniture,Office Chair,2,127.83,255.66
+ORD-1047,2024-02-03,South,Electronics,Wireless Mouse,1,21.49,21.49
+ORD-1048,2024-02-03,South,Electronics,Webcam HD,7,43.9,307.3
+ORD-1049,2024-02-04,West,Electronics,Wireless Mouse,3,19.6,58.8
+ORD-1050,2024-02-04,West,Furniture,Standing Desk,8,240.44,1923.52
+ORD-1051,2024-02-04,North,Electronics,Webcam HD,4,42.57,170.28
+ORD-1052,2024-02-04,North,Grocery,Coffee Beans 1kg,1,19.49,19.49
+ORD-1053,2024-02-06,North,Clothing,Sneakers,3,54.82,164.46
+ORD-1054,2024-02-06,South,Electronics,Webcam HD,2,44.67,89.34
+ORD-1055,2024-02-06,South,Clothing,Cotton T-Shirt,2,16.05,32.1
+ORD-1056,2024-02-09,South,Grocery,Green Tea 100pc,6,11.98,71.88
+ORD-1057,2024-02-09,West,Grocery,Green Tea 100pc,6,10.73,64.38
+ORD-1058,2024-02-09,North,Electronics,Webcam HD,5,43.7,218.5
+ORD-1059,2024-02-10,South,Clothing,Hoodie,2,32.14,64.28
+ORD-1060,2024-02-11,South,Electronics,Webcam HD,6,46.68,280.08
+ORD-1061,2024-02-11,East,Furniture,Bookshelf,5,75.15,375.75
+ORD-1062,2024-02-11,East,Grocery,Coffee Beans 1kg,1,19.25,19.25
+ORD-1063,2024-02-13,South,Furniture,Standing Desk,2,264.53,529.06
+ORD-1064,2024-02-14,South,Furniture,Standing Desk,4,257.67,1030.68
+ORD-1065,2024-02-14,East,Grocery,Green Tea 100pc,5,11.21,56.05
+ORD-1066,2024-02-17,South,Furniture,Standing Desk,1,229.22,229.22
+ORD-1067,2024-02-17,West,Grocery,Green Tea 100pc,5,10.59,52.95
+ORD-1068,2024-02-17,North,Clothing,Sneakers,7,59.57,416.99
+ORD-1069,2024-02-17,East,Electronics,USB-C Cable,3,9.57,28.71
+ORD-1070,2024-02-18,East,Clothing,Cotton T-Shirt,3,13.89,41.67
+ORD-1071,2024-02-18,South,Toys,Puzzle 1000pc,1,17.55,17.55
+ORD-1072,2024-02-19,West,Grocery,Green Tea 100pc,2,10.94,21.88
+ORD-1073,2024-02-20,South,Furniture,Office Chair,3,138.83,416.49
+ORD-1074,2024-02-21,East,Electronics,Wireless Mouse,3,20.75,62.25
+ORD-1075,2024-02-21,South,Toys,Puzzle 1000pc,7,17.3,121.1
+ORD-1076,2024-02-21,North,Furniture,Standing Desk,3,260.45,781.35
+ORD-1077,2024-02-22,West,Electronics,Wireless Mouse,8,19.1,152.8
+ORD-1078,2024-02-22,South,Furniture,Bookshelf,5,83.58,417.9
+ORD-1079,2024-02-22,West,Furniture,Office Chair,1,132.3,132.3
+ORD-1080,2024-02-23,East,Furniture,Standing Desk,2,267.6,535.2
+ORD-1081,2024-02-23,East,Furniture,Bookshelf,7,81.78,572.46
+ORD-1082,2024-02-24,East,Electronics,USB-C Cable,5,9.01,45.05
+ORD-1083,2024-02-25,East,Electronics,USB-C Cable,7,9.27,64.89
+ORD-1084,2024-02-26,South,Grocery,Coffee Beans 1kg,2,18.41,36.82
+ORD-1085,2024-02-26,North,Furniture,Standing Desk,1,257.32,257.32
+ORD-1086,2024-02-26,North,Clothing,Sneakers,4,57.72,230.88
+ORD-1087,2024-02-27,North,Grocery,Coffee Beans 1kg,6,19.24,115.44
+ORD-1088,2024-02-27,West,Toys,Building Blocks,5,25.02,125.1
+ORD-1089,2024-02-28,South,Clothing,Cotton T-Shirt,5,15.12,75.6
+ORD-1090,2024-02-28,South,Clothing,Cotton T-Shirt,7,15.42,107.94
+ORD-1091,2024-02-29,South,Clothing,Cotton T-Shirt,1,14.52,14.52
+ORD-1092,2024-02-29,West,Clothing,Cotton T-Shirt,6,14.91,89.46
+ORD-1093,2024-03-01,South,Clothing,Sneakers,8,61.77,494.16
+ORD-1094,2024-03-02,South,Furniture,Standing Desk,6,232.8,1396.8
+ORD-1095,2024-03-03,North,Furniture,Office Chair,4,121.72,486.88
+ORD-1096,2024-03-03,North,Furniture,Office Chair,8,131.3,1050.4
+ORD-1097,2024-03-03,South,Clothing,Hoodie,7,36.63,256.41
+ORD-1098,2024-03-04,North,Clothing,Hoodie,7,33.09,231.63
+ORD-1099,2024-03-04,South,Toys,Puzzle 1000pc,2,17.24,34.48
+ORD-1100,2024-03-04,South,Electronics,Webcam HD,8,40.83,326.64
+ORD-1101,2024-03-06,East,Electronics,Webcam HD,8,45.18,361.44
+ORD-1102,2024-03-06,West,Toys,Puzzle 1000pc,8,16.8,134.4
+ORD-1103,2024-03-06,West,Clothing,Sneakers,8,62.75,502.0
+ORD-1104,2024-03-07,East,Furniture,Standing Desk,4,262.54,1050.16
+ORD-1105,2024-03-07,East,Toys,Puzzle 1000pc,8,16.83,134.64
+ORD-1106,2024-03-07,South,Clothing,Hoodie,2,35.68,71.36
+ORD-1107,2024-03-08,North,Furniture,Bookshelf,6,84.5,507.0
+ORD-1108,2024-03-08,South,Electronics,Webcam HD,3,42.11,126.33
+ORD-1109,2024-03-09,West,Electronics,USB-C Cable,7,9.36,65.52
+ORD-1110,2024-03-09,West,Clothing,Cotton T-Shirt,1,14.29,14.29
+ORD-1111,2024-03-10,West,Toys,Puzzle 1000pc,1,17.44,17.44
+ORD-1112,2024-03-10,East,Clothing,Hoodie,1,36.94,36.94
+ORD-1113,2024-03-10,West,Toys,Puzzle 1000pc,7,17.43,122.01
+ORD-1114,2024-03-10,East,Clothing,Sneakers,4,58.89,235.56
+ORD-1115,2024-03-11,West,Clothing,Hoodie,1,33.89,33.89
+ORD-1116,2024-03-11,South,Toys,Building Blocks,3,26.35,79.05
+ORD-1117,2024-03-11,North,Grocery,Coffee Beans 1kg,1,19.97,19.97
+ORD-1118,2024-03-13,East,Electronics,Webcam HD,8,41.76,334.08
+ORD-1119,2024-03-13,East,Clothing,Cotton T-Shirt,6,14.3,85.8
+ORD-1120,2024-03-13,West,Furniture,Bookshelf,7,76.68,536.76
+ORD-1121,2024-03-14,North,Electronics,USB-C Cable,8,8.77,70.16
+ORD-1122,2024-03-14,North,Furniture,Bookshelf,4,81.41,325.64
+ORD-1123,2024-03-16,South,Furniture,Office Chair,1,131.5,131.5
+ORD-1124,2024-03-16,South,Electronics,Webcam HD,8,45.19,361.52
+ORD-1125,2024-03-17,South,Toys,Building Blocks,5,26.06,130.3
+ORD-1126,2024-03-17,South,Grocery,Coffee Beans 1kg,2,19.58,39.16
+ORD-1127,2024-03-17,East,Furniture,Standing Desk,2,252.13,504.26
+ORD-1128,2024-03-17,South,Grocery,Coffee Beans 1kg,7,18.44,129.08
+ORD-1129,2024-03-19,North,Electronics,USB-C Cable,5,10.03,50.15
+ORD-1130,2024-03-21,North,Clothing,Sneakers,7,60.52,423.64
+ORD-1131,2024-03-21,West,Clothing,Sneakers,6,54.4,326.4
+ORD-1132,2024-03-22,West,Electronics,USB-C Cable,7,10.2,71.4
+ORD-1133,2024-03-22,East,Toys,Building Blocks,3,24.73,74.19
+ORD-1134,2024-03-22,East,Grocery,Coffee Beans 1kg,8,18.64,149.12
+ORD-1135,2024-03-23,West,Furniture,Office Chair,2,124.44,248.88
+ORD-1136,2024-03-23,West,Furniture,Office Chair,8,130.44,1043.52
+ORD-1137,2024-03-23,East,Furniture,Bookshelf,1,79.43,79.43
+ORD-1138,2024-03-24,East,Clothing,Hoodie,4,33.7,134.8
+ORD-1139,2024-03-24,East,Furniture,Bookshelf,5,84.34,421.7
+ORD-1140,2024-03-26,West,Electronics,USB-C Cable,4,9.83,39.32
+ORD-1141,2024-03-27,West,Toys,Building Blocks,8,25.57,204.56
+ORD-1142,2024-03-28,South,Toys,Puzzle 1000pc,1,15.43,15.43
+ORD-1143,2024-03-28,East,Clothing,Cotton T-Shirt,4,14.53,58.12
+ORD-1144,2024-03-28,East,Clothing,Hoodie,6,34.09,204.54
+ORD-1145,2024-03-29,East,Toys,Building Blocks,8,24.07,192.56
+ORD-1146,2024-03-29,East,Furniture,Office Chair,2,133.57,267.14
+ORD-1147,2024-03-30,West,Toys,Building Blocks,3,23.76,71.28
+ORD-1148,2024-03-31,South,Toys,Building Blocks,5,26.91,134.55
+ORD-1149,2024-03-31,East,Furniture,Standing Desk,4,243.46,973.84
+ORD-1150,2024-03-31,North,Electronics,Wireless Mouse,3,19.27,57.81
+ORD-1151,2024-04-01,West,Toys,Building Blocks,3,25.54,76.62
+ORD-1152,2024-04-01,West,Electronics,USB-C Cable,1,9.61,9.61
+ORD-1153,2024-04-02,North,Clothing,Hoodie,6,32.76,196.56
+ORD-1154,2024-04-02,North,Furniture,Standing Desk,8,233.63,1869.04
+ORD-1155,2024-04-02,North,Clothing,Cotton T-Shirt,8,13.97,111.76
+ORD-1156,2024-04-03,South,Electronics,Webcam HD,5,41.08,205.4
+ORD-1157,2024-04-05,West,Grocery,Coffee Beans 1kg,4,19.58,78.32
+ORD-1158,2024-04-05,West,Clothing,Hoodie,8,33.38,267.04
+ORD-1159,2024-04-05,North,Furniture,Standing Desk,1,253.37,253.37
+ORD-1160,2024-04-06,North,Grocery,Green Tea 100pc,4,10.78,43.12
+ORD-1161,2024-04-06,North,Electronics,Webcam HD,4,41.7,166.8
+ORD-1162,2024-04-07,West,Electronics,Wireless Mouse,7,19.83,138.81
+ORD-1163,2024-04-07,East,Furniture,Standing Desk,1,238.3,238.3
+ORD-1164,2024-04-08,South,Electronics,USB-C Cable,4,10.14,40.56
+ORD-1165,2024-04-08,South,Clothing,Cotton T-Shirt,2,15.1,30.2
+ORD-1166,2024-04-08,South,Furniture,Standing Desk,3,231.92,695.76
+ORD-1167,2024-04-09,West,Grocery,Coffee Beans 1kg,5,18.57,92.85
+ORD-1168,2024-04-09,East,Toys,Building Blocks,5,25.79,128.95
+ORD-1169,2024-04-10,West,Clothing,Hoodie,2,35.04,70.08
+ORD-1170,2024-04-10,North,Toys,Building Blocks,6,25.4,152.4
+ORD-1171,2024-04-10,North,Electronics,USB-C Cable,4,10.2,40.8
+ORD-1172,2024-04-11,South,Grocery,Coffee Beans 1kg,1,19.54,19.54
+ORD-1173,2024-04-11,South,Clothing,Hoodie,8,36.8,294.4
+ORD-1174,2024-04-12,West,Grocery,Green Tea 100pc,8,12.04,96.32
+ORD-1175,2024-04-12,North,Furniture,Bookshelf,7,77.38,541.66
+ORD-1176,2024-04-12,West,Electronics,Webcam HD,6,43.38,260.28
+ORD-1177,2024-04-13,North,Grocery,Green Tea 100pc,7,11.76,82.32
+ORD-1178,2024-04-13,East,Clothing,Hoodie,2,33.48,66.96
+ORD-1179,2024-04-13,North,Electronics,USB-C Cable,7,10.05,70.35
+ORD-1180,2024-04-14,East,Clothing,Cotton T-Shirt,1,14.24,14.24
+ORD-1181,2024-04-14,North,Grocery,Coffee Beans 1kg,8,19.13,153.04
+ORD-1182,2024-04-14,East,Furniture,Office Chair,5,130.02,650.1
+ORD-1183,2024-04-14,South,Clothing,Hoodie,8,32.41,259.28
+ORD-1184,2024-04-15,North,Furniture,Standing Desk,1,251.08,251.08
+ORD-1185,2024-04-16,South,Electronics,USB-C Cable,8,10.18,81.44
+ORD-1186,2024-04-17,East,Toys,Building Blocks,5,25.03,125.15
+ORD-1187,2024-04-17,South,Clothing,Cotton T-Shirt,8,16.14,129.12
+ORD-1188,2024-04-17,South,Clothing,Hoodie,3,33.86,101.58
+ORD-1189,2024-04-19,East,Toys,Puzzle 1000pc,7,16.08,112.56
+ORD-1190,2024-04-19,West,Electronics,Wireless Mouse,5,20.71,103.55
+ORD-1191,2024-04-20,West,Clothing,Hoodie,8,33.65,269.2
+ORD-1192,2024-04-20,South,Clothing,Hoodie,6,36.54,219.24
+ORD-1193,2024-04-21,West,Furniture,Office Chair,7,119.58,837.06
+ORD-1194,2024-04-21,South,Toys,Building Blocks,7,24.53,171.71
+ORD-1195,2024-04-21,East,Clothing,Hoodie,1,32.44,32.44
+ORD-1196,2024-04-21,West,Electronics,USB-C Cable,8,8.89,71.12
+ORD-1197,2024-04-23,East,Clothing,Cotton T-Shirt,3,13.97,41.91
+ORD-1198,2024-04-24,East,Grocery,Coffee Beans 1kg,7,19.2,134.4
+ORD-1199,2024-04-24,West,Grocery,Green Tea 100pc,7,12.01,84.07
+ORD-1200,2024-04-27,North,Grocery,Green Tea 100pc,5,12.09,60.45
+ORD-1201,2024-04-27,North,Clothing,Cotton T-Shirt,2,15.61,31.22
+ORD-1202,2024-04-28,North,Electronics,Webcam HD,5,46.84,234.2
+ORD-1203,2024-04-28,East,Furniture,Bookshelf,1,76.87,76.87
+ORD-1204,2024-04-28,West,Clothing,Cotton T-Shirt,3,14.38,43.14
+ORD-1205,2024-04-28,North,Grocery,Coffee Beans 1kg,3,17.76,53.28
+ORD-1206,2024-04-29,South,Grocery,Coffee Beans 1kg,4,18.74,74.96
+ORD-1207,2024-04-29,West,Furniture,Office Chair,8,131.85,1054.8
+ORD-1208,2024-04-29,West,Furniture,Standing Desk,1,264.89,264.89
+ORD-1209,2024-04-30,East,Grocery,Green Tea 100pc,3,10.44,31.32
+ORD-1210,2024-04-30,West,Grocery,Coffee Beans 1kg,5,19.17,95.85
+ORD-1211,2024-05-01,West,Clothing,Hoodie,5,32.84,164.2
+ORD-1212,2024-05-01,East,Clothing,Hoodie,2,33.05,66.1
+ORD-1213,2024-05-02,West,Toys,Building Blocks,5,23.08,115.4
+ORD-1214,2024-05-02,North,Furniture,Standing Desk,1,251.63,251.63
+ORD-1215,2024-05-03,East,Furniture,Standing Desk,4,253.27,1013.08
+ORD-1216,2024-05-03,South,Furniture,Office Chair,4,131.5,526.0
+ORD-1217,2024-05-03,North,Grocery,Green Tea 100pc,2,11.92,23.84
+ORD-1218,2024-05-04,East,Toys,Puzzle 1000pc,8,15.27,122.16
+ORD-1219,2024-05-04,East,Toys,Building Blocks,3,23.35,70.05
+ORD-1220,2024-05-04,South,Furniture,Bookshelf,7,75.37,527.59
+ORD-1221,2024-05-05,East,Clothing,Sneakers,5,62.12,310.6
+ORD-1222,2024-05-05,East,Clothing,Hoodie,5,35.86,179.3
+ORD-1223,2024-05-05,North,Toys,Puzzle 1000pc,2,16.42,32.84
+ORD-1224,2024-05-06,West,Toys,Puzzle 1000pc,4,17.45,69.8
+ORD-1225,2024-05-07,North,Electronics,USB-C Cable,7,8.76,61.32
+ORD-1226,2024-05-07,East,Clothing,Hoodie,6,35.45,212.7
+ORD-1227,2024-05-08,South,Grocery,Green Tea 100pc,6,10.5,63.0
+ORD-1228,2024-05-08,East,Clothing,Hoodie,1,35.16,35.16
+ORD-1229,2024-05-08,West,Grocery,Coffee Beans 1kg,4,19.19,76.76
+ORD-1230,2024-05-09,North,Grocery,Green Tea 100pc,7,10.51,73.57
+ORD-1231,2024-05-09,North,Electronics,Wireless Mouse,5,21.58,107.9
+ORD-1232,2024-05-11,East,Clothing,Sneakers,3,57.95,173.85
+ORD-1233,2024-05-11,South,Grocery,Green Tea 100pc,7,11.36,79.52
+ORD-1234,2024-05-12,West,Grocery,Green Tea 100pc,2,11.8,23.6
+ORD-1235,2024-05-12,South,Furniture,Standing Desk,1,256.58,256.58
+ORD-1236,2024-05-12,East,Clothing,Hoodie,8,36.99,295.92
+ORD-1237,2024-05-12,East,Electronics,USB-C Cable,6,9.57,57.42
+ORD-1238,2024-05-14,West,Furniture,Standing Desk,4,267.65,1070.6
+ORD-1239,2024-05-14,North,Electronics,USB-C Cable,4,9.72,38.88
+ORD-1240,2024-05-14,South,Electronics,Wireless Mouse,6,19.17,115.02
+ORD-1241,2024-05-15,South,Electronics,USB-C Cable,4,9.63,38.52
+ORD-1242,2024-05-16,North,Toys,Puzzle 1000pc,3,17.26,51.78
+ORD-1243,2024-05-16,East,Furniture,Standing Desk,3,268.42,805.26
+ORD-1244,2024-05-17,East,Electronics,USB-C Cable,1,8.94,8.94
+ORD-1245,2024-05-18,East,Grocery,Coffee Beans 1kg,6,17.3,103.8
+ORD-1246,2024-05-18,North,Electronics,Wireless Mouse,3,20.76,62.28
+ORD-1247,2024-05-19,North,Clothing,Hoodie,8,36.03,288.24
+ORD-1248,2024-05-20,North,Clothing,Sneakers,4,63.2,252.8
+ORD-1249,2024-05-20,North,Toys,Building Blocks,5,24.82,124.1
+ORD-1250,2024-05-20,West,Electronics,Wireless Mouse,8,21.1,168.8
+ORD-1251,2024-05-22,North,Toys,Building Blocks,8,23.28,186.24
+ORD-1252,2024-05-22,East,Furniture,Bookshelf,3,73.98,221.94
+ORD-1253,2024-05-22,East,Grocery,Coffee Beans 1kg,6,18.39,110.34
+ORD-1254,2024-05-23,North,Clothing,Sneakers,7,55.22,386.54
+ORD-1255,2024-05-23,South,Grocery,Green Tea 100pc,4,11.07,44.28
+ORD-1256,2024-05-23,West,Clothing,Cotton T-Shirt,6,15.78,94.68
+ORD-1257,2024-05-24,East,Toys,Building Blocks,2,24.24,48.48
+ORD-1258,2024-05-24,South,Grocery,Green Tea 100pc,5,10.97,54.85
+ORD-1259,2024-05-24,North,Grocery,Green Tea 100pc,8,10.42,83.36
+ORD-1260,2024-05-25,East,Clothing,Cotton T-Shirt,2,15.58,31.16
+ORD-1261,2024-05-26,East,Clothing,Sneakers,1,59.82,59.82
+ORD-1262,2024-05-26,West,Grocery,Green Tea 100pc,2,11.04,22.08
+ORD-1263,2024-05-28,South,Grocery,Coffee Beans 1kg,5,18.3,91.5
+ORD-1264,2024-05-28,North,Electronics,Webcam HD,8,42.06,336.48
+ORD-1265,2024-05-29,East,Clothing,Sneakers,6,55.36,332.16
+ORD-1266,2024-05-29,North,Grocery,Coffee Beans 1kg,4,19.67,78.68
+ORD-1267,2024-05-30,East,Electronics,Wireless Mouse,3,19.26,57.78
+ORD-1268,2024-05-30,South,Furniture,Bookshelf,6,73.22,439.32
+ORD-1269,2024-05-31,North,Electronics,USB-C Cable,3,9.87,29.61
+ORD-1270,2024-05-31,West,Electronics,USB-C Cable,4,9.31,37.24
+ORD-1271,2024-05-31,East,Furniture,Bookshelf,3,77.85,233.55
+ORD-1272,2024-06-01,North,Electronics,Wireless Mouse,3,18.89,56.67
+ORD-1273,2024-06-02,West,Furniture,Standing Desk,8,255.45,2043.6
+ORD-1274,2024-06-03,North,Clothing,Cotton T-Shirt,5,14.31,71.55
+ORD-1275,2024-06-03,West,Furniture,Bookshelf,7,74.55,521.85
+ORD-1276,2024-06-03,West,Clothing,Sneakers,5,54.71,273.55
+ORD-1277,2024-06-06,East,Furniture,Standing Desk,4,259.65,1038.6
+ORD-1278,2024-06-07,West,Furniture,Bookshelf,2,73.24,146.48
+ORD-1279,2024-06-07,South,Electronics,Webcam HD,3,43.16,129.48
+ORD-1280,2024-06-08,North,Electronics,USB-C Cable,7,10.05,70.35
+ORD-1281,2024-06-08,North,Clothing,Cotton T-Shirt,1,14.89,14.89
+ORD-1282,2024-06-08,West,Furniture,Bookshelf,7,80.43,563.01
+ORD-1283,2024-06-09,East,Electronics,USB-C Cable,7,8.77,61.39
+ORD-1284,2024-06-09,East,Electronics,Webcam HD,8,46.34,370.72
+ORD-1285,2024-06-09,South,Electronics,USB-C Cable,7,10.02,70.14
+ORD-1286,2024-06-10,West,Grocery,Coffee Beans 1kg,7,18.82,131.74
+ORD-1287,2024-06-10,South,Furniture,Standing Desk,6,237.91,1427.46
+ORD-1288,2024-06-10,South,Electronics,USB-C Cable,2,9.55,19.1
+ORD-1289,2024-06-11,South,Furniture,Bookshelf,3,76.15,228.45
+ORD-1290,2024-06-11,South,Furniture,Standing Desk,4,235.99,943.96
+ORD-1291,2024-06-13,West,Toys,Puzzle 1000pc,8,16.4,131.2
+ORD-1292,2024-06-14,North,Grocery,Green Tea 100pc,6,10.57,63.42
+ORD-1293,2024-06-14,East,Clothing,Hoodie,8,35.23,281.84
+ORD-1294,2024-06-15,West,Furniture,Bookshelf,2,77.09,154.18
+ORD-1295,2024-06-16,North,Electronics,Wireless Mouse,6,21.05,126.3
+ORD-1296,2024-06-18,South,Clothing,Hoodie,1,34.22,34.22
+ORD-1297,2024-06-18,North,Furniture,Bookshelf,8,79.52,636.16
+ORD-1298,2024-06-18,East,Clothing,Hoodie,2,36.22,72.44
+ORD-1299,2024-06-20,West,Electronics,Wireless Mouse,4,20.65,82.6
+ORD-1300,2024-06-21,West,Furniture,Bookshelf,6,84.82,508.92
+ORD-1301,2024-06-22,North,Toys,Puzzle 1000pc,6,16.97,101.82
+ORD-1302,2024-06-22,North,Toys,Puzzle 1000pc,6,15.35,92.1
+ORD-1303,2024-06-22,South,Clothing,Sneakers,7,56.96,398.72
+ORD-1304,2024-06-22,South,Furniture,Bookshelf,2,80.55,161.1
+ORD-1305,2024-06-23,North,Furniture,Standing Desk,7,234.22,1639.54
+ORD-1306,2024-06-23,East,Furniture,Standing Desk,7,254.72,1783.04
+ORD-1307,2024-06-23,West,Electronics,Webcam HD,2,45.03,90.06
+ORD-1308,2024-06-24,South,Electronics,Wireless Mouse,6,19.38,116.28
+ORD-1309,2024-06-24,South,Furniture,Bookshelf,8,75.58,604.64
+ORD-1310,2024-06-25,North,Electronics,USB-C Cable,5,10.02,50.1
+ORD-1311,2024-06-27,South,Toys,Puzzle 1000pc,3,16.76,50.28
+ORD-1312,2024-06-27,South,Electronics,Webcam HD,3,46.33,138.99
+ORD-1313,2024-06-28,South,Electronics,Wireless Mouse,7,19.56,136.92
+ORD-1314,2024-06-28,West,Clothing,Hoodie,5,35.89,179.45
+ORD-1315,2024-06-28,West,Furniture,Office Chair,4,125.07,500.28
+ORD-1316,2024-06-29,East,Furniture,Bookshelf,8,79.01,632.08
+ORD-1317,2024-06-29,West,Toys,Puzzle 1000pc,7,16.51,115.57
+ORD-1318,2024-06-30,North,Furniture,Office Chair,3,136.7,410.1
+ORD-1319,2024-06-30,North,Grocery,Green Tea 100pc,8,11.87,94.96
+ORD-1320,2024-07-02,South,Electronics,USB-C Cable,3,9.15,27.45
+ORD-1321,2024-07-02,South,Clothing,Cotton T-Shirt,2,16.06,32.12
+ORD-1322,2024-07-03,West,Furniture,Bookshelf,1,78.42,78.42
+ORD-1323,2024-07-03,North,Clothing,Sneakers,6,56.51,339.06
+ORD-1324,2024-07-03,North,Furniture,Bookshelf,4,73.5,294.0
+ORD-1325,2024-07-04,East,Toys,Puzzle 1000pc,3,15.54,46.62
+ORD-1326,2024-07-04,West,Clothing,Hoodie,3,35.93,107.79
+ORD-1327,2024-07-05,North,Grocery,Coffee Beans 1kg,1,19.97,19.97
+ORD-1328,2024-07-05,West,Furniture,Standing Desk,4,262.34,1049.36
+ORD-1329,2024-07-05,North,Electronics,USB-C Cable,5,9.1,45.5
+ORD-1330,2024-07-06,West,Furniture,Office Chair,7,131.87,923.09
+ORD-1331,2024-07-07,North,Electronics,USB-C Cable,8,9.65,77.2
+ORD-1332,2024-07-08,North,Toys,Building Blocks,3,24.16,72.48
+ORD-1333,2024-07-09,North,Furniture,Office Chair,7,122.55,857.85
+ORD-1334,2024-07-09,North,Clothing,Sneakers,6,54.92,329.52
+ORD-1335,2024-07-10,East,Clothing,Hoodie,1,35.25,35.25
+ORD-1336,2024-07-10,North,Furniture,Standing Desk,1,243.31,243.31
+ORD-1337,2024-07-10,North,Furniture,Bookshelf,4,82.46,329.84
+ORD-1338,2024-07-11,East,Electronics,Webcam HD,1,42.96,42.96
+ORD-1339,2024-07-11,West,Grocery,Green Tea 100pc,3,11.79,35.37
+ORD-1340,2024-07-12,North,Grocery,Green Tea 100pc,3,11.76,35.28
+ORD-1341,2024-07-12,South,Toys,Building Blocks,8,23.14,185.12
+ORD-1342,2024-07-12,East,Electronics,Wireless Mouse,4,21.22,84.88
+ORD-1343,2024-07-13,West,Clothing,Sneakers,7,63.62,445.34
+ORD-1344,2024-07-13,South,Furniture,Standing Desk,1,259.09,259.09
+ORD-1345,2024-07-13,North,Furniture,Standing Desk,6,263.43,1580.58
+ORD-1346,2024-07-14,West,Furniture,Standing Desk,2,260.93,521.86
+ORD-1347,2024-07-14,West,Clothing,Cotton T-Shirt,8,15.94,127.52
+ORD-1348,2024-07-14,West,Furniture,Bookshelf,3,79.45,238.35
+ORD-1349,2024-07-15,West,Toys,Puzzle 1000pc,5,17.3,86.5
+ORD-1350,2024-07-15,South,Electronics,USB-C Cable,7,9.66,67.62
+ORD-1351,2024-07-16,East,Furniture,Bookshelf,2,74.16,148.32
+ORD-1352,2024-07-16,West,Furniture,Standing Desk,8,253.09,2024.72
+ORD-1353,2024-07-17,North,Toys,Building Blocks,8,24.4,195.2
+ORD-1354,2024-07-18,North,Grocery,Coffee Beans 1kg,7,18.07,126.49
+ORD-1355,2024-07-18,South,Electronics,USB-C Cable,7,9.29,65.03
+ORD-1356,2024-07-20,North,Grocery,Coffee Beans 1kg,8,17.35,138.8
+ORD-1357,2024-07-20,North,Furniture,Office Chair,6,126.15,756.9
+ORD-1358,2024-07-21,East,Grocery,Green Tea 100pc,8,12.0,96.0
+ORD-1359,2024-07-21,East,Clothing,Hoodie,2,34.91,69.82
+ORD-1360,2024-07-22,North,Furniture,Bookshelf,5,76.32,381.6
+ORD-1361,2024-07-22,West,Electronics,Wireless Mouse,3,19.99,59.97
+ORD-1362,2024-07-22,East,Clothing,Sneakers,2,56.75,113.5
+ORD-1363,2024-07-23,West,Furniture,Office Chair,5,133.0,665.0
+ORD-1364,2024-07-23,North,Furniture,Office Chair,2,121.48,242.96
+ORD-1365,2024-07-23,West,Clothing,Hoodie,3,36.7,110.1
+ORD-1366,2024-07-25,East,Grocery,Green Tea 100pc,6,11.58,69.48
+ORD-1367,2024-07-25,South,Furniture,Standing Desk,3,257.44,772.32
+ORD-1368,2024-07-26,South,Clothing,Sneakers,4,55.43,221.72
+ORD-1369,2024-07-26,West,Toys,Puzzle 1000pc,3,15.8,47.4
+ORD-1370,2024-07-27,South,Furniture,Bookshelf,6,79.09,474.54
+ORD-1371,2024-07-28,West,Electronics,USB-C Cable,5,9.35,46.75
+ORD-1372,2024-07-29,North,Toys,Puzzle 1000pc,7,17.35,121.45
+ORD-1373,2024-07-29,West,Electronics,Webcam HD,6,45.0,270.0
+ORD-1374,2024-07-29,South,Clothing,Hoodie,6,32.45,194.7
+ORD-1375,2024-07-30,South,Clothing,Cotton T-Shirt,1,15.78,15.78
+ORD-1376,2024-07-31,South,Electronics,Webcam HD,3,42.75,128.25
+ORD-1377,2024-07-31,East,Furniture,Bookshelf,5,83.9,419.5
+ORD-1378,2024-08-01,East,Grocery,Green Tea 100pc,5,10.53,52.65
+ORD-1379,2024-08-03,East,Grocery,Coffee Beans 1kg,3,17.76,53.28
+ORD-1380,2024-08-03,North,Grocery,Coffee Beans 1kg,1,19.73,19.73
+ORD-1381,2024-08-04,West,Electronics,Wireless Mouse,5,20.47,102.35
+ORD-1382,2024-08-06,East,Grocery,Green Tea 100pc,5,11.45,57.25
+ORD-1383,2024-08-06,West,Clothing,Hoodie,4,36.18,144.72
+ORD-1384,2024-08-06,North,Furniture,Standing Desk,8,231.99,1855.92
+ORD-1385,2024-08-07,South,Clothing,Hoodie,7,34.41,240.87
+ORD-1386,2024-08-08,East,Grocery,Coffee Beans 1kg,3,18.19,54.57
+ORD-1387,2024-08-08,South,Toys,Building Blocks,6,26.89,161.34
+ORD-1388,2024-08-09,West,Clothing,Sneakers,2,57.29,114.58
+ORD-1389,2024-08-09,South,Electronics,USB-C Cable,5,9.42,47.1
+ORD-1390,2024-08-10,West,Electronics,Wireless Mouse,5,21.41,107.05
+ORD-1391,2024-08-11,East,Electronics,Webcam HD,6,47.05,282.3
+ORD-1392,2024-08-11,West,Furniture,Office Chair,3,128.96,386.88
+ORD-1393,2024-08-12,West,Furniture,Standing Desk,8,230.0,1840.0
+ORD-1394,2024-08-12,South,Clothing,Sneakers,8,63.41,507.28
+ORD-1395,2024-08-12,East,Grocery,Coffee Beans 1kg,6,17.4,104.4
+ORD-1396,2024-08-13,North,Grocery,Coffee Beans 1kg,8,18.11,144.88
+ORD-1397,2024-08-13,East,Electronics,USB-C Cable,7,8.94,62.58
+ORD-1398,2024-08-13,East,Toys,Building Blocks,6,26.05,156.3
+ORD-1399,2024-08-15,East,Electronics,Wireless Mouse,4,19.55,78.2
+ORD-1400,2024-08-15,East,Electronics,USB-C Cable,7,9.51,66.57
+ORD-1401,2024-08-15,North,Grocery,Coffee Beans 1kg,2,17.64,35.28
+ORD-1402,2024-08-16,East,Furniture,Bookshelf,6,80.24,481.44
+ORD-1403,2024-08-16,West,Toys,Puzzle 1000pc,3,15.71,47.13
+ORD-1404,2024-08-16,South,Clothing,Sneakers,1,54.71,54.71
+ORD-1405,2024-08-17,South,Toys,Puzzle 1000pc,8,16.55,132.4
+ORD-1406,2024-08-17,East,Grocery,Coffee Beans 1kg,3,18.23,54.69
+ORD-1407,2024-08-17,East,Electronics,Webcam HD,7,47.45,332.15
+ORD-1408,2024-08-18,East,Clothing,Sneakers,8,60.97,487.76
+ORD-1409,2024-08-18,North,Clothing,Hoodie,1,33.77,33.77
+ORD-1410,2024-08-18,North,Clothing,Cotton T-Shirt,5,15.7,78.5
+ORD-1411,2024-08-19,West,Furniture,Standing Desk,4,257.82,1031.28
+ORD-1412,2024-08-19,South,Electronics,Webcam HD,7,41.52,290.64
+ORD-1413,2024-08-19,West,Electronics,Wireless Mouse,2,19.0,38.0
+ORD-1414,2024-08-20,South,Clothing,Cotton T-Shirt,3,14.78,44.34
+ORD-1415,2024-08-20,North,Clothing,Cotton T-Shirt,8,15.88,127.04
+ORD-1416,2024-08-21,West,Clothing,Sneakers,4,59.57,238.28
+ORD-1417,2024-08-22,East,Furniture,Bookshelf,3,78.99,236.97
+ORD-1418,2024-08-22,East,Clothing,Sneakers,6,60.66,363.96
+ORD-1419,2024-08-22,South,Grocery,Coffee Beans 1kg,8,17.83,142.64
+ORD-1420,2024-08-23,East,Clothing,Sneakers,5,56.4,282.0
+ORD-1421,2024-08-23,West,Toys,Puzzle 1000pc,5,17.04,85.2
+ORD-1422,2024-08-24,East,Clothing,Hoodie,6,34.83,208.98
+ORD-1423,2024-08-24,West,Furniture,Standing Desk,2,251.93,503.86
+ORD-1424,2024-08-24,South,Clothing,Cotton T-Shirt,6,16.08,96.48
+ORD-1425,2024-08-25,North,Electronics,Wireless Mouse,5,21.45,107.25
+ORD-1426,2024-08-25,West,Furniture,Bookshelf,8,81.48,651.84
+ORD-1427,2024-08-25,East,Furniture,Office Chair,4,135.77,543.08
+ORD-1428,2024-08-26,South,Electronics,Webcam HD,2,44.81,89.62
+ORD-1429,2024-08-26,South,Furniture,Office Chair,1,132.51,132.51
+ORD-1430,2024-08-27,West,Electronics,Wireless Mouse,2,19.71,39.42
+ORD-1431,2024-08-29,West,Electronics,Wireless Mouse,3,19.69,59.07
+ORD-1432,2024-08-30,East,Grocery,Green Tea 100pc,4,11.66,46.64
+ORD-1433,2024-08-30,North,Furniture,Bookshelf,5,81.36,406.8
+ORD-1434,2024-08-30,North,Grocery,Green Tea 100pc,4,11.26,45.04
+ORD-1435,2024-08-31,North,Clothing,Cotton T-Shirt,3,16.03,48.09
+ORD-1436,2024-08-31,East,Clothing,Cotton T-Shirt,8,14.24,113.92
+ORD-1437,2024-09-01,North,Electronics,Wireless Mouse,5,20.21,101.05
+ORD-1438,2024-09-02,West,Furniture,Standing Desk,8,268.49,2147.92
+ORD-1439,2024-09-02,North,Electronics,Webcam HD,8,42.4,339.2
+ORD-1440,2024-09-03,South,Electronics,Webcam HD,8,45.04,360.32
+ORD-1441,2024-09-03,South,Electronics,Wireless Mouse,6,20.92,125.52
+ORD-1442,2024-09-04,East,Grocery,Coffee Beans 1kg,7,19.73,138.11
+ORD-1443,2024-09-06,South,Grocery,Green Tea 100pc,2,10.64,21.28
+ORD-1444,2024-09-06,North,Clothing,Hoodie,6,36.91,221.46
+ORD-1445,2024-09-06,East,Furniture,Standing Desk,7,238.46,1669.22
+ORD-1446,2024-09-07,East,Furniture,Standing Desk,1,239.5,239.5
+ORD-1447,2024-09-07,North,Toys,Building Blocks,4,23.24,92.96
+ORD-1448,2024-09-07,East,Clothing,Hoodie,5,32.62,163.1
+ORD-1449,2024-09-08,South,Grocery,Green Tea 100pc,5,10.96,54.8
+ORD-1450,2024-09-09,East,Electronics,Webcam HD,8,41.56,332.48
+ORD-1451,2024-09-10,South,Toys,Building Blocks,8,26.02,208.16
+ORD-1452,2024-09-10,North,Toys,Puzzle 1000pc,4,16.98,67.92
+ORD-1453,2024-09-10,East,Clothing,Sneakers,8,59.27,474.16
+ORD-1454,2024-09-14,West,Grocery,Coffee Beans 1kg,3,17.74,53.22
+ORD-1455,2024-09-14,West,Electronics,USB-C Cable,4,9.83,39.32
+ORD-1456,2024-09-15,West,Clothing,Sneakers,8,61.91,495.28
+ORD-1457,2024-09-16,North,Clothing,Sneakers,7,58.59,410.13
+ORD-1458,2024-09-17,West,Grocery,Green Tea 100pc,5,11.6,58.0
+ORD-1459,2024-09-17,North,Furniture,Standing Desk,1,258.79,258.79
+ORD-1460,2024-09-17,North,Electronics,Wireless Mouse,7,19.49,136.43
+ORD-1461,2024-09-20,South,Electronics,Wireless Mouse,5,19.7,98.5
+ORD-1462,2024-09-20,West,Toys,Puzzle 1000pc,7,16.17,113.19
+ORD-1463,2024-09-20,South,Clothing,Hoodie,7,33.81,236.67
+ORD-1464,2024-09-21,West,Electronics,USB-C Cable,3,10.25,30.75
+ORD-1465,2024-09-21,South,Clothing,Sneakers,3,61.15,183.45
+ORD-1466,2024-09-21,West,Electronics,Wireless Mouse,1,21.52,21.52
+ORD-1467,2024-09-22,South,Clothing,Sneakers,7,62.05,434.35
+ORD-1468,2024-09-22,South,Clothing,Hoodie,6,32.6,195.6
+ORD-1469,2024-09-22,West,Toys,Building Blocks,2,23.12,46.24
+ORD-1470,2024-09-22,North,Grocery,Coffee Beans 1kg,1,17.97,17.97
+ORD-1471,2024-09-25,North,Grocery,Coffee Beans 1kg,1,17.98,17.98
+ORD-1472,2024-09-25,South,Clothing,Cotton T-Shirt,8,14.35,114.8
+ORD-1473,2024-09-25,East,Toys,Puzzle 1000pc,1,15.55,15.55
+ORD-1474,2024-09-26,East,Toys,Building Blocks,6,25.3,151.8
+ORD-1475,2024-09-27,South,Furniture,Standing Desk,3,268.35,805.05
+ORD-1476,2024-09-28,South,Furniture,Standing Desk,5,231.51,1157.55
+ORD-1477,2024-09-28,North,Grocery,Green Tea 100pc,7,11.3,79.1
+ORD-1478,2024-09-28,East,Furniture,Bookshelf,7,83.14,581.98
+ORD-1479,2024-09-28,East,Toys,Building Blocks,7,24.62,172.34
+ORD-1480,2024-09-29,South,Electronics,Webcam HD,8,42.18,337.44
+ORD-1481,2024-09-29,North,Furniture,Standing Desk,3,261.18,783.54
+ORD-1482,2024-09-29,South,Clothing,Sneakers,7,63.42,443.94
+ORD-1483,2024-09-29,East,Clothing,Cotton T-Shirt,4,14.4,57.6
+ORD-1484,2024-10-01,South,Furniture,Bookshelf,2,79.95,159.9
+ORD-1485,2024-10-01,North,Electronics,Wireless Mouse,5,19.6,98.0
+ORD-1486,2024-10-01,South,Electronics,USB-C Cable,4,9.96,39.84
+ORD-1487,2024-10-02,North,Furniture,Office Chair,6,124.94,749.64
+ORD-1488,2024-10-02,North,Furniture,Office Chair,4,138.54,554.16
+ORD-1489,2024-10-02,South,Toys,Building Blocks,8,26.65,213.2
+ORD-1490,2024-10-03,West,Furniture,Office Chair,6,134.69,808.14
+ORD-1491,2024-10-03,East,Clothing,Hoodie,6,33.44,200.64
+ORD-1492,2024-10-03,West,Clothing,Sneakers,8,58.68,469.44
+ORD-1493,2024-10-04,North,Furniture,Office Chair,6,125.14,750.84
+ORD-1494,2024-10-04,North,Grocery,Coffee Beans 1kg,4,19.47,77.88
+ORD-1495,2024-10-05,South,Clothing,Sneakers,7,57.07,399.49
+ORD-1496,2024-10-05,South,Furniture,Bookshelf,4,77.97,311.88
+ORD-1497,2024-10-05,West,Clothing,Hoodie,6,33.16,198.96
+ORD-1498,2024-10-06,East,Clothing,Hoodie,3,35.78,107.34
+ORD-1499,2024-10-06,West,Electronics,Webcam HD,3,45.55,136.65
+ORD-1500,2024-10-06,North,Electronics,Webcam HD,1,44.17,44.17
+ORD-1501,2024-10-06,West,Grocery,Green Tea 100pc,1,11.67,11.67
+ORD-1502,2024-10-07,South,Grocery,Green Tea 100pc,4,10.43,41.72
+ORD-1503,2024-10-09,West,Clothing,Sneakers,8,57.8,462.4
+ORD-1504,2024-10-10,West,Electronics,Wireless Mouse,1,20.09,20.09
+ORD-1505,2024-10-10,East,Electronics,Wireless Mouse,1,20.08,20.08
+ORD-1506,2024-10-10,West,Clothing,Sneakers,5,54.44,272.2
+ORD-1507,2024-10-11,South,Electronics,USB-C Cable,2,9.54,19.08
+ORD-1508,2024-10-12,East,Grocery,Coffee Beans 1kg,5,19.7,98.5
+ORD-1509,2024-10-12,West,Toys,Puzzle 1000pc,7,15.39,107.73
+ORD-1510,2024-10-13,South,Grocery,Coffee Beans 1kg,4,20.22,80.88
+ORD-1511,2024-10-13,North,Furniture,Standing Desk,2,255.12,510.24
+ORD-1512,2024-10-13,West,Electronics,USB-C Cable,7,9.32,65.24
+ORD-1513,2024-10-13,North,Electronics,Wireless Mouse,1,20.64,20.64
+ORD-1514,2024-10-14,North,Clothing,Cotton T-Shirt,6,15.15,90.9
+ORD-1515,2024-10-14,West,Clothing,Sneakers,1,56.45,56.45
+ORD-1516,2024-10-14,East,Furniture,Standing Desk,1,265.9,265.9
+ORD-1517,2024-10-16,South,Furniture,Bookshelf,1,85.37,85.37
+ORD-1518,2024-10-17,South,Electronics,USB-C Cable,5,8.99,44.95
+ORD-1519,2024-10-17,East,Grocery,Coffee Beans 1kg,7,19.28,134.96
+ORD-1520,2024-10-17,North,Clothing,Cotton T-Shirt,3,15.69,47.07
+ORD-1521,2024-10-18,North,Electronics,Wireless Mouse,2,19.79,39.58
+ORD-1522,2024-10-18,East,Furniture,Bookshelf,7,85.46,598.22
+ORD-1523,2024-10-19,West,Grocery,Green Tea 100pc,5,11.71,58.55
+ORD-1524,2024-10-20,West,Furniture,Office Chair,6,130.09,780.54
+ORD-1525,2024-10-20,West,Clothing,Cotton T-Shirt,3,15.42,46.26
+ORD-1526,2024-10-20,North,Electronics,USB-C Cable,5,9.95,49.75
+ORD-1527,2024-10-20,South,Electronics,USB-C Cable,5,8.97,44.85
+ORD-1528,2024-10-21,North,Furniture,Bookshelf,6,74.5,447.0
+ORD-1529,2024-10-21,East,Furniture,Standing Desk,8,243.42,1947.36
+ORD-1530,2024-10-21,West,Electronics,USB-C Cable,3,8.87,26.61
+ORD-1531,2024-10-22,North,Clothing,Sneakers,7,55.26,386.82
+ORD-1532,2024-10-22,East,Furniture,Bookshelf,2,80.73,161.46
+ORD-1533,2024-10-22,West,Clothing,Cotton T-Shirt,1,14.49,14.49
+ORD-1534,2024-10-24,South,Grocery,Coffee Beans 1kg,3,19.31,57.93
+ORD-1535,2024-10-25,South,Furniture,Standing Desk,5,239.77,1198.85
+ORD-1536,2024-10-26,East,Electronics,Webcam HD,7,42.42,296.94
+ORD-1537,2024-10-27,South,Toys,Puzzle 1000pc,2,16.13,32.26
+ORD-1538,2024-10-27,South,Toys,Building Blocks,8,25.37,202.96
+ORD-1539,2024-10-27,North,Clothing,Hoodie,2,32.49,64.98
+ORD-1540,2024-10-27,West,Clothing,Cotton T-Shirt,6,15.81,94.86
+ORD-1541,2024-10-28,South,Clothing,Hoodie,6,34.12,204.72
+ORD-1542,2024-10-28,South,Furniture,Standing Desk,6,253.11,1518.66
+ORD-1543,2024-10-29,East,Furniture,Bookshelf,3,85.41,256.23
+ORD-1544,2024-10-29,South,Furniture,Standing Desk,8,267.64,2141.12
+ORD-1545,2024-10-29,West,Furniture,Bookshelf,7,76.71,536.97
+ORD-1546,2024-10-30,South,Electronics,USB-C Cable,4,9.64,38.56
+ORD-1547,2024-10-30,West,Grocery,Green Tea 100pc,1,12.01,12.01
+ORD-1548,2024-10-31,North,Clothing,Hoodie,5,36.33,181.65
+ORD-1549,2024-11-01,East,Grocery,Green Tea 100pc,8,10.55,84.4
+ORD-1550,2024-11-01,West,Furniture,Office Chair,5,132.27,661.35
+ORD-1551,2024-11-01,West,Toys,Puzzle 1000pc,7,15.38,107.66
+ORD-1552,2024-11-01,West,Grocery,Coffee Beans 1kg,7,18.85,131.95
+ORD-1553,2024-11-02,North,Toys,Puzzle 1000pc,6,17.03,102.18
+ORD-1554,2024-11-02,East,Electronics,USB-C Cable,4,9.74,38.96
+ORD-1555,2024-11-03,West,Grocery,Green Tea 100pc,1,11.31,11.31
+ORD-1556,2024-11-03,West,Toys,Puzzle 1000pc,6,17.73,106.38
+ORD-1557,2024-11-03,South,Electronics,USB-C Cable,1,8.89,8.89
+ORD-1558,2024-11-04,South,Clothing,Hoodie,6,33.9,203.4
+ORD-1559,2024-11-04,East,Furniture,Bookshelf,1,79.28,79.28
+ORD-1560,2024-11-05,South,Electronics,USB-C Cable,2,10.0,20.0
+ORD-1561,2024-11-05,South,Furniture,Bookshelf,5,77.5,387.5
+ORD-1562,2024-11-05,North,Clothing,Sneakers,8,57.57,460.56
+ORD-1563,2024-11-05,East,Clothing,Hoodie,8,33.5,268.0
+ORD-1564,2024-11-06,East,Toys,Puzzle 1000pc,2,15.24,30.48
+ORD-1565,2024-11-07,South,Grocery,Green Tea 100pc,3,11.97,35.91
+ORD-1566,2024-11-08,West,Clothing,Sneakers,3,57.4,172.2
+ORD-1567,2024-11-08,South,Clothing,Hoodie,4,36.14,144.56
+ORD-1568,2024-11-09,South,Grocery,Green Tea 100pc,7,11.01,77.07
+ORD-1569,2024-11-09,South,Clothing,Hoodie,7,33.89,237.23
+ORD-1570,2024-11-09,North,Furniture,Office Chair,5,134.21,671.05
+ORD-1571,2024-11-10,South,Toys,Puzzle 1000pc,3,16.15,48.45
+ORD-1572,2024-11-10,West,Clothing,Hoodie,2,33.19,66.38
+ORD-1573,2024-11-11,North,Grocery,Coffee Beans 1kg,7,19.08,133.56
+ORD-1574,2024-11-11,South,Furniture,Bookshelf,6,83.89,503.34
+ORD-1575,2024-11-11,North,Grocery,Green Tea 100pc,5,11.95,59.75
+ORD-1576,2024-11-12,North,Furniture,Bookshelf,2,76.17,152.34
+ORD-1577,2024-11-12,West,Electronics,Webcam HD,6,45.36,272.16
+ORD-1578,2024-11-13,West,Grocery,Coffee Beans 1kg,3,18.97,56.91
+ORD-1579,2024-11-13,South,Electronics,Webcam HD,8,44.95,359.6
+ORD-1580,2024-11-13,South,Clothing,Sneakers,3,58.9,176.7
+ORD-1581,2024-11-13,North,Electronics,Webcam HD,6,46.41,278.46
+ORD-1582,2024-11-14,West,Electronics,Wireless Mouse,8,18.83,150.64
+ORD-1583,2024-11-14,West,Clothing,Sneakers,8,58.14,465.12
+ORD-1584,2024-11-14,North,Clothing,Cotton T-Shirt,8,14.96,119.68
+ORD-1585,2024-11-15,East,Toys,Puzzle 1000pc,4,15.95,63.8
+ORD-1586,2024-11-16,West,Clothing,Sneakers,5,55.87,279.35
+ORD-1587,2024-11-16,North,Grocery,Coffee Beans 1kg,8,18.9,151.2
+ORD-1588,2024-11-16,East,Grocery,Coffee Beans 1kg,2,18.05,36.1
+ORD-1589,2024-11-17,West,Toys,Puzzle 1000pc,8,16.62,132.96
+ORD-1590,2024-11-17,North,Electronics,USB-C Cable,4,9.19,36.76
+ORD-1591,2024-11-18,North,Furniture,Standing Desk,6,263.43,1580.58
+ORD-1592,2024-11-18,South,Clothing,Hoodie,2,36.02,72.04
+ORD-1593,2024-11-18,West,Furniture,Office Chair,6,136.45,818.7
+ORD-1594,2024-11-18,South,Electronics,Webcam HD,3,46.01,138.03
+ORD-1595,2024-11-19,South,Grocery,Coffee Beans 1kg,6,18.85,113.1
+ORD-1596,2024-11-20,East,Toys,Building Blocks,5,24.15,120.75
+ORD-1597,2024-11-20,West,Clothing,Sneakers,2,55.56,111.12
+ORD-1598,2024-11-20,South,Electronics,Wireless Mouse,5,21.16,105.8
+ORD-1599,2024-11-21,South,Furniture,Office Chair,3,133.36,400.08
+ORD-1600,2024-11-21,East,Toys,Puzzle 1000pc,7,16.47,115.29
+ORD-1601,2024-11-22,North,Clothing,Cotton T-Shirt,8,13.97,111.76
+ORD-1602,2024-11-22,East,Clothing,Cotton T-Shirt,5,15.46,77.3
+ORD-1603,2024-11-22,North,Clothing,Hoodie,8,33.55,268.4
+ORD-1604,2024-11-22,West,Toys,Puzzle 1000pc,2,17.11,34.22
+ORD-1605,2024-11-23,West,Electronics,USB-C Cable,7,9.07,63.49
+ORD-1606,2024-11-23,East,Furniture,Office Chair,8,124.22,993.76
+ORD-1607,2024-11-23,West,Furniture,Bookshelf,3,80.34,241.02
+ORD-1608,2024-11-23,North,Toys,Puzzle 1000pc,6,17.54,105.24
+ORD-1609,2024-11-24,South,Electronics,USB-C Cable,8,8.76,70.08
+ORD-1610,2024-11-24,West,Clothing,Hoodie,8,31.74,253.92
+ORD-1611,2024-11-25,East,Toys,Building Blocks,3,26.52,79.56
+ORD-1612,2024-11-25,East,Electronics,Webcam HD,5,41.14,205.7
+ORD-1613,2024-11-26,South,Electronics,USB-C Cable,6,9.75,58.5
+ORD-1614,2024-11-26,South,Electronics,Wireless Mouse,7,20.39,142.73
+ORD-1615,2024-11-26,North,Clothing,Cotton T-Shirt,2,15.48,30.96
+ORD-1616,2024-11-27,South,Clothing,Hoodie,2,32.47,64.94
+ORD-1617,2024-11-27,East,Clothing,Sneakers,8,54.37,434.96
+ORD-1618,2024-11-28,South,Clothing,Cotton T-Shirt,3,14.94,44.82
+ORD-1619,2024-11-29,East,Electronics,USB-C Cable,2,8.9,17.8
+ORD-1620,2024-11-29,South,Furniture,Standing Desk,3,244.33,732.99
+ORD-1621,2024-11-29,North,Grocery,Green Tea 100pc,3,10.43,31.29
+ORD-1622,2024-11-29,South,Grocery,Coffee Beans 1kg,3,18.57,55.71
+ORD-1623,2024-11-30,North,Clothing,Cotton T-Shirt,8,15.85,126.8
+ORD-1624,2024-11-30,West,Electronics,USB-C Cable,3,9.88,29.64
+ORD-1625,2024-11-30,South,Furniture,Bookshelf,7,77.14,539.98
+ORD-1626,2024-12-01,East,Furniture,Standing Desk,2,238.97,477.94
+ORD-1627,2024-12-01,East,Toys,Puzzle 1000pc,1,17.42,17.42
+ORD-1628,2024-12-01,East,Furniture,Office Chair,4,134.12,536.48
+ORD-1629,2024-12-02,North,Toys,Puzzle 1000pc,4,16.49,65.96
+ORD-1630,2024-12-03,North,Clothing,Hoodie,2,34.66,69.32
+ORD-1631,2024-12-03,West,Furniture,Bookshelf,6,74.82,448.92
+ORD-1632,2024-12-04,North,Clothing,Sneakers,3,61.48,184.44
+ORD-1633,2024-12-04,South,Electronics,Wireless Mouse,2,18.43,36.86
+ORD-1634,2024-12-04,West,Electronics,Wireless Mouse,1,21.43,21.43
+ORD-1635,2024-12-05,West,Grocery,Green Tea 100pc,7,11.06,77.42
+ORD-1636,2024-12-05,East,Electronics,USB-C Cable,3,9.16,27.48
+ORD-1637,2024-12-05,South,Electronics,USB-C Cable,4,10.22,40.88
+ORD-1638,2024-12-06,West,Clothing,Cotton T-Shirt,2,14.53,29.06
+ORD-1639,2024-12-06,North,Toys,Building Blocks,4,23.22,92.88
+ORD-1640,2024-12-06,North,Clothing,Cotton T-Shirt,2,14.88,29.76
+ORD-1641,2024-12-07,South,Grocery,Green Tea 100pc,3,10.52,31.56
+ORD-1642,2024-12-07,East,Toys,Building Blocks,1,23.65,23.65
+ORD-1643,2024-12-07,South,Clothing,Sneakers,5,55.86,279.3
+ORD-1644,2024-12-07,North,Toys,Building Blocks,5,25.92,129.6
+ORD-1645,2024-12-08,North,Furniture,Bookshelf,7,76.6,536.2
+ORD-1646,2024-12-08,East,Furniture,Standing Desk,2,248.85,497.7
+ORD-1647,2024-12-09,East,Clothing,Hoodie,3,33.77,101.31
+ORD-1648,2024-12-10,North,Grocery,Coffee Beans 1kg,2,17.94,35.88
+ORD-1649,2024-12-11,East,Electronics,Wireless Mouse,4,18.54,74.16
+ORD-1650,2024-12-12,North,Electronics,Webcam HD,3,47.04,141.12
+ORD-1651,2024-12-12,South,Clothing,Sneakers,7,56.4,394.8
+ORD-1652,2024-12-12,North,Clothing,Cotton T-Shirt,6,14.44,86.64
+ORD-1653,2024-12-12,North,Grocery,Coffee Beans 1kg,6,17.61,105.66
+ORD-1654,2024-12-13,North,Furniture,Office Chair,1,138.37,138.37
+ORD-1655,2024-12-13,East,Clothing,Hoodie,5,36.01,180.05
+ORD-1656,2024-12-14,South,Electronics,USB-C Cable,8,8.75,70.0
+ORD-1657,2024-12-14,South,Furniture,Standing Desk,5,258.54,1292.7
+ORD-1658,2024-12-14,West,Clothing,Hoodie,6,35.01,210.06
+ORD-1659,2024-12-14,South,Toys,Puzzle 1000pc,4,17.11,68.44
+ORD-1660,2024-12-15,East,Electronics,Wireless Mouse,7,18.47,129.29
+ORD-1661,2024-12-15,North,Grocery,Green Tea 100pc,1,12.01,12.01
+ORD-1662,2024-12-15,East,Toys,Puzzle 1000pc,7,17.42,121.94
+ORD-1663,2024-12-16,North,Furniture,Office Chair,4,127.34,509.36
+ORD-1664,2024-12-17,South,Toys,Building Blocks,5,23.36,116.8
+ORD-1665,2024-12-17,East,Clothing,Sneakers,7,60.9,426.3
+ORD-1666,2024-12-18,South,Toys,Building Blocks,2,25.31,50.62
+ORD-1667,2024-12-18,North,Grocery,Green Tea 100pc,7,10.44,73.08
+ORD-1668,2024-12-18,East,Clothing,Cotton T-Shirt,3,14.36,43.08
+ORD-1669,2024-12-18,East,Furniture,Bookshelf,7,82.05,574.35
+ORD-1670,2024-12-19,South,Clothing,Hoodie,5,33.03,165.15
+ORD-1671,2024-12-19,South,Electronics,Webcam HD,2,41.57,83.14
+ORD-1672,2024-12-19,North,Clothing,Hoodie,8,33.47,267.76
+ORD-1673,2024-12-20,West,Toys,Puzzle 1000pc,4,16.37,65.48
+ORD-1674,2024-12-20,East,Furniture,Standing Desk,2,232.68,465.36
+ORD-1675,2024-12-20,East,Toys,Building Blocks,1,23.85,23.85
+ORD-1676,2024-12-21,West,Electronics,USB-C Cable,4,10.21,40.84
+ORD-1677,2024-12-21,East,Clothing,Sneakers,1,60.67,60.67
+ORD-1678,2024-12-21,West,Electronics,Webcam HD,1,47.18,47.18
+ORD-1679,2024-12-22,South,Electronics,USB-C Cable,8,8.89,71.12
+ORD-1680,2024-12-22,South,Electronics,USB-C Cable,1,8.83,8.83
+ORD-1681,2024-12-22,East,Electronics,Webcam HD,4,46.28,185.12
+ORD-1682,2024-12-23,North,Grocery,Coffee Beans 1kg,5,20.0,100.0
+ORD-1683,2024-12-24,West,Electronics,USB-C Cable,4,10.11,40.44
+ORD-1684,2024-12-25,West,Electronics,USB-C Cable,6,8.93,53.58
+ORD-1685,2024-12-25,West,Electronics,Wireless Mouse,3,21.35,64.05
+ORD-1686,2024-12-26,West,Clothing,Hoodie,1,33.85,33.85
+ORD-1687,2024-12-26,South,Electronics,Webcam HD,6,41.99,251.94
+ORD-1688,2024-12-26,South,Furniture,Standing Desk,5,246.85,1234.25
+ORD-1689,2024-12-26,West,Electronics,Wireless Mouse,4,20.46,81.84
+ORD-1690,2024-12-27,East,Clothing,Sneakers,8,54.86,438.88
+ORD-1691,2024-12-27,South,Clothing,Cotton T-Shirt,3,14.8,44.4
+ORD-1692,2024-12-27,East,Grocery,Green Tea 100pc,1,12.08,12.08
+ORD-1693,2024-12-27,East,Clothing,Hoodie,8,33.64,269.12
+ORD-1694,2024-12-28,South,Furniture,Standing Desk,3,230.12,690.36
+ORD-1695,2024-12-28,West,Electronics,Wireless Mouse,5,18.58,92.9
+ORD-1696,2024-12-28,South,Clothing,Sneakers,6,61.52,369.12
+ORD-1697,2024-12-28,South,Electronics,Webcam HD,2,42.22,84.44
+ORD-1698,2024-12-28,South,Furniture,Standing Desk,1,259.52,259.52
+ORD-1699,2024-12-29,East,Furniture,Bookshelf,3,75.38,226.14
+ORD-1700,2024-12-29,North,Toys,Puzzle 1000pc,6,17.59,105.54
+ORD-1701,2024-12-29,South,Toys,Building Blocks,6,26.78,160.68
+ORD-1702,2024-12-29,West,Grocery,Coffee Beans 1kg,4,19.76,79.04
+ORD-1703,2024-12-29,North,Clothing,Sneakers,5,55.94,279.7
+ORD-1704,2024-12-30,North,Electronics,Wireless Mouse,4,20.32,81.28

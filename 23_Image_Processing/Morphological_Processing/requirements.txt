@@ -1,0 +1,5 @@
+numpy==2.5.2
+Pillow==12.3.0
+
+# Test dependency:
+pytest==9.1.1

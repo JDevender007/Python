@@ -1,0 +1,36 @@
+# Virtual Environment
+.venv/
+venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Tests
+.pytest_cache/
+
+# Demo artifacts - plaintext samples must never be committed
+data/
+
+# Secrets - never commit passwords, keys, or ciphertext you care about
+.env
+*.enc
+*.pem
+*.key
+pw.txt
+passwords.txt
+
+# Logs
+logs/*.log
+
+# VS Code
+.vscode/
+
+# JetBrains
+.idea/
+
+# OS Files
+Thumbs.db
+.DS_Store

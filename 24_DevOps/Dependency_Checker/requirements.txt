@@ -1,0 +1,7 @@
+# Standard library only (json, re, tomllib, importlib.metadata,
+# argparse, pathlib) - no third-party runtime dependencies.
+# Installed versions are read from local package metadata; nothing is
+# ever downloaded or resolved against an index.
+
+# Test dependency:
+pytest==9.1.1

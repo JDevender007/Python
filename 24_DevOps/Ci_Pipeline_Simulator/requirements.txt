@@ -1,0 +1,5 @@
+# Standard library only (json, tomllib, argparse, pathlib, dataclasses,
+# itertools) - no third-party runtime dependencies.
+
+# Test dependency:
+pytest==9.1.1

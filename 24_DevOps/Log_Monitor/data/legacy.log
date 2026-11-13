@@ -1,0 +1,20 @@
+2025-03-10 09:30:00 INFO [payment-adapter] authorized card token
+2025-03-10 09:30:17 INFO [cache] segment loaded
+2025-03-10 09:30:34 INFO [payment-adapter] captured payment
+2025-03-10 09:30:51 INFO [cache] segment stored
+2025-03-10 09:31:08 INFO [payment-adapter] refunded payment
+2025-03-10 09:31:25 INFO [cache] cold start complete
+2025-03-10 09:31:42 INFO [payment-adapter] token vault synced
+2025-03-10 09:31:59 INFO [cache] segment loaded
+2025-03-10 09:32:16 INFO [payment-adapter] authorized card token
+2025-03-10 09:32:33 INFO [cache] segment stored
+2025-03-10 09:32:50 WARNING [payment-adapter] upstream slow: 3200ms
+2025-03-10 09:33:07 INFO [cache] cold start complete
+2025-03-10 09:33:24 ERROR [payment-adapter] timeout talking to upstream
+2025-03-10 09:33:41 INFO [cache] segment loaded
+2025-03-10 09:33:58 ERROR [payment-adapter] timeout talking to upstream
+2025-03-10 09:34:15 INFO [cache] segment stored
+2025-03-10 09:34:32 ERROR [payment-adapter] timeout talking to upstream
+2025-03-10 09:34:49 WARNING [cache] evicted 128 keys under pressure
+2025-03-10 09:35:06 CRITICAL [payment-adapter] timeout talking to upstream
+2025-03-10 09:35:23 ERROR [cache] redis connection reset

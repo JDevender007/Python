@@ -1,0 +1,17 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.tox/
+ venv/
+ .venv/
+ env/
+ .env/
+
+# Media files (don't bundle copyrighted music)
+data/
+screenshots/real/
+
+# System
+.DS_Store

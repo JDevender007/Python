@@ -1,0 +1,4 @@
+# Standard library only (hashlib, random, logging, argparse, json)
+
+# Test dependency:
+pytest==9.1.1

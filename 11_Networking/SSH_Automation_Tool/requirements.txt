@@ -1,0 +1,4 @@
+paramiko==5.1.0
+
+# Test dependency:
+pytest==9.1.1

@@ -1,0 +1,5 @@
+# Standard library only (json, argparse, dataclasses, pathlib, logging,
+# contextlib) - no third-party runtime dependencies.
+
+# Test dependency:
+pytest==9.1.1

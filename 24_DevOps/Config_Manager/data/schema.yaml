@@ -1,0 +1,38 @@
+# Schema for every configuration key: type, required, bounds, choices.
+# Types: str | int | number | bool
+app_name:
+  type: str
+  required: true
+port:
+  type: int
+  required: true
+  min: 1
+  max: 65535
+debug:
+  type: bool
+  required: true
+log_level:
+  type: str
+  required: true
+  choices: [DEBUG, INFO, WARNING, ERROR, CRITICAL]
+timeout_seconds:
+  type: number
+  required: true
+  min: 0.1
+  max: 60.0
+retries:
+  type: int
+  required: true
+  min: 0
+  max: 10
+db.host:
+  type: str
+  required: true
+db.port:
+  type: int
+  required: true
+  min: 1
+  max: 65535
+db.name:
+  type: str
+  required: true

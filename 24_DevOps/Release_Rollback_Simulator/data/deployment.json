@@ -1,0 +1,22 @@
+{
+  "service": "checkout-api",
+  "strategy": "canary",
+  "gate": {
+    "max_error_rate": 0.02,
+    "max_latency_ms": 350,
+    "max_saturation": 0.85
+  },
+  "slo": {
+    "target": 0.999,
+    "window_minutes": 60,
+    "requests_per_minute": 6000,
+    "soak_minutes": 5
+  },
+  "releases": [
+    { "version": "1.4.0",     "error_rate": 0.0008, "latency_ms": 205, "saturation": 0.54 },
+    { "version": "1.5.0",     "error_rate": 0.0035, "latency_ms": 238, "saturation": 0.61 },
+    { "version": "1.6.0-rc1", "error_rate": 0.081,  "latency_ms": 296, "saturation": 0.74 },
+    { "version": "1.6.0-rc2", "error_rate": 0.004,  "latency_ms": 520, "saturation": 0.66 },
+    { "version": "1.6.0",     "error_rate": 0.0009, "latency_ms": 244, "saturation": 0.64 }
+  ]
+}

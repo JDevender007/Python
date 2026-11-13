@@ -1,0 +1,20 @@
+{
+  "name": "room_survey",
+  "seed": 3,
+  "dt": 0.1,
+  "initial_state": [2.0, 2.0, 0.0],
+  "segments": [
+    {"v": 0.4, "w": 0.0, "steps": 30},
+    {"v": 0.4, "w": 0.5, "steps": 30},
+    {"v": 0.35, "w": -0.2, "steps": 40},
+    {"v": 0.4, "w": 0.45, "steps": 40},
+    {"v": 0.3, "w": -0.1, "steps": 30},
+    {"v": 0.35, "w": 0.0, "steps": 30}
+  ],
+  "odom_noise": {"distance": 0.12, "rotation": 0.04},
+  "meas_noise": {"range": 0.1, "bearing": 0.03},
+  "gate": 5.991,
+  "range_limit": 6.0,
+  "outlier_every": 29,
+  "outlier_bias": 2.5
+}
