@@ -1,0 +1,100 @@
+{
+  "name": "Ledger Hotel",
+  "sequence": 5,
+  "rooms": [
+    {
+      "number": "101",
+      "kind": "Single",
+      "capacity": 1,
+      "rate": {"kind": "flat", "cents": 8500}
+    },
+    {
+      "number": "102",
+      "kind": "Double",
+      "capacity": 2,
+      "rate": {"kind": "weekend", "weekday_cents": 11000, "weekend_cents": 14000}
+    },
+    {
+      "number": "103",
+      "kind": "Double",
+      "capacity": 2,
+      "rate": {"kind": "weekend", "weekday_cents": 12000, "weekend_cents": 15000}
+    },
+    {
+      "number": "201",
+      "kind": "Suite",
+      "capacity": 4,
+      "rate": {
+        "kind": "season",
+        "base_cents": 20000,
+        "peak_start": "2026-06-01",
+        "peak_end": "2026-09-01",
+        "peak_basis_points": 2500
+      }
+    },
+    {
+      "number": "202",
+      "kind": "Single",
+      "capacity": 1,
+      "rate": {"kind": "flat", "cents": 7500}
+    },
+    {
+      "number": "203",
+      "kind": "Double",
+      "capacity": 2,
+      "rate": {"kind": "flat", "cents": 13500}
+    }
+  ],
+  "bookings": [
+    {
+      "reference": "BK-0001",
+      "room": "101",
+      "guest": {"name": "Asha Rao", "phone": "9876543210", "email": "asha@example.com"},
+      "check_in": "2026-03-02",
+      "check_out": "2026-03-05",
+      "status": "checked_in",
+      "notes": "",
+      "history": [["confirmed", "2026-03-01"], ["checked_in", "2026-03-02"]]
+    },
+    {
+      "reference": "BK-0002",
+      "room": "102",
+      "guest": {"name": "Bilal Khan", "phone": "9876543211", "email": "bilal@example.com"},
+      "check_in": "2026-03-03",
+      "check_out": "2026-03-06",
+      "status": "confirmed",
+      "notes": "",
+      "history": [["confirmed", "2026-03-01"]]
+    },
+    {
+      "reference": "BK-0003",
+      "room": "103",
+      "guest": {"name": "Chen Wei", "phone": "9876543212", "email": "chen@example.com"},
+      "check_in": "2026-03-05",
+      "check_out": "2026-03-08",
+      "status": "confirmed",
+      "notes": "",
+      "history": [["confirmed", "2026-03-02"]]
+    },
+    {
+      "reference": "BK-0004",
+      "room": "101",
+      "guest": {"name": "Diya Menon", "phone": "9876543213", "email": "diya@example.com"},
+      "check_in": "2026-03-05",
+      "check_out": "2026-03-07",
+      "status": "confirmed",
+      "notes": "arrives the morning BK-0001 leaves",
+      "history": [["confirmed", "2026-03-02"]]
+    },
+    {
+      "reference": "BK-0005",
+      "room": "202",
+      "guest": {"name": "Eli Novak", "phone": "9876543214", "email": "eli@example.com"},
+      "check_in": "2026-03-01",
+      "check_out": "2026-03-03",
+      "status": "cancelled",
+      "notes": "",
+      "history": [["confirmed", "2026-02-20"], ["cancelled", "2026-02-25"]]
+    }
+  ]
+}

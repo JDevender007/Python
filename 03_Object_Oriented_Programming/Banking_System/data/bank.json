@@ -1,0 +1,55 @@
+{
+  "name": "Ledger Bank",
+  "sequence": 4,
+  "accounts": [
+    {
+      "number": "AC-0001",
+      "kind": "savings",
+      "holder": "Asha Rao",
+      "opened": "2026-01-05",
+      "opening_cents": 120000,
+      "ledger": [
+        {"kind": "deposit", "cents": 30000, "when": "2026-02-01", "memo": "salary"},
+        {"kind": "withdrawal", "cents": -20000, "when": "2026-02-10", "memo": "rent"},
+        {"kind": "transfer_out", "cents": -25000, "when": "2026-02-15", "memo": "to Chen Wei Traders", "reference": "TR-0004-001"}
+      ],
+      "minimum_cents": 50000,
+      "monthly_withdrawal_limit": 2
+    },
+    {
+      "number": "AC-0002",
+      "kind": "savings",
+      "holder": "Bilal Khan",
+      "opened": "2026-01-12",
+      "opening_cents": 75000,
+      "ledger": [
+        {"kind": "deposit", "cents": 5000, "when": "2026-02-03", "memo": "cash"}
+      ],
+      "minimum_cents": 25000,
+      "monthly_withdrawal_limit": 3
+    },
+    {
+      "number": "AC-0003",
+      "kind": "current",
+      "holder": "Chen Wei Traders",
+      "opened": "2026-01-20",
+      "opening_cents": 10000,
+      "ledger": [
+        {"kind": "transfer_in", "cents": 25000, "when": "2026-02-15", "memo": "from Asha Rao", "reference": "TR-0004-001"}
+      ],
+      "overdraft_cents": 50000,
+      "fee_cents": 2500
+    },
+    {
+      "number": "AC-0004",
+      "kind": "savings",
+      "holder": "Diya Menon",
+      "opened": "2026-02-02",
+      "opening_cents": 0,
+      "ledger": [],
+      "minimum_cents": 0,
+      "monthly_withdrawal_limit": 1,
+      "closed_on": "2026-02-28"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "name": "Northgate Institute",
+  "scale": "ten-point",
+  "students": [
+    {
+      "roll": "CE-2023-019",
+      "name": "Gita Sharma",
+      "department": "Civil",
+      "year": 3,
+      "email": "gita.sharma@example.edu",
+      "phone": "9876543215",
+      "courses": [
+        {"code": "CE301", "title": "Structural Analysis", "credits": 4, "grade": "A+"},
+        {"code": "CE302", "title": "Surveying", "credits": 3, "grade": "A"},
+        {"code": "CE303", "title": "Geotechnical Engineering", "credits": 3, "grade": "B+"},
+        {"code": "HS102", "title": "Ethics", "credits": 2, "grade": "A"}
+      ]
+    },
+    {
+      "roll": "CS-2023-007",
+      "name": "Bilal Khan",
+      "department": "Computer Science",
+      "year": 3,
+      "email": "bilal.khan@example.edu",
+      "phone": "9876543211",
+      "courses": [
+        {"code": "CS301", "title": "Algorithms", "credits": 4, "grade": "B+"},
+        {"code": "CS302", "title": "Databases", "credits": 3, "grade": "A"},
+        {"code": "CS303", "title": "Operating Systems", "credits": 4, "grade": "B"},
+        {"code": "MA201", "title": "Discrete Maths", "credits": 3, "grade": "C+"}
+      ]
+    },
+    {
+      "roll": "CS-2023-014",
+      "name": "Asha Rao",
+      "department": "Computer Science",
+      "year": 3,
+      "email": "asha.rao@example.edu",
+      "phone": "9876543210",
+      "courses": [
+        {"code": "CS301", "title": "Algorithms", "credits": 4, "grade": "A"},
+        {"code": "CS302", "title": "Databases", "credits": 3, "grade": "A+"},
+        {"code": "CS303", "title": "Operating Systems", "credits": 4, "grade": "B+"},
+        {"code": "MA201", "title": "Discrete Maths", "credits": 3, "grade": "A"}
+      ]
+    },
+    {
+      "roll": "CS-2024-055",
+      "name": "Farhan Ali",
+      "department": "Computer Science",
+      "year": 2,
+      "email": "farhan.ali@example.edu",
+      "phone": "9876543214",
+      "courses": [
+        {"code": "CS201", "title": "Data Structures", "credits": 4, "grade": "A"},
+        {"code": "CS202", "title": "Digital Logic", "credits": 3, "grade": "B+"},
+        {"code": "HS101", "title": "Communication", "credits": 2, "grade": "A+"},
+        {"code": "MA101", "title": "Calculus", "credits": 4, "grade": "B"}
+      ]
+    },
+    {
+      "roll": "EC-2022-031",
+      "name": "Chen Wei",
+      "department": "Electronics",
+      "year": 4,
+      "email": "chen.wei@example.edu",
+      "phone": "9876543212",
+      "courses": [
+        {"code": "EC401", "title": "Signals and Systems", "credits": 4, "grade": "A"},
+        {"code": "EC402", "title": "Control Systems", "credits": 3, "grade": "A+"},
+        {"code": "EC403", "title": "VLSI Design", "credits": 4, "grade": "A"},
+        {"code": "MA301", "title": "Probability", "credits": 3, "grade": "B+"}
+      ]
+    },
+    {
+      "roll": "ME-2024-102",
+      "name": "Divya Menon",
+      "department": "Mechanical",
+      "year": 2,
+      "email": "divya.menon@example.edu",
+      "phone": "9876543213",
+      "courses": [
+        {"code": "MA101", "title": "Calculus", "credits": 4, "grade": "C+"},
+        {"code": "ME201", "title": "Thermodynamics", "credits": 4, "grade": "B"},
+        {"code": "ME202", "title": "Fluid Mechanics", "credits": 3, "grade": "B+"},
+        {"code": "ME203", "title": "Machine Drawing", "credits": 2, "grade": "A"}
+      ]
+    }
+  ]
+}

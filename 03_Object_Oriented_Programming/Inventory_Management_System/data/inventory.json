@@ -1,0 +1,37 @@
+{
+  "name": "Main Store",
+  "lines": [
+    {
+      "item": {"sku": "B-300", "name": "Bearing 608", "category": "Motion", "price_cents": 2599, "supplier": "Rotex"},
+      "quantity": 18
+    },
+    {
+      "item": {"sku": "B-301", "name": "Bearing 6200", "category": "Motion", "price_cents": 3299, "supplier": "Rotex"},
+      "quantity": 6
+    },
+    {
+      "item": {"sku": "G-200", "name": "Gasket 40mm", "category": "Seals", "price_cents": 349, "supplier": "Northwind"},
+      "quantity": 120
+    },
+    {
+      "item": {"sku": "G-201", "name": "Gasket 60mm", "category": "Seals", "price_cents": 449, "supplier": "Northwind"},
+      "quantity": 0
+    },
+    {
+      "item": {"sku": "M-400", "name": "Motor 12V", "category": "Motion", "price_cents": 45900, "supplier": "Rotex"},
+      "quantity": 3
+    },
+    {
+      "item": {"sku": "S-500", "name": "Sensor kit", "category": "Electronics", "price_cents": 25950, "supplier": "Vellum"},
+      "quantity": 12
+    },
+    {
+      "item": {"sku": "W-100", "name": "Widget steel", "category": "Hardware", "price_cents": 1299, "supplier": "Acme"},
+      "quantity": 40
+    },
+    {
+      "item": {"sku": "W-101", "name": "Widget brass", "category": "Hardware", "price_cents": 1899, "supplier": "Acme"},
+      "quantity": 4
+    }
+  ]
+}
