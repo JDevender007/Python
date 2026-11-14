@@ -1,0 +1,13 @@
+# The menu: one dish per line, price in dollars and cents.
+# '#' starts a comment.
+name,price
+Garlic Bread,4.50
+Tomato Soup,6.25
+Caesar Salad,9.75
+Margherita Pizza,12.50
+Spaghetti Carbonara,14.00
+Grilled Salmon,19.95
+Pad Thai,13.40
+Beef Burger,15.25
+Tiramisu,7.80
+Lemonade,3.25

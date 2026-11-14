@@ -1,0 +1,89 @@
+{
+ "books": [
+  {
+   "author": "Brian W. Kernighan",
+   "copies_available": 1,
+   "copies_total": 1,
+   "isbn": "978-0131103627",
+   "price_cents": 6500,
+   "title": "The C Programming Language"
+  },
+  {
+   "author": "Robert C. Martin",
+   "copies_available": 2,
+   "copies_total": 2,
+   "isbn": "978-0132350884",
+   "price_cents": 4250,
+   "title": "Clean Code"
+  },
+  {
+   "author": "Martin Fowler",
+   "copies_available": 0,
+   "copies_total": 1,
+   "isbn": "978-0134757599",
+   "price_cents": 4720,
+   "title": "Refactoring"
+  },
+  {
+   "author": "Andrew Hunt",
+   "copies_available": 1,
+   "copies_total": 2,
+   "isbn": "978-0201616224",
+   "price_cents": 4999,
+   "title": "The Pragmatic Programmer"
+  },
+  {
+   "author": "Thomas H. Cormen",
+   "copies_available": 0,
+   "copies_total": 1,
+   "isbn": "978-0262033848",
+   "price_cents": 8995,
+   "title": "Introduction to Algorithms"
+  },
+  {
+   "author": "Eric Evans",
+   "copies_available": 1,
+   "copies_total": 1,
+   "isbn": "978-0321125217",
+   "price_cents": 5475,
+   "title": "Domain-Driven Design"
+  }
+ ],
+ "loans": [
+  {
+   "borrowed_on": "2024-03-20",
+   "due_on": "2024-04-03",
+   "isbn": "978-0201616224",
+   "member": "asha",
+   "returned_on": null
+  },
+  {
+   "borrowed_on": "2024-04-01",
+   "due_on": "2024-04-15",
+   "isbn": "978-0262033848",
+   "member": "ravi",
+   "returned_on": null
+  },
+  {
+   "borrowed_on": "2024-03-01",
+   "due_on": "2024-03-15",
+   "isbn": "978-0134757599",
+   "member": "mei",
+   "returned_on": null
+  },
+  {
+   "borrowed_on": "2024-03-05",
+   "due_on": "2024-03-19",
+   "isbn": "978-0132350884",
+   "member": "asha",
+   "returned_on": "2024-03-18"
+  },
+  {
+   "borrowed_on": "2024-02-01",
+   "due_on": "2024-02-15",
+   "isbn": "978-0132350884",
+   "member": "leo",
+   "returned_on": "2024-03-10"
+  }
+ ]
+}

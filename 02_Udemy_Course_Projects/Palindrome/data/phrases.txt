@@ -1,0 +1,23 @@
+# One phrase per line. '#' starts a comment.
+# Ten palindromes once punctuation and case are removed ...
+Was it a car or a cat I saw?
+Red rum, sir, is murder
+No lemon, no melon
+Never odd or even
+A Santa at NASA
+Step on no pets
+Madam, I'm Adam
+Yo, banana boy!
+Taco cat
+Racecar
+# ... and ten that only look like one, or do not try at all
+Racecars
+Python
+Almost a palindrome
+The quick brown fox
+Level up
+Kayak club
+Refer to the manual
+Civic duty
+Noon is close
+Stats for 2024

@@ -1,0 +1,21 @@
+# Bundled card numbers. Every row is a published test number or a deliberate
+# corruption of one; none belong to a real account.
+# Columns: number, brand, luhn (yes/no), note
+number,brand,luhn,note
+4111111111111111,Visa,yes,classic Visa test number
+4111 1111 1111 1111,Visa,yes,spaces are ignored
+4111-1111-1111-1111,Visa,yes,hyphens are ignored
+5555555555554444,Mastercard,yes,16-digit Mastercard
+2221000000000009,Mastercard,yes,first of the 2221-2720 range
+378282246310005,Amex,yes,15 digits printed 4-6-5
+6011111111111117,Discover,yes,16-digit Discover
+30569309025904,Diners,yes,14 digits printed 4-6-4
+3530111333300000,JCB,yes,16-digit JCB
+4111111111111112,Visa,no,one digit changed so Luhn fails
+79927398713,Unknown,yes,Luhn-valid but no brand and no allowed length
+123,Unknown,no,too short to mask - the legacy leak case
+37828224631000,Amex,no,14-digit Amex missing its check digit
+4111111111111,Visa,no,Visa 13 is an allowed length but Luhn fails
+6011111111111111111,Discover,no,19-digit Discover fails Luhn
+555555555555444,Mastercard,no,15 digits is not a Mastercard length
+3782822463100050,Amex,no,16 digits is not an Amex length

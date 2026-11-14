@@ -1,0 +1,8 @@
+# A bundled journal: six entries in date order, one JSON object per line.
+# Blank lines and comments are skipped by load().
+{"body": "Set up the workbench and labelled the drawers.", "date": "2024-03-04", "id": 1, "tags": ["setup", "workshop"], "title": "First light"}
+{"body": "Stayed in, read the manual, sketched a shelf.", "date": "2024-03-06", "id": 2, "tags": ["reading"], "title": "Rain all day"}
+{"body": "Cut, drilled, sanded. Two shelves fit.", "date": "2024-03-09", "id": 3, "tags": ["build", "workshop"], "title": "Shelf done"}
+{"body": "The second shelf was two millimetres short. Measured again, cut once more.", "date": "2024-03-12", "id": 4, "tags": ["workshop"], "title": "Measure twice"}
+{"body": "PVA grabs in ten minutes, polyurethane needs clamping overnight.", "date": "2024-03-15", "id": 5, "tags": ["materials"], "title": "Notes on glue"}
+{"body": "Swept the floor, sorted the offcuts, threw out the sawdust.", "date": "2024-03-21", "id": 6, "tags": ["tidy", "workshop"], "title": "Spring clean"}

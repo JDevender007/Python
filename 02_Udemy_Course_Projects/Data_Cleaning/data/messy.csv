@@ -1,0 +1,10 @@
+# Deliberately messy: padded cells, a trailing comma, a duplicate row,
+# leading zeros, a bad date, a blank city and a word where a boolean belongs.
+# Columns: id, name, city, amount, joined, active, note
+id,name, city ,amount,joined,active,note
+1,  Alice ,Mumbai,42,2024-01-31,yes, first order 
+2,Bob,Delhi,3.5,2024-02-15,no,
+3,Carol,  Pune ,007,2023-11-02,yes, keeps leading zeros 
+4,  dave ,Delhi,100,2024-03-07,YES,duplicate of next
+4,  dave ,Delhi,100,2024-03-07,YES,duplicate of next
+5,Eve,,18,not-a-date,maybe,missing city

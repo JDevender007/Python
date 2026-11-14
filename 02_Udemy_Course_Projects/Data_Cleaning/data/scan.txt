@@ -1,0 +1,7 @@
+# Raw scans, one per line. Punctuation, spacing and digits are all wrong.
+# Blank lines and comments are skipped by load_lines().
+These+notes#reveal9Newton seeking-out an{underlying structure to/the\pyramid}
+   Leading and trailing spaces   with   runs   of   them
+Dup, dup, DUP -- same word in three cases
+amount=42; rate=3.5; date=2024-01-31; flag=yes
+<punctuation only: !!!###$$$%%%>

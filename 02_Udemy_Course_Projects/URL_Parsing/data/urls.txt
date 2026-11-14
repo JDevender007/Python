@@ -1,0 +1,23 @@
+# One URL per line. '#' starts a comment.
+# Shapes: a plain host, a bare host, a port, userinfo, an IPv6 literal,
+# a file path, a repeated query key, percent escapes and mixed case.
+https://www.kaggle.com/datasets
+https://example.com
+http://localhost:8000/
+https://user:pass@example.com:8443/path?q=1#frag
+https://[2001:db8::1]:8080/v1/items
+http://[::1]/
+ftp://files.example.org/pub/file.txt
+https://example.com/search?q=python+urls&page=2
+https://example.com/search?q=a%20b&q=c%26d
+https://example.com:443/secure
+http://example.com:80/plain
+https://example.com/path/with/trailing/
+https://example.com//double//slash
+file:///C:/temp/report.txt
+https://Example.COM/MixedCase
+https://example.com/?empty=
+https://example.com/page?flag&k=v
+https://sub.domain.example.co.uk/a/b?x=1&y=2#top
+http://192.168.0.1:8080/status
+https://example.com/path%20with%20spaces?q=na%C3%AFve

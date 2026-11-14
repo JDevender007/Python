@@ -1,0 +1,43 @@
+# Common passwords, stored lowercase with no punctuation.
+# '#' starts a comment. The checker also tries the de-leeted form of the
+# candidate, so 'P@ssw0rd!' is matched against 'password' below.
+password
+password1
+password123
+123456
+12345678
+123456789
+12345
+qwerty
+qwerty123
+qwertyuiop
+abc123
+letmein
+iloveyou
+admin
+admin123
+welcome
+monkey
+dragon
+master
+sunshine
+princess
+football
+baseball
+passw0rd
+trustno1
+shadow
+superman
+michael
+hunter2
+s3cr3t
+starwars
+whatever
+freedom
+zaq12wsx
+000000
+111111
+121212
+654321
+666666
+changeme
