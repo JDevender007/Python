@@ -1,0 +1,10 @@
+; every article on the page
+; id<TAB>title<TAB>timestamp, exactly as the page printed it
+iso	Budget passes	2026-11-14T09:30:00Z
+prose	Market opens higher	13 Nov 2026 18:05 +02:00
+hours	Ferry strike ends	3 hours ago
+naive	Untimed update	2026-11-15 10:00:00
+empty	Header only	
+iso2	Late result	2026-11-15T11:00:00+00:00
+yesterday	Yesterday's rally	yesterday
+old	Archive piece	2019-03-01T00:00:00Z

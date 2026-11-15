@@ -2,12 +2,10 @@
 
 # 🎬 IMDb Movie Scraper
 
-### A Python desktop application for scraping movie data from IMDb Top 250 chart with detailed information, ratings, and export capabilities.
+### The legacy scraper deleted the units, so `2h 15min` became **215 minutes** and `1h 47min` became **147**. Worse: the same film printed two ways — `2h 15min` and `135 min` — came out seventy minutes apart.
 
-![Python](https://img.shields.io/badge/Python-3.13-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Requests](https://img.shields.io/badge/Requests-HTTP-blue?style=for-the-badge)
-![BeautifulSoup](https://img.shields.io/badge/BeautifulSoup-HTML%20Parser-success?style=for-the-badge)
-![Tkinter](https://img.shields.io/badge/Tkinter-GUI-orange?style=for-the-badge)
+![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![Offline](https://img.shields.io/badge/Network-None-lightgrey?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
 
 </div>
@@ -16,86 +14,96 @@
 
 # 📖 About
 
-IMDb Movie Scraper is a Python desktop application designed to collect movie information from the IMDb Top 250 chart.
+```python
+def clean_runtime(value):
+    cleaned = re.sub(r"[^\d]", "", value)
+    try:
+        return int(cleaned)
+    except ValueError:
+        return 0
+```
 
-The application fetches the IMDb Top 250 chart, extracts movie titles, years, ratings, and vote counts, then optionally scrapes detailed information for each movie including genres, duration, director, writers, cast, plot description, certificates, release dates, countries, languages, budget, gross revenue, and poster images. Data can be exported to CSV or JSON format.
+**1 → Deleting the units concatenates the fields.** `"2h 15min"` loses the `h` and the
+`min`, and `"215"` is what is left. The units are not decoration — they are the only
+thing that says what the digits mean.
 
-The project follows a modular architecture with separate components for scraping, parsing, tracking, exporting, configuration, logging, and the graphical interface.
+**2 → Two spellings of one length became two numbers.** The same runtime is printed
+`"2h 15min"` on one page and `"135 min"` on another:
+
+```text
+Long One prints '2h 15min' -> 135 minutes
+Long Two prints '135 min'  -> 135 minutes
+the same runtime: True
+the legacy reader says 215 and 135, so it thinks they differ by 80 minutes
+```
+
+**3 → A colon is not a runtime.** `"2:15"` could be two hours fifteen or two minutes
+fifteen. The legacy reader answers `215` for both readings; here the shape is refused
+with the sentence that says why, instead of being guessed at.
+
+**4 → Zero is not "unknown".** Every failure path returns `0`, so a film whose runtime
+the page did not print becomes a film that runs for no time at all — and a marathon
+planner then schedules it without noticing.
+
+**5 → A series is a runtime with a count.** Twenty-four episodes of forty-seven minutes
+is 1,128 minutes, and the legacy reader can only ever hold one of those two numbers:
+
+```text
+24 episodes of 47 minutes is 1,128 minutes
+the legacy reader can only hold one of those two numbers: 24 or 47
+```
+
+| | legacy | here |
+|---|---|---|
+| `135 min` | `135` | `135` minutes |
+| `2h 15min` | `215` | `135` minutes |
+| `2 hours 15 minutes` | `215` | `135` minutes |
+| `1h 47min` | `147` | `107` minutes |
+| `2h` | `2` | `120` minutes |
+| `2h 75min` | `275` | refused: a minute field is below 60 |
+| `2:15` | `215` | refused: a clock form, not a runtime |
+| `2h 15min 30s` | `21530` | refused: a runtime is printed in minutes |
+| a runtime the page did not print | `0` | `None`, with the reason |
+
+The demonstration is offline: one bundled page, one bundled budget, no network.
+Standard library only: no `requests`, no `beautifulsoup`.
 
 ---
 
 # ✨ Features
 
-- Fetch IMDb Top 250 chart
-- Extract movie titles, years, ratings, votes
-- Scrape detailed movie information:
-  - Genres
-  - Duration (runtime)
-  - Director
-  - Writers
-  - Starring actors
-  - Plot description
-  - Age certificate
-  - Release date
-  - Production countries
-  - Languages
-  - Budget
-  - Gross worldwide revenue
-  - Poster image URL
-- Display results in sortable table
-- View detailed movie information on double-click
-- Export to CSV
-- Export to JSON
-- Request timeout handling
-- HTTP error handling
-- Rate limiting (polite scraping)
-- Activity logging
-- Progress indicator
-- Fullscreen mode
-- Keyboard shortcuts
-- Modular Python architecture
+- `Duration` — whole minutes in **one unit**, validated, ordered, addable,
+  multiplied by an episode count, and printed as `2h 15min` / `45min` / `2h`
+- `parse_duration` — `135`, `135 min`, `2h 15min`, `2h15min`, `2 hours 15 minutes`,
+  `2h`, `45min`, and a named refusal for the shapes that are ambiguous
+- `legacy_minutes` — the legacy reader, executable, so the demo can refute it
+- `Film` — title, runtime or `None`, year, and the reason a runtime is unknown
+- `Series` — a per-episode runtime and a count, and `total()` as their product
+- `Catalogue` — films and series apart, `known_runtimes()`, `unknown()`
+- `Marathon` / `plan` — a budget in minutes, whole films in page order, and the
+  films that did not fit
+- an `Element` tree with class and tag lookup, so the page is read without a parser
+- `audit` — nine named checks with a guard, so a broken runtime is a `FAIL`
+- CLI: `--page`, `--runtime`, `--budget`, `--audit`, `--json`, `--quiet`, `--demo`
+- 175 passing pytest tests
 
 ---
 
-# 🛠 Technologies Used
-
-- Python 3.13
-- Tkinter (GUI)
-- Requests (HTTP)
-- BeautifulSoup4 (HTML Parsing)
-- lxml (Parser backend)
-- CSV / JSON (Export)
-- Logging
-- Threading (Non-blocking GUI)
-
----
-
-# 📂 Project Structure
+# 📂 Folder Structure
 
 ```text
 IMDb_Movie_Scraper/
 │
 ├── src/
-│   ├── __init__.py
-│   ├── app.py              # Main application entry point
-│   ├── config.py           # Configuration settings
-│   ├── scraper.py          # HTTP scraping logic
-│   ├── parser.py           # HTML parsing logic
-│   ├── tracker.py          # Scraping workflow coordination
-│   ├── exporter.py         # Data export (CSV/JSON)
-│   ├── logger.py           # Logging setup
-│   ├── utils.py            # Utility functions
-│   ├── colors.py           # Color theme
-│   └── controls.py         # Custom Tkinter widgets
+│   ├── main.py       # CLI: the page, one runtime, a budget, the audit
+│   └── durations.py  # runtimes, parsing, series, the marathon, the audit
 │
 ├── tests/
-│   ├── conftest.py
-│   ├── test_utils.py
-│   ├── test_parser.py
-│   └── test_exporter.py
+│   └── test_durations.py
 │
-├── logs/
-├── exports/
+├── data/
+│   └── titles.html   # four films (2h 15min, 135 min, 1h 47min, none) and a series
+│
 ├── README.md
 ├── requirements.txt
 └── .gitignore
@@ -103,23 +111,17 @@ IMDb_Movie_Scraper/
 
 ---
 
-# ⚙️ Environment Setup
-
-Create a virtual environment:
+# 🛠️ Installation
 
 ```bash
+git clone https://github.com/JDevender007/Python.git
+
+cd 07_Web_Scraping/IMDb_Movie_Scraper
+
 python -m venv .venv
-```
 
-Activate the environment on Windows:
-
-```bash
 .venv\Scripts\activate
-```
 
-Install dependencies:
-
-```bash
 pip install -r requirements.txt
 ```
 
@@ -127,186 +129,125 @@ pip install -r requirements.txt
 
 # ▶️ Run
 
-Run the application from the project root:
-
 ```bash
-python -m src.app
+# Offline demo: 2h 15min read as 135, the two spellings, the series, the marathon
+python src/main.py --demo
+
+# Read the bundled page and plan the bundled marathon
+python src/main.py
+
+# Read one runtime, in the one unit
+python src/main.py --runtime "2h 15min"
+
+# Plan a marathon with your own budget
+python src/main.py --budget "2h"
+
+# Every check
+python src/main.py --audit
+
+# The whole reading as JSON
+python src/main.py --json reading.json
+
+# Your own page
+python src/main.py --page .\titles.html
 ```
+
+**Exit codes:** `0` = the command ran · `1` = an audit check failed · `2` = a runtime
+that cannot be read, a missing file, or an audit requested for a page with no series.
 
 ---
 
-# 🌐 Target Website
-
-The application is configured for:
+# ⚙️ How It Works
 
 ```text
-https://www.imdb.com/chart/top/
+parse_duration(text)
+  ├── a colon form is refused: it does not say which unit is which
+  ├── seconds are refused: a runtime is printed in hours and minutes
+  ├── a bare number is minutes (that is what the page prints)
+  ├── hours and minutes are separate fields, ADDED not concatenated
+  ├── a minute field beside an hour is below 60
+  └── anything left over is refused, by name
+
+plan(films, budget)
+  ├── a film with no runtime is skipped: it cannot be known to fit
+  ├── a film is taken while spent + runtime <= budget
+  └── the order is the page order, so the result is reproducible
 ```
 
-You can enter a different IMDb chart URL through the application.
+Details worth knowing:
 
-**Note:** IMDb may block automated requests. The application includes rate limiting and proper headers, but extraction results depend on IMDb's current HTML structure and anti-bot measures.
-
----
-
-# 📊 Data Fields
-
-## Chart Data (Basic)
-- Rank
-- Title
-- Year
-- Rating (/10)
-- Votes
-- IMDb URL
-
-## Detailed Data
-- Genres
-- Duration (minutes)
-- Director
-- Writers
-- Stars (top cast)
-- Description/Plot
-- Certificate (MPAA/BBFC)
-- Release Date
-- Production Countries
-- Languages
-- Budget
-- Gross Worldwide
-- Poster Image URL
+- **One unit means no ambiguity.** Every runtime is stored in minutes; the printing
+  splits hours and minutes by integer division, so `2h 15min` and `135 min` are the
+  same `Duration` and compare equal by definition.
+- **The conversion is arithmetic, not concatenation.** `2 * 60 + 15`, and the
+  expression is the whole lesson.
+- **The minute field has a range.** `2h 75min` is refused rather than silently read as
+  195 or 275: the page writes `3h 15min`, and so should anything that prints one.
+- **A colon is ambiguous, so it is not parsed.** One form (`2:15`), two readings
+  (135 or 2.25 hours), and no evidence on the page to choose between them.
+- **An unknown runtime is `None`, and the planner skips it.** Assuming zero schedules
+  a film nobody can finish.
+- **A budget never goes negative.** `remaining()` is `None` when the plan does not
+  fit, because "minus fifteen minutes left" is not a thing a budget has.
+- **A broken runtime is a `FAIL`.** Every audit check runs behind a guard.
 
 ---
 
-# 📤 Export
+# 🧪 Technologies
 
-### CSV
-Exports all fields with list values joined by semicolons.
+- Python 3 standard library: `re`, `dataclasses`, `html.parser`, `pathlib`, `json`,
+  `argparse`, `contextlib`
+- pytest 9.1.1
 
-### JSON
-Exports structured data with metadata:
-```json
-{
-  "exported_at": "2024-01-15T10:30:00",
-  "total_movies": 250,
-  "movies": [...]
-}
-```
+No `requests`, no `beautifulsoup4`, no network.
 
 ---
 
-# ⌨️ Keyboard Shortcuts
+# 📚 Concepts Covered
 
-| Shortcut | Action |
-|----------|--------|
-| Ctrl + S | Scrape Chart |
-| Ctrl + D | Scrape Details |
-| Ctrl + E | Export Data |
-| F11 | Toggle Fullscreen |
-| Escape | Exit Fullscreen |
-| Double-click / Enter | View Movie Details |
+- A quantity stored in one unit, converted by arithmetic
+- Units as meaning: why an hours field and a minutes field cannot be concatenated
+- Refusing an ambiguous form (`2:15`) instead of picking a reading
+- Range rules for a field (`a minute field is below 60`)
+- Unknown as distinct from zero, and the planner that must skip it
+- A composite figure (episodes × per-episode) as one duration
+- Budgeting in whole units, and a remainder that cannot go negative
+- Audits whose negative controls plant the defect where the check looks
 
 ---
 
-# 📋 Requirements
-
-```text
-requests>=2.31.0
-beautifulsoup4>=4.12.0
-lxml>=4.9.0
-```
-
-Install all requirements:
+# ✅ Testing
 
 ```bash
-pip install -r requirements.txt
+python -m pytest tests/ -q
 ```
 
----
-
-# 🧪 Testing
-
-Run tests with pytest:
-
-```bash
-pytest tests/ -v
-```
-
-Or run specific test modules:
-
-```bash
-pytest tests/test_utils.py -v
-pytest tests/test_parser.py -v
-pytest tests/test_exporter.py -v
-```
+**175 tests passed** covering `Duration` construction, printing and refusals, every
+accepted spelling, nine parse refusals, the legacy reader's concatenation, the DOM's
+classes / entities / void elements, the catalogue and its notes, the series product,
+the marathon's budget arithmetic and skip rules, nine audit checks with six negative
+controls, the demo, and every CLI mode including four exit-code-2 paths.
 
 ---
 
 # 🎯 Learning Outcomes
 
-- Web scraping with Python
-- HTTP requests with Sessions
-- HTML parsing with BeautifulSoup
-- CSS selector-based extraction
-- Data cleaning and normalization
-- Rate limiting and polite scraping
-- Threading for responsive GUI
-- Tkinter GUI development
-- Custom widget creation
-- CSV/JSON export
-- Logging configuration
-- Modular application architecture
-- Object-Oriented Programming
-- Exception handling
-- Type hints
-
----
-
-# 🔄 Application Workflow
-
-```text
-Enter Chart URL
-        ↓
-Fetch Chart Page
-        ↓
-Parse Movie List
-        ↓
-Display in Table
-        ↓
-Select Movies (optional)
-        ↓
-Scrape Details
-        ↓
-Export CSV / JSON
-```
+- Store a runtime in one unit and convert with arithmetic
+- Explain why `2h 15min` and `135 min` must compare equal
+- Refuse a colon form rather than guess which unit is which
+- Enforce a range on a field (`0 <= minutes < 60`)
+- Multiply a per-episode duration by a count
+- Plan a budget in whole units and report what did not fit
 
 ---
 
 # 🚀 Future Improvements
 
-- Search functionality
-- Filter by genre/year/rating
-- Pagination support for other charts
-- Actor/Actress filmography scraping
-- TV series scraping
-- Image downloading
-- Database storage (SQLite)
-- Scheduled scraping
-- Proxy support
-- More export formats (Excel, XML)
-- Dark/Light theme toggle
-- Column visibility toggles
-- Sort by any column
-- Advanced filtering UI
-
----
-
-# ⚠️ Legal & Ethical Notice
-
-This project is for educational purposes only. Please respect IMDb's Terms of Service and robots.txt. 
-
-- Use rate limiting (built-in 2 second delay)
-- Do not scrape excessively
-- Consider using IMDb's official API for production use
-- This tool scrapes publicly available data only
+- A duration in seconds, for a cut that is printed to the second
+- A season list, so a series total is a sum of season products
+- Time zones and air dates, read from the same page
+- A planner that maximises minutes used instead of taking page order
+- A text mode, so a pasted line reads without an HTML page
 
 ---
 
@@ -314,14 +255,12 @@ This project is for educational purposes only. Please respect IMDb's Terms of Se
 
 **Devender J**
 
-Data Analyst • Python Developer • AI & Machine Learning Enthusiast
-
 GitHub: **https://github.com/JDevender007**
 
 ---
 
 <div align="center">
 
-⭐ Python Web Scraping Project
+⭐ If you found this project useful, consider giving this repository a star.
 
 </div>

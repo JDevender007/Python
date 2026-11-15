@@ -1,0 +1,7 @@
+; the star count of price-lab, one line per day
+; tick<TAB>stars
+0	1.8k
+1	2.1k
+2	2.3k
+3	2.3k
+4	2.5k

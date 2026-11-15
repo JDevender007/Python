@@ -1,32 +1,22 @@
-# Virtual environment
+# Virtual Environment
 .venv/
 venv/
-env/
 
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
-
-# Logs
-logs/
-*.log
-
-# Exports
-exports/
-*.csv
-*.json
 
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# OS
-.DS_Store
-Thumbs.db
+# Logs
+*.log
 
 # Environment
 .env
-.env.local
+
+# OS Files
+.DS_Store
+Thumbs.db
+Desktop.ini

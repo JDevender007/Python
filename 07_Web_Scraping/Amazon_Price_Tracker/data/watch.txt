@@ -1,0 +1,7 @@
+; the buy-box price as the tracker logged it, one line per day
+; tick<TAB>price
+0	$1,399.00
+1	$1,399.00
+2	$1,299.00
+3	$1,249.00
+4	$1,299.00

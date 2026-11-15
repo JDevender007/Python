@@ -1,0 +1,11 @@
+; every anchor on https://jobs.example/jobs/list.html
+; href<TAB>label, exactly as the page printed it
+/jobs/42	Data Engineer
+43	Analyst
+https://jobs.example/jobs/44#apply	Designer
+//jobs.example/jobs/45	Ops Engineer
+https://jobs.example.com.evil.test/jobs/99	Cheap Traffic
+javascript:void(0)	Apply
+#top	Top of page
+/jobs/42#apply	Data Engineer (again)
+?page=2	Next page

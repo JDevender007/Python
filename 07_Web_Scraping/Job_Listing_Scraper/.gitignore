@@ -1,19 +1,22 @@
-__pycache__/
-*.pyc
-*.pyo
-*.pyd
-
+# Virtual Environment
 .venv/
 venv/
-env/
 
+# Python
+__pycache__/
+*.py[cod]
+
+# IDE
 .vscode/
 .idea/
 
-logs/
+# Logs
+*.log
 
-*.csv
-*.json
+# Environment
+.env
 
+# OS Files
 .DS_Store
-Thumbs.db 
+Thumbs.db
+Desktop.ini

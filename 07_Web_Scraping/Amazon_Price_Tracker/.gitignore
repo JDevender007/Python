@@ -1,39 +1,22 @@
-# Virtual environment
+# Virtual Environment
 .venv/
 venv/
-env/
 
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
 
 # IDE
 .vscode/
 .idea/
 
-# Database
-data/*.db
-data/*.sqlite
-data/*.sqlite3
-
 # Logs
-logs/
 *.log
 
-# Generated exports
-exports/
-*.csv
-*.json
+# Environment
+.env
 
-# OS files
+# OS Files
 .DS_Store
 Thumbs.db
-
-# Build files
-build/
-dist/
-*.egg-info/
-
-# Environment files
-.env
+Desktop.ini
