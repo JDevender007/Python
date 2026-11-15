@@ -1,33 +1,22 @@
-# Python bytecode
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Virtual environments
+# Virtual Environment
 .venv/
 venv/
-env/
 
-# Packaging
-build/
-dist/
-*.egg-info/
+# Python
+__pycache__/
+*.py[cod]
 
-# Testing and coverage
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Type checking and linting
-.mypy_cache/
-.ruff_cache/
-
-# IDE and OS files
+# IDE
 .vscode/
 .idea/
+
+# Logs
+*.log
+
+# Environment
+.env
+
+# OS Files
 .DS_Store
 Thumbs.db
-
-# Runtime logs
-*.log
-*.log.*
+Desktop.ini

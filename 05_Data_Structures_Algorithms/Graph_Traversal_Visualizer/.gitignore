@@ -1,36 +1,22 @@
-# Python bytecode
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Virtual environments
+# Virtual Environment
 .venv/
 venv/
-env/
 
-# Build and packaging
-build/
-dist/
-*.egg-info/
+# Python
+__pycache__/
+*.py[cod]
 
-# Test and coverage output
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Type checker and linter caches
-.mypy_cache/
-.ruff_cache/
-
-# IDE and editor files
+# IDE
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# OS metadata
+# Logs
+*.log
+
+# Environment
+.env
+
+# OS Files
 .DS_Store
 Thumbs.db
-
-# Runtime logs
-*.log
+Desktop.ini

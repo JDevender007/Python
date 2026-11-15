@@ -1,0 +1,18 @@
+; A scripted session: the four structures, and the reads that do not count.
+push red
+push green
+push blue
+pop
+peek
+enqueue one
+enqueue two
+dequeue
+front
+push_front left
+push_back right
+pop_front
+pop_back
+heap_push urgent 1
+heap_push later 9
+heap_push soon 3
+heap_pop

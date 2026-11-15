@@ -1,31 +1,22 @@
-# Byte-compiled files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# Virtual environments
+# Virtual Environment
 .venv/
 venv/
-env/
 
-# Packaging
-build/
-dist/
-*.egg-info/
+# Python
+__pycache__/
+*.py[cod]
 
-# Logs and runtime files
-logs/
-*.log
-
-# Test and tool caches
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-.coverage
-htmlcov/
-
-# IDE and OS files
+# IDE
 .vscode/
 .idea/
+
+# Logs
+*.log
+
+# Environment
+.env
+
+# OS Files
 .DS_Store
 Thumbs.db
+Desktop.ini
