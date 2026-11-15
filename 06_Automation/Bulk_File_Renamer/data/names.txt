@@ -1,0 +1,8 @@
+; One name per line, in the folder's sorted order.
+; Bare names take the old file's suffix; names with a suffix are used whole.
+chapter-one
+photo-2024
+q3-report.pdf
+invoice
+final-summary
+checklist

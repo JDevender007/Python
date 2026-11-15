@@ -1,0 +1,7 @@
+; the backup somebody handed you: five paths, five bytes-compatible sizes,
+; and one file whose eight bytes are not the eight bytes of the source
+index.html	<html><body>hello</body></html>
+notes.txt	alpha bravo
+photo.jpg	JPEGDATA2
+report.csv	id,total
+settings.ini	theme=dark

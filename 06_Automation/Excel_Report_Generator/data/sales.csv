@@ -1,0 +1,13 @@
+order_id,region,channel,units,unit_price,shipping,discount,status
+A-1001,North,web,3,24.50,4.99,,paid
+A-1002,North,web,1,19.99,4.99,2.00,paid
+A-1003,South,retail,2,35.00,,,paid
+A-1004,South,web,,12.50,3.50,1.25,refunded
+A-1005,East,retail,5,8.75,2.50,,paid
+A-1006,East,web,1,120.00,,10.00,paid
+A-1007,,web,2,15.00,3.00,,paid
+A-1008,West,retail,4,6.40,2.01,0.50,paid
+A-1009,West,partner,2,49.99,,,pending
+A-1010,North,partner,1,250.00,,25.00,paid
+A-1011,South,retail,3,9.99,2.99,,cancelled
+A-1012,East,retail,2,18.45,1.50,,paid

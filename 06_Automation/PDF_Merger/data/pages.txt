@@ -1,0 +1,7 @@
+; three documents, declared page by page: document<TAB>page title
+alpha	Cover
+alpha	Introduction
+alpha	Methods
+beta	Results
+beta	Discussion
+gamma	Appendix

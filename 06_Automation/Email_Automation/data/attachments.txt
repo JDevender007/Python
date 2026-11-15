@@ -1,0 +1,3 @@
+; One attachment path per line, in either separator style.
+reports/q3-summary.pdf
+C:\Mail\brand\logo.png

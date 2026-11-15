@@ -1,0 +1,7 @@
+; The folder as it is: name<TAB>contents
+notes.txt	week one notes
+photo.JPG	camera roll
+report.pdf	q3 numbers
+scan.pdf	scanned invoice
+summary.txt	the old summary
+todo.md	- buy milk

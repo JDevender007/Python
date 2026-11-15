@@ -1,0 +1,6 @@
+; the folder that is being backed up: path<TAB>text
+index.html	<html><body>hello</body></html>
+notes.txt	alpha bravo
+photo.jpg	JPEGDATA1
+report.csv	id,total
+settings.ini	theme=dark

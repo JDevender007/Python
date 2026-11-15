@@ -1,11 +1,22 @@
-__pycache__/
-*.pyc
-*.pyo
-*.xlsx
-*.xls
-*.png
-*.pdf
+# Virtual Environment
 .venv/
+venv/
+
+# Python
+__pycache__/
+*.py[cod]
+
+# IDE
 .vscode/
 .idea/
-logs/
+
+# Logs
+*.log
+
+# Environment
+.env
+
+# OS Files
+.DS_Store
+Thumbs.db
+Desktop.ini

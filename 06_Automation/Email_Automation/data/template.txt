@@ -1,0 +1,12 @@
+; The campaign: subject, a rule, then the body.
+subject: {{first_name}}, your {{product}} trial ends Friday
+--
+Hi {{first_name}},
+
+Your {{product}} trial ends on Friday. If you would like to keep the
+workspace you have set up, renew this week and take {{discount}}% off
+the first year.
+
+Nothing is deleted until you decide either way.
+
+- The team

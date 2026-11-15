@@ -1,0 +1,6 @@
+; name<TAB>address<TAB>field=value, one row per person
+Ada Lovelace	ada@example.com	first_name=Ada	product=Analytics Pro	discount=15
+Grace Hopper	grace@example.com	first_name=Grace	product=Analytics Pro	discount=15
+Alan Turing	alan@example.com	first_name=Alan	product=Compiler Kit	discount=20
+Katherine Johnson	katherine@example.com	first_name=Katherine	product=Analytics Pro	discount=15
+Ada Again	ADA@example.com	first_name=Ada	product=Analytics Pro	discount=15

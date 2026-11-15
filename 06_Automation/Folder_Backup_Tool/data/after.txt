@@ -1,0 +1,7 @@
+; the same folder a day later: one same-size edit, one file added,
+; one file deleted -- all invisible to a count of paths
+draft.md	- a first draft
+index.html	<html><body>hello</body></html>
+notes.txt	alpha BRAVO
+photo.jpg	JPEGDATA1
+report.csv	id,total
