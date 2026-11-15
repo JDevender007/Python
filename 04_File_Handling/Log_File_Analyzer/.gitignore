@@ -1,5 +1,6 @@
 # Virtual Environment
 .venv/
+venv/
 
 # Python
 __pycache__/
@@ -9,12 +10,13 @@ __pycache__/
 .vscode/
 .idea/
 
-# Reports
-reports/*.csv
-
 # Logs
-logs/*.log
+*.log
 
-# OS
-Thumbs.db
+# Environment
+.env
+
+# OS Files
 .DS_Store
+Thumbs.db
+Desktop.ini

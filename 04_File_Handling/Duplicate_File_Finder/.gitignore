@@ -1,7 +1,8 @@
 # Virtual Environment
 .venv/
+venv/
 
-# Python Cache
+# Python
 __pycache__/
 *.py[cod]
 
@@ -10,11 +11,12 @@ __pycache__/
 .idea/
 
 # Logs
-logs/*.log
+*.log
 
-# Reports
-reports/*.csv
+# Environment
+.env
 
 # OS Files
-Thumbs.db
 .DS_Store
+Thumbs.db
+Desktop.ini

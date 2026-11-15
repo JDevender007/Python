@@ -1,0 +1,1 @@
+a file in a subfolder, which the legacy iterdir never sees

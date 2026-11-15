@@ -1,0 +1,5 @@
+This file appears exactly once in the folder.
+
+It is here so the scan has a size bucket of its own: nothing else is
+this long, so its bucket holds one path and one digest, and one path is
+not a duplicate group.
