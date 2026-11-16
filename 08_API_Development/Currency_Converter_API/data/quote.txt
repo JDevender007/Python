@@ -1,0 +1,14 @@
+; one rate sheet, exactly as an API would send it
+; a rate is numerator/denominator of the quote currency per ONE base currency,
+; in MAJOR units -- the exponents are what turn that into minor units
+as_of 2026-11-14
+base USD
+
+exp USD 2
+exp EUR 2
+exp GBP 2
+exp JPY 0
+
+rate EUR 92 100
+rate GBP 79 100
+rate JPY 151 1

@@ -1,0 +1,6 @@
+; an amount in the base currency's minor units, and the currency to convert it to
+; 10000 is 100.00 USD, and 15100 JPY is 15,100 JPY (yen has no subunit)
+EUR 10000
+GBP 10000
+JPY 10000
+EUR 1234

@@ -1,0 +1,20 @@
+; nine response bodies, exactly as a server would send them
+; --- name, then the body, then the next header
+--- metric
+{"units": "metric", "main": {"temp": 21.555, "humidity": 61}}
+--- kelvin
+{"units": "standard", "main": {"temp": 294.65, "humidity": 40}}
+--- imperial
+{"units": "imperial", "main": {"temp": 70.7, "humidity": 55}}
+--- null-temp
+{"units": "metric", "main": {"temp": null, "humidity": 30}}
+--- string-temp
+{"units": "metric", "main": {"temp": "21.555", "humidity": 30}}
+--- no-main
+{"units": "metric", "cod": "404", "message": "city not found"}
+--- cold
+{"units": "metric", "main": {"temp": -300.0, "humidity": 10}}
+--- no-humidity
+{"units": "metric", "main": {"temp": 21.5}}
+--- truncated
+{"units": "metric", "main": {"temp": 21.5

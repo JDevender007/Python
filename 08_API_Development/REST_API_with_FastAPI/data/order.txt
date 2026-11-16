@@ -1,0 +1,11 @@
+; the order the client is trying to place, in whole numbers
+; quantity and a unit price in cents -- no floats anywhere near money
+quantity 3
+unit-cents 4499
+
+; the token the client holds, and how long it was good for
+issued 0
+lifetime 60
+
+; the moment the retry loop starts, in the same seconds
+now 0

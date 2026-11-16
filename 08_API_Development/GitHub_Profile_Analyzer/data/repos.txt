@@ -1,0 +1,16 @@
+; a repository list exactly as the server holds it, newest first
+; id name stars
+; the walk starts with the ten below, and one arrives while it is running
+101 alpha 1200
+102 bravo 940
+103 charlie 870
+104 delta 640
+105 echo 520
+106 foxtrot 480
+107 golf 310
+108 hotel 260
+109 india 140
+110 juliet 90
+
+; the repository pushed while the walk is running
+arrives 111 kilo 760

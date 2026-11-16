@@ -1,0 +1,37 @@
+; ten responses exactly as they came off the wire
+; the first line is the status, the rest is the body, byte for byte
+--- ok
+HTTP 200
+{"status": "ok", "totalResults": 3, "articles": [
+  {"title": "Rates hold steady", "source": "wire"},
+  {"title": "Chips rally again", "source": "wire"},
+  {"title": "Oil slips on supply", "source": "wire"}]}
+--- empty
+HTTP 200
+{"status": "ok", "totalResults": 0, "articles": []}
+--- partial
+HTTP 200
+{"status": "ok", "totalResults": 20, "articles": [
+  {"title": "Two of twenty arrived", "source": "wire"},
+  {"title": "And the rest were cut", "source": "wire"}]}
+--- rate-limited
+HTTP 429
+{"status": "error", "code": "rateLimited", "message": "You have made too many requests recently. Please wait and try again."}
+--- not-found
+HTTP 404
+{"status": "error", "code": "notFound", "message": "Nothing matches your query."}
+--- server-error
+HTTP 500
+<html><body>Upstream unavailable</body></html>
+--- truncated
+HTTP 200
+{"status": "ok", "totalResults": 3, "articles": [{"title": "A
+--- no-articles
+HTTP 200
+{"status": "ok", "totalResults": 0}
+--- null-articles
+HTTP 200
+{"status": "ok", "totalResults": 1, "articles": null}
+--- proxy-200-error
+HTTP 200
+{"status": "error", "code": "unexpectedError", "message": "The request could not be satisfied."}

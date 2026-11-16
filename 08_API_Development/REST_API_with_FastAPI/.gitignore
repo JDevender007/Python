@@ -1,38 +1,22 @@
-# Virtual environment
+# Virtual Environment
 .venv/
 venv/
-env/
 
-# Python cache
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
-
-# Logs
-logs/
-*.log
-
-# Database
-data/
-*.db
-*.sqlite
-*.sqlite3
-
-# Environment
-.env
-.env.local
 
 # IDE
 .vscode/
 .idea/
-*.swp
-*.swo
 
-# OS
+# Logs
+*.log
+
+# Environment
+.env
+
+# OS Files
 .DS_Store
 Thumbs.db
-
-# Test coverage
-.coverage
-htmlcov/
-.pytest_cache/
+Desktop.ini
