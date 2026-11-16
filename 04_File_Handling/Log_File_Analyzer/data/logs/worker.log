@@ -1,0 +1,11 @@
+2026-05-11 09:00:00 INFO Worker 1 online
+2026-05-11 09:00:01 DEBUG Claimed job 41
+2026-05-11 09:00:05 WARNING Job 41 exceeded 3 seconds
+2026-05-11 09:00:09 ERROR Job 41 failed: division by zero
+Traceback (most recent call last):
+  File "src/worker.py", line 12, in run
+ZeroDivisionError: division by zero
+2026-05-11 09:00:10 INFO Job 42 claimed
+2026-05-11 09:00:12 CRITICAL Worker 1 shutting down, error in loop
+2026-05-11 09:00:13 INFO Upstream said "2026-05-11 08:00:00 ERROR disk full"; ignored
+2026-05-11 09:01:00 [pid 41] trailer not understood

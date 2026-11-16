@@ -1,0 +1,10 @@
+# Line-ending policy.
+#
+# Source and docs are normalised to LF in the repository so that a checkout
+# looks the same on every machine. Bundled demo data is different: the
+# projects assert exact byte counts, so those files must be checked out
+# verbatim, byte for byte, on any platform and under any core.autocrlf value.
+
+* text=auto
+
+**/data/** -text

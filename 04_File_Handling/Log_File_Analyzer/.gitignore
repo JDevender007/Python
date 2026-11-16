@@ -12,6 +12,8 @@ __pycache__/
 
 # Logs
 *.log
+# ...except the sample logs bundled for the offline demo
+!data/logs/*.log
 
 # Environment
 .env
