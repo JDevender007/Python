@@ -1,6 +1,8 @@
 <div align="center">
 
-# 🐍 Python Projects
+<img src="./assets/header.svg" width="100%" alt="Python Projects"/>
+
+<img src="./assets/typing.svg" width="100%" alt="From fundamentals to enterprise software"/>
 
 ### A structured collection of Python projects covering programming fundamentals, automation, data analysis, machine learning, deep learning, computer vision, cybersecurity, networking, and software engineering.
 
@@ -8,15 +10,19 @@
 ![Projects](https://img.shields.io/badge/Projects-131-blue?style=for-the-badge)
 ![Categories](https://img.shields.io/badge/Categories-25-success?style=for-the-badge)
 ![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
+![Tests](https://img.shields.io/badge/Tests-pytest-0A9EDC?style=for-the-badge&logo=pytest&logoColor=white)
+![Demo](https://img.shields.io/badge/Demo-Fully%20Offline-3fb950?style=for-the-badge)
 
 <p>
   <a href="https://github.com/JDevender007"><img src="https://img.shields.io/badge/GitHub-181717?style=flat-square&logo=github&logoColor=white"/></a>
   <a href="https://www.linkedin.com/in/devender-j"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white"/></a>
 </p>
 
+<img src="./assets/marquee.svg" width="100%" alt="Technologies used"/>
+
 </div>
 
----
+<img src="./assets/divider.svg" width="100%" alt=""/>
 
 ## 📚 Table of Contents
 
@@ -30,19 +36,23 @@
 - [Goal](#-goal)
 - [Author](#-author)
 
----
+<img src="./assets/divider.svg" width="100%" alt=""/>
 
 ## ℹ️ About
 
 This repository documents my journey of building **131 Python projects**, ranging from beginner programs to advanced AI and enterprise-level applications. Every project is designed to strengthen practical programming skills while following clean coding practices, Object-Oriented Programming principles, modular architecture, and Git version control.
 
-The repository serves as a structured roadmap for mastering Python across multiple domains — desktop applications, automation, data analysis, machine learning, deep learning, computer vision, cybersecurity, networking, cloud computing, DevOps, and software engineering.
+The repository serves as a structured roadmap for mastering Python across multiple domains: desktop applications, automation, data analysis, machine learning, deep learning, computer vision, cybersecurity, networking, cloud computing, DevOps, and software engineering.
 
-Every project from category 10 onward ships with its own README, pinned `requirements.txt`, `.gitignore`, a modular `src/` package, a passing `pytest` suite, and a **fully offline `--demo`** that runs from bundled deterministic sample data — no API keys, no network, no downloads.
+Every project from category 10 onward ships with its own README, pinned `requirements.txt`, `.gitignore`, a modular `src/` package, a passing `pytest` suite, and a **fully offline `--demo`** that runs from bundled deterministic sample data. No API keys, no network, no downloads.
 
----
+<img src="./assets/divider.svg" width="100%" alt=""/>
 
 ## 📊 Repository Statistics
+
+<div align="center">
+<img src="./assets/stats.svg" width="100%" alt="131 projects, 25 categories, 11 Udemy practice projects, 100 percent completed"/>
+</div>
 
 | Item | Count |
 |--- | --: |
@@ -51,9 +61,18 @@ Every project from category 10 onward ships with its own README, pinned `require
 | Udemy Practice Projects | 11 |
 | **Total Projects** | **131** |
 
----
+<img src="./assets/divider.svg" width="100%" alt=""/>
 
 ## 📂 Categories
+
+<div align="center">
+<img src="./assets/categories.svg" width="100%" alt="All 25 project categories completed"/>
+</div>
+
+<details>
+<summary><b>View the full category table</b></summary>
+
+<br/>
 
 | No. | Category | Projects |
 |---:|--- | --: |
@@ -83,7 +102,9 @@ Every project from category 10 onward ships with its own README, pinned `require
 | 24 | DevOps | 5 |
 | 25 | Software Engineering | 5 |
 
----
+</details>
+
+<img src="./assets/divider.svg" width="100%" alt=""/>
 
 ## 🛠 Technologies
 
@@ -135,9 +156,14 @@ Every project from category 10 onward ships with its own README, pinned `require
 </tr>
 </table>
 
----
+<img src="./assets/divider.svg" width="100%" alt=""/>
 
 ## 🗂️ Repository Structure
+
+<details>
+<summary><b>📁 Full folder tree</b></summary>
+
+<br/>
 
 ```text
 Python/
@@ -174,7 +200,13 @@ Python/
 └── README.md
 ```
 
+</details>
+
 Each project from category 10 onward contains:
+
+<div align="center">
+<img src="./assets/anatomy.svg" width="100%" alt="Anatomy of a project: src, tests, data, README, requirements, gitignore and an offline demo"/>
+</div>
 
 ```text
 Project_Name/
@@ -186,9 +218,18 @@ Project_Name/
 └── .gitignore
 ```
 
----
+<img src="./assets/divider.svg" width="100%" alt=""/>
 
 ## ✅ Progress
+
+<div align="center">
+<img src="./assets/progress.svg" width="100%" alt="131 of 131 projects, 25 of 25 categories, 11 of 11 Udemy projects completed"/>
+</div>
+
+<details>
+<summary><b>View progress by category</b></summary>
+
+<br/>
 
 | Category | Status |
 |---|---|
@@ -218,6 +259,8 @@ Project_Name/
 | 24. DevOps | ✅ Completed |
 | 25. Software Engineering | ✅ Completed |
 
+</details>
+
 ### Current Progress
 
 - Completed Categories: **25 / 25**
@@ -225,9 +268,7 @@ Project_Name/
 - Udemy Practice Projects: **11**
 - Total Projects: **131**
 
-![Progress Bar](https://progress-bar.xyz/100/?title=Main%20Projects&width=400)
-
----
+<img src="./assets/divider.svg" width="100%" alt=""/>
 
 ## 💡 Skills Developed
 
@@ -273,15 +314,17 @@ Project_Name/
 </tr>
 </table>
 
----
+<img src="./assets/divider.svg" width="100%" alt=""/>
 
 ## 🎯 Goal
 
 Build and publish **131 Python projects** that demonstrate practical programming skills, clean architecture, and real-world problem solving while creating a professional GitHub portfolio.
 
----
+<img src="./assets/divider.svg" width="100%" alt=""/>
 
 ## 👨‍💻 Author
+
+<div align="center">
 
 **Devender J**
 Data Analyst · Python Developer · AI & Machine Learning Enthusiast
@@ -291,8 +334,6 @@ Data Analyst · Python Developer · AI & Machine Learning Enthusiast
   <a href="https://www.linkedin.com/in/devender-j"><img src="https://img.shields.io/badge/LinkedIn-0A66C2?style=flat-square&logo=linkedin&logoColor=white"/></a>
 </p>
 
-<p align="center">
-  Follow my journey as I build 131 Python projects, progressing from beginner applications to advanced AI and enterprise software.
-</p>
+Follow my journey as I build 131 Python projects, progressing from beginner applications to advanced AI and enterprise software.
 
 </div>

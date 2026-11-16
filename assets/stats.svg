@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="130" viewBox="0 0 900 130" role="img" aria-label="131 projects, 25 categories, 11 Udemy practice projects, 100 percent completed">
+<style>.n{font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:44px;font-weight:800}.t{font-family:Segoe UI,Helvetica,Arial,sans-serif;font-size:14px;fill:#8b949e}</style><g><animateTransform attributeName="transform" type="translate" values="0 18;0 0" dur="0.7s" begin="0.0s" fill="freeze"/>
+<rect x="12" y="10" width="204" height="110" rx="14" fill="#0d1117" stroke="#4b8bbe" stroke-opacity="0.6"/>
+<rect x="12" y="10" width="204" height="110" rx="14" fill="#4b8bbe" opacity="0.06"><animate attributeName="opacity" values="0.04;0.14;0.04" dur="4s" begin="0.0s" repeatCount="indefinite"/></rect>
+<text x="114" y="70" text-anchor="middle" class="n" fill="#4b8bbe">131</text><text x="114" y="98" text-anchor="middle" class="t">Total projects</text></g><g><animateTransform attributeName="transform" type="translate" values="0 18;0 0" dur="0.7s" begin="0.25s" fill="freeze"/>
+<rect x="234" y="10" width="204" height="110" rx="14" fill="#0d1117" stroke="#ffd43b" stroke-opacity="0.6"/>
+<rect x="234" y="10" width="204" height="110" rx="14" fill="#ffd43b" opacity="0.06"><animate attributeName="opacity" values="0.04;0.14;0.04" dur="4s" begin="0.5s" repeatCount="indefinite"/></rect>
+<text x="336" y="70" text-anchor="middle" class="n" fill="#ffd43b">25</text><text x="336" y="98" text-anchor="middle" class="t">Categories</text></g><g><animateTransform attributeName="transform" type="translate" values="0 18;0 0" dur="0.7s" begin="0.5s" fill="freeze"/>
+<rect x="456" y="10" width="204" height="110" rx="14" fill="#0d1117" stroke="#a78bfa" stroke-opacity="0.6"/>
+<rect x="456" y="10" width="204" height="110" rx="14" fill="#a78bfa" opacity="0.06"><animate attributeName="opacity" values="0.04;0.14;0.04" dur="4s" begin="1.0s" repeatCount="indefinite"/></rect>
+<text x="558" y="70" text-anchor="middle" class="n" fill="#a78bfa">11</text><text x="558" y="98" text-anchor="middle" class="t">Udemy practice</text></g><g><animateTransform attributeName="transform" type="translate" values="0 18;0 0" dur="0.7s" begin="0.75s" fill="freeze"/>
+<rect x="678" y="10" width="204" height="110" rx="14" fill="#0d1117" stroke="#3fb950" stroke-opacity="0.6"/>
+<rect x="678" y="10" width="204" height="110" rx="14" fill="#3fb950" opacity="0.06"><animate attributeName="opacity" values="0.04;0.14;0.04" dur="4s" begin="1.5s" repeatCount="indefinite"/></rect>
+<text x="780" y="70" text-anchor="middle" class="n" fill="#3fb950">100%</text><text x="780" y="98" text-anchor="middle" class="t">Completed</text></g></svg>
