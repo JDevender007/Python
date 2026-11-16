@@ -1,0 +1,13 @@
+; name width height box_width box_height
+; nine images, each shown inside its own viewport
+; the small one is where the float loses a pixel
+
+photo      4000 3000  320 240
+wide       3000 1000  320 240
+tall       1000 3000  320 240
+tiny          3    1    2   2
+portrait     90  160  200 200
+exact       400  300  400 300
+odd         101   51  320 240
+square      500  500  320 240
+seam        100   50   40  40

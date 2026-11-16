@@ -1,0 +1,17 @@
+; name | kind | bytes
+; a flat listing: numbers are numbers, and two names are hidden
+; the sizes are the ones the two formatters disagree about, plus a few ordinary ones
+
+.config          | file | 12
+.gitignore       | file | 64
+Zebra.txt        | file | 1280
+apple.txt        | file | 1
+docs             | dir  | 0
+file1.txt        | file | 512
+file2.txt        | file | 900
+file10.txt       | file | 1536
+file20.txt       | file | 2047
+notes.txt        | file | 1023
+pictures         | dir  | 0
+report-9.txt     | file | 3072
+report-10.txt    | file | 4096

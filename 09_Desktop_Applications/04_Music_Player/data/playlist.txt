@@ -1,0 +1,15 @@
+; title | artist | MM:SS
+; eleven tracks, 1:04:23 in all
+; the titles are distinct, so a removal can name one
+
+Kite            | Aria  | 3:07
+Harbour         | Nils  | 4:52
+Ember           | Sable | 2:59
+Drift           | Aria  | 5:01
+Quiet Hours     | Nils  | 6:30
+Last Light      | Sable | 4:11
+Long Way Home   | Aria  | 8:44
+Night Bus       | Nils  | 7:05
+Slow Train      | Sable | 9:58
+Dawn Chorus     | Aria  | 6:12
+Half Light      | Nils  | 5:44

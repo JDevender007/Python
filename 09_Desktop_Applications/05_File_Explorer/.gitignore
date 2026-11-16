@@ -1,17 +1,22 @@
+# Virtual Environment
+.venv/
+venv/
+
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-.pytest_cache/
-.tox/
- venv/
- .venv/
- env/
- .env/
 
-# System
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Environment
+.env
+
+# OS Files
 .DS_Store
-
-# Data
-data/
-screenshots/real/
+Thumbs.db
+Desktop.ini

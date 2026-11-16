@@ -1,3 +1,1 @@
-"""Requirements for Calculator GUI."""
-# Calculator GUI uses only Python standard library (tkinter)
-# No third-party dependencies required
+pytest==9.1.1

@@ -1,3 +1,1 @@
-# Image Viewer requires Pillow for image processing
-# All other dependencies are part of Python standard library (Tkinter)
-Pillow>=9.0.0
+pytest==9.1.1

@@ -1,2 +1,1 @@
-# File Explorer uses only Python standard library (Tkinter, pathlib, os)
-# No third-party dependencies required
+pytest==9.1.1

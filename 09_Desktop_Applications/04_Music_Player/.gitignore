@@ -1,17 +1,22 @@
+# Virtual Environment
+.venv/
+venv/
+
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-.pytest_cache/
-.tox/
- venv/
- .venv/
- env/
- .env/
 
-# Media files (don't bundle copyrighted music)
-data/
-screenshots/real/
+# IDE
+.vscode/
+.idea/
 
-# System
+# Logs
+*.log
+
+# Environment
+.env
+
+# OS Files
 .DS_Store
+Thumbs.db
+Desktop.ini

@@ -1,23 +1,22 @@
+# Virtual Environment
+.venv/
+venv/
+
 # Python
 __pycache__/
 *.py[cod]
-*$py.class
-.pytest_cache/
-.tox/
- venv/
- .venv/
- env/
- .env/
 
 # IDE
 .vscode/
 .idea/
-*.json
-*.merge-file
 
-# Calculator
-data/
-screenshots/real/
+# Logs
+*.log
 
-# System
+# Environment
+.env
+
+# OS Files
 .DS_Store
+Thumbs.db
+Desktop.ini
