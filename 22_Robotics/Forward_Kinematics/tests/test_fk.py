@@ -479,3 +479,17 @@ def test_bundled_scenarios_valid_against_arms(arms):
         assert states == ["ok"] * arm.n_joints
         assert reach_status(arm, end_effector(arm, scenario.q))[0] == \
             "within reach"
+
+
+# --------------------------------------------------------------------------- #
+# Pose and workspace contract
+# --------------------------------------------------------------------------- #
+def test_pose_distance_is_euclidean():
+    pose = Pose(x=3.0, y=4.0, z=12.0, roll=0.0, pitch=0.0, yaw=0.0)
+    assert pose.distance == pytest.approx(13.0)
+
+
+def test_pose_to_dict_rounds_angles(arms):
+    pose = end_effector(arms["planar2"], [0.0, 0.0])
+    payload = pose.to_dict()
+    assert set(payload) == {"x", "y", "z", "roll", "pitch", "yaw"}

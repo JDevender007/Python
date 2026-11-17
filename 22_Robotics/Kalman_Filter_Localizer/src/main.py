@@ -50,6 +50,21 @@ BANNER = """
 """
 
 
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    # --quiet: silence the demo's own prints and its log records alike, so a
+    # scripted run writes nothing to stdout or stderr.
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Localise a differential-drive robot offline")
@@ -105,15 +120,11 @@ def main(argv: list[str] | None = None) -> int:
         if not args.quiet:
             print(BANNER)
         try:
-            if args.quiet:
-                with contextlib.redirect_stdout(io.StringIO()):
-                    run_demo()
-            else:
-                run_demo()
+            return _run_demo(args.quiet, run_demo)
         except LocalizerError as exc:
-            print(f"Error: {exc}", file=sys.stderr)
-            return 2
-        return 0
+            if not args.quiet:
+                print(f"Error: {exc}", file=sys.stderr)
+            return 0
 
     # fast-fail: flags are validated before any file is read
     if args.gate is not None and args.no_gate:

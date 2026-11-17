@@ -31,7 +31,7 @@ Every run reports the answer twice: once in **joint space** (angles against per-
 - Strict validation: JSON schema (keys, joint types, finite values, `a ≥ 0`, `min ≤ max`), CSV scenario schema (arm exists, angle count, duplicates)
 - `--angles "45,-90"` with fast-fail parsing **before** any file is touched; `--json` pose export
 - Deterministic bundled scenarios: 4 arms × 8 configurations, identical output every run
-- 49 passing pytest tests
+- 51 passing pytest tests
 
 ---
 
@@ -179,7 +179,7 @@ Details worth knowing:
 python -m pytest tests/ -q
 ```
 
-**49 tests passed** covering every validation rule (JSON keys, joint types, finite values, link lengths, limit pairs, CSV columns, angle counts, duplicate scenarios), analytic-vs-matrix agreement on seeded random angles, orthonormal rotations, planar yaw/zero-z identities, prismatic lift arithmetic, reach bounds, limit statuses, report/table rendering, demo idempotency and byte-identical re-runs, and every CLI path (demo, angles, file/arm, JSON export, fast-fail ordering, usage errors) — all offline.
+**51 tests passed** covering every validation rule (JSON keys, joint types, finite values, link lengths, limit pairs, CSV columns, angle counts, duplicate scenarios), analytic-vs-matrix agreement on seeded random angles, orthonormal rotations, planar yaw/zero-z identities, prismatic lift arithmetic, reach bounds, limit statuses, report/table rendering, demo idempotency and byte-identical re-runs, and every CLI path (demo, angles, file/arm, JSON export, fast-fail ordering, usage errors) — all offline. Extra cases pin the Euclidean pose distance and the `to_dict` key set on a real arm.
 
 ---
 
