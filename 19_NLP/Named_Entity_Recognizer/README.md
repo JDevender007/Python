@@ -31,7 +31,7 @@ Every run can be **scored against a bundled gold sample**: 5 annotated sentences
 - `evaluate()` computing per-label and micro P/R/F1 with exact-span matching; duplicate predictions collapse
 - `load_gold()` with strict annotation-schema validation (bounds, label whitelist, declared-text consistency)
 - CLI: `--demo`, `--file`, `--text`, `--gold`, `--json`, `--quiet` — fast-fail flag checks
-- **46 passing pytest tests**
+- **51 passing pytest tests**
 
 ---
 
@@ -174,7 +174,7 @@ Details worth knowing:
 python -m pytest tests/ -q
 ```
 
-**46 tests passed** covering Entity validation (labels, spans, integer types), gazetteer loading rules, every date and money pattern (including non-matches: bare years, plain numbers), longest-match and article-trimming behaviour, whole-pipeline invariants (sorted, non-overlapping, slice-consistent, deterministic), evaluation math against hand-computed values (perfect / empty / partial / duplicate predictions), gold-schema error cases, demo idempotency, and every CLI path — all offline.
+**51 tests passed** covering Entity validation (labels, spans, integer types), gazetteer loading rules, every date and money pattern (including non-matches: bare years, plain numbers), longest-match and article-trimming behaviour, whole-pipeline invariants (sorted, non-overlapping, slice-consistent, deterministic), evaluation math against hand-computed values (perfect / empty / partial / duplicate predictions), gold-schema error cases, demo idempotency, and every CLI path — all offline. Extra cases pin the evaluation contract (every label reported, a perfect match scoring 1.0, a missed gold span showing up as a false negative), gazetteer order preservation, and the blank-text refusal.
 
 ---
 

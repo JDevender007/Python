@@ -33,7 +33,7 @@ DATE_PATTERNS = (
 )
 
 MONEY_PATTERNS = (
-    r"[$€£]\s?\d[\d,]*(?:\.\d+)?"
+    r"[$\u20ac\u00a3]\s?\d[\d,]*(?:\.\d+)?"
     r"(?:\s?(?:million|billion|trillion|thousand))?",
     r"\b\d[\d,]*(?:\.\d+)?(?:\s(?:million|billion|trillion|thousand))?"
     r"\s(?:dollars|euros|pounds)\b",

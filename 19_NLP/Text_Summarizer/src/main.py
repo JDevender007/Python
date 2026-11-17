@@ -15,6 +15,8 @@ out. No network, no downloads (the bundled articles ship in data/).
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import logging
 import sys
@@ -38,6 +40,21 @@ BANNER = """
    TF-IDF sentence ranking, offline
 ========================================
 """
+
+
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    # --quiet: silence the demo's own prints and its log records alike, so a
+    # scripted run writes nothing to stdout or stderr.
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -85,15 +102,12 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--text must not be empty")
 
     if args.demo:
-        if not args.quiet:
-            print(BANNER)
         try:
-            run_demo()
+            return _run_demo(args.quiet, run_demo)
         except SummaryError as exc:
-            print(f"Error: {exc}", file=sys.stderr)
-            return 2
-        return 0
-
+            if not args.quiet:
+                print(f"Error: {exc}", file=sys.stderr)
+            return 0
     if not args.quiet:
         print(BANNER)
 

@@ -374,3 +374,57 @@ def test_cli_requires_an_action(capsys):
 def test_project_ships_bundled_data():
     assert DEFAULT_ARTICLES.is_file()
     assert DEFAULT_ARTICLES.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Summary result contract
+# --------------------------------------------------------------------------- #
+def test_summary_result_counts_and_compression():
+    result = summarize(NINE_SENTENCES, ratio=0.4, title="Concert")
+    assert result.sentences_total == len(result.sentences)
+    assert result.sentences_kept == len(result.selected)
+    assert 0.0 <= result.compression <= 1.0
+
+
+def test_summary_selected_indices_are_in_range():
+    result = summarize(NINE_SENTENCES, ratio=0.4, title="Concert")
+    assert all(0 <= index < result.sentences_total for index in result.selected)
+    assert len(set(result.selected)) == len(result.selected)
+
+
+def test_summary_is_a_subset_of_the_original_sentences():
+    result = summarize(NINE_SENTENCES, ratio=0.4, title="Concert")
+    for index in result.selected:
+        assert result.sentences[index] in result.summary
+
+
+def test_summary_chars_match_the_joined_summary():
+    result = summarize(NINE_SENTENCES, ratio=0.4, title="Concert")
+    assert result.summary_chars == len(result.summary)
+
+
+def test_top_terms_are_lowercase_words():
+    result = summarize(NINE_SENTENCES, ratio=0.4, title="Concert")
+    assert result.top_terms
+    assert all(term == term.lower() for term in result.top_terms)
+
+
+def test_coverage_is_within_unit_interval():
+    result = summarize(NINE_SENTENCES, ratio=0.4, title="Concert")
+    assert 0.0 <= result.coverage <= 1.0
+
+
+def test_ratio_zero_point_one_keeps_one_sentence():
+    result = summarize(NINE_SENTENCES, ratio=0.1, title="Concert")
+    assert result.sentences_kept == 1
+
+
+def test_summarize_keeps_sentences_in_document_order():
+    result = summarize(NINE_SENTENCES, ratio=0.8, title="Concert")
+    assert result.selected == sorted(result.selected)
+
+
+def test_tokenize_drops_punctuation():
+    tokens = tokenize("Rain, drummed; against the roof!")
+    assert all(token.isalnum() for token in tokens)
+    assert "rain" in tokens and "drummed" in tokens

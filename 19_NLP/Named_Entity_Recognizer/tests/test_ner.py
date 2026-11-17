@@ -446,3 +446,42 @@ def test_project_ships_bundled_data():
     assert DEFAULT_PLACES.is_file()
     assert DEFAULT_ORGS.is_file()
     assert DEFAULT_GOLD.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Evaluation contract
+# --------------------------------------------------------------------------- #
+def test_evaluate_reports_every_label():
+    text = "Acme Corp paid 500 dollars on 3 March 2024 in Geneva."
+    predicted = find_entities(text)
+    result = evaluate(predicted, predicted)
+    assert set(result["labels"]) == set(LABELS)
+    assert result["micro"]["fp"] == 0 and result["micro"]["fn"] == 0
+
+
+def test_evaluate_perfect_match_scores_one():
+    text = "The Bank of England met in Paris on 2024-01-05."
+    predicted = find_entities(text)
+    result = evaluate(predicted, predicted)
+    assert result["micro"]["precision"] == 1.0
+    assert result["micro"]["recall"] == 1.0
+    assert result["micro"]["f1"] == 1.0
+
+
+def test_evaluate_counts_a_missed_gold_span():
+    predicted = find_entities("Acme Corp opened an office in Paris.")
+    gold = predicted + [Entity("Zurich", "PLACE", 34, 40)]
+    result = evaluate(predicted, gold)
+    assert result["micro"]["fn"] >= 1
+    assert result["labels"]["PLACE"]["recall"] < 1.0
+
+
+def test_load_gazetteer_preserves_order(tmp_path):
+    path = tmp_path / "places.txt"
+    path.write_text("Zurich\nGeneva\nBasel\n", encoding="utf-8")
+    assert load_gazetteer(path) == ("Zurich", "Geneva", "Basel")
+
+
+def test_find_entities_rejects_blank_text():
+    with pytest.raises(NerError, match="empty"):
+        find_entities("   ")

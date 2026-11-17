@@ -33,7 +33,7 @@ Training is pure counting (no RNG anywhere), smoothing is fixed add-k with α = 
 - Strict corpus validation: line format, unknown tags, empty sentences, minimum size
 - `--json metrics.json` export, `--quiet` mode, deterministic re-training (demo asserts it)
 - Bundled dataset: 600 tagged sentences (4,080 tokens, 167 words, 20 tags) as `data/corpus.txt`
-- 45 passing pytest tests
+- 51 passing pytest tests
 
 ---
 
@@ -165,7 +165,7 @@ Details worth knowing:
 python -m pytest tests/ -q
 ```
 
-**45 tests passed** covering every validation rule (missing corpus, bad line format, unknown tags, empty sentences, too few sentences, bad `--ratio`, bad `alpha`, empty inputs), training table shapes and probability normalisation, Viterbi correctness, determinism and unknown-word decoding, baseline arithmetic, per-tag metric consistency (supports sum to test tokens), report rendering, exact sample tagging, demo idempotency, and every CLI path — all offline.
+**51 tests passed** covering every validation rule (missing corpus, bad line format, unknown tags, empty sentences, too few sentences, bad `--ratio`, bad `alpha`, empty inputs), training table shapes and probability normalisation, Viterbi correctness, determinism and unknown-word decoding, baseline arithmetic, per-tag metric consistency (supports sum to test tokens), report rendering, exact sample tagging, demo idempotency, and every CLI path — all offline. Extra cases pin corpus statistics against the sentence list, the split preserving every sentence and tracking the ratio, the baseline score bound, the majority tag being a known tag, and `unk_index` sitting past the vocabulary with a matching emission width.
 
 ---
 

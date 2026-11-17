@@ -32,7 +32,7 @@ The demo summarizes three bundled articles (~9 sentences each) at `ratio=0.4` an
 - `load_articles()`: strict JSON schema validation (`title` non-empty, `text ≥ 150` chars)
 - CLI: `--demo`, `--file`, `--text`, `--index`, `--ratio`, `--json`, `--quiet` with fast-fail flag validation
 - Fully deterministic — same input, same summary, every run
-- **42 passing pytest tests**
+- **51 passing pytest tests**
 
 ---
 
@@ -166,7 +166,7 @@ Details worth knowing:
 python -m pytest tests/ -q
 ```
 
-**42 tests passed** covering sentence splitting (abbreviations, empties, newlines, validation), the TF-IDF formula against hand-computed values, row normalization, centroid scoring behaviour, article JSON schema validation (missing file, broken JSON, non-list, short text), summarization invariants (`ceil` selection math, verbatim reconstruction, ratio limits, determinism), metrics arithmetic, demo idempotency, and every CLI path — all offline.
+**51 tests passed** covering sentence splitting (abbreviations, empties, newlines, validation), the TF-IDF formula against hand-computed values, row normalization, centroid scoring behaviour, article JSON schema validation (missing file, broken JSON, non-list, short text), summarization invariants (`ceil` selection math, verbatim reconstruction, ratio limits, determinism), metrics arithmetic, demo idempotency, and every CLI path — all offline. Extra cases pin the result contract: sentence counts, compression and coverage in [0, 1], selected indices in range and unique, the summary being a verbatim subset in document order, the character count matching the joined text, lowercase top terms, the one-sentence floor at ratio 0.1, and punctuation-free tokenisation.
 
 ---
 

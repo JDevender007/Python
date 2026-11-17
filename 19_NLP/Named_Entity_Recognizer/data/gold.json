@@ -81,7 +81,7 @@
     ]
   },
   {
-    "text": "Meanwhile, in New York City, officials from Acme Corp and the Bank of England announced €2,000 grants on 2024-01-05.",
+    "text": "Meanwhile, in New York City, officials from Acme Corp and the Bank of England announced \u20ac2,000 grants on 2024-01-05.",
     "entities": [
       {
         "text": "New York City",
@@ -102,7 +102,7 @@
         "end": 77
       },
       {
-        "text": "€2,000",
+        "text": "\u20ac2,000",
         "label": "MONEY",
         "start": 88,
         "end": 94
@@ -116,7 +116,7 @@
     ]
   },
   {
-    "text": "Dr. Chen flew from San Francisco to Paris on 15 June 2019 and bought gifts worth £75.",
+    "text": "Dr. Chen flew from San Francisco to Paris on 15 June 2019 and bought gifts worth \u00a375.",
     "entities": [
       {
         "text": "San Francisco",
@@ -137,7 +137,7 @@
         "end": 57
       },
       {
-        "text": "£75",
+        "text": "\u00a375",
         "label": "MONEY",
         "start": 81,
         "end": 84

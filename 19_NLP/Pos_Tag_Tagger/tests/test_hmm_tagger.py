@@ -416,3 +416,40 @@ def test_cli_requires_an_action(capsys):
 def test_project_ships_bundled_data():
     assert DEFAULT_CORPUS.is_file()
     assert DEFAULT_CORPUS.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Corpus statistics and baseline contract
+# --------------------------------------------------------------------------- #
+def test_corpus_stats_counts_tokens_and_tags(sentences):
+    stats = corpus_stats(sentences)
+    assert stats["sentences"] == len(sentences)
+    assert stats["tokens"] == sum(len(s) for s in sentences)
+    assert stats["tags"] >= 2
+
+
+def test_split_corpus_preserves_every_sentence(sentences):
+    train, test = split_corpus(sentences, ratio=0.8)
+    assert len(train) + len(test) == len(sentences)
+    assert len(train) >= 1 and len(test) >= 1
+
+
+def test_split_corpus_ratio_changes_the_cut(sentences):
+    small_train, _ = split_corpus(sentences, ratio=0.5)
+    large_train, _ = split_corpus(sentences, ratio=0.9)
+    assert len(small_train) <= len(large_train)
+
+
+def test_baseline_is_between_zero_and_one(model, sentences):
+    _, test = split_corpus(sentences)
+    score = baseline_accuracy(model, test)
+    assert 0.0 <= score <= 1.0
+
+
+def test_majority_tag_is_a_known_tag(model):
+    assert model.majority_tag in TAGS
+
+
+def test_unk_index_is_beyond_the_vocabulary(model):
+    assert model.unk_index == len(model.words)
+    assert model.emission.shape[1] == len(model.words) + 1
