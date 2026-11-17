@@ -1,162 +1,95 @@
-<div align="center">
+# Chat Application
 
-# 💬 Chat Application
+TCP hands you **bytes**, not messages, and the reader every socket tutorial shows treats a
+`recv` as a message:
 
-### A threaded TCP chat server and client with nicknames, rooms, broadcast messaging, and a member list.
-
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-
-</div>
-
----
-
-# 📖 About
-
-Chat Application is a small rooms-based chat system built on raw TCP sockets. A threaded server accepts multiple clients, each registers a nickname, joins a room, and exchanges newline-delimited messages with everyone else in that room.
-
-It demonstrates socket programming, thread-per-client servers, a simple text protocol, and buffered stream reading.
-
----
-
-# ✨ Features
-
-- Threaded server supporting many concurrent clients
-- Nickname registration with duplicate rejection
-- Rooms: join, leave, auto-lobby, per-room broadcast
-- `WHO` command returning the current member list
-- Clean disconnect handling that frees nicknames and room slots
-- Buffered protocol reader (survives messages split across packets)
-- Localhost by default
-- Demo mode that runs a server and two clients with no input
-- 13 passing pytest tests
-
----
-
-# 📂 Folder Structure
-
-```text
-Chat_Application/
-│
-├── src/
-│   ├── main.py         # CLI: demo, server mode, interactive client mode
-│   ├── server.py       # ChatServer, Client, protocol handling
-│   └── client.py       # ChatClient, background reader, demo
-│
-├── tests/
-│   └── test_chat.py
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
+```python
+chunk = sock.recv(4096).decode("utf-8", errors="replace")
+for line in chunk.split("\n"):
+    deliver(line)
 ```
 
----
+Four defects fall out of those two lines, and all four are visible in one four-message
+conversation. A newline inside a message splits it in two. A read that lands mid-frame is
+delivered as if it were whole. A header written from `len(text)` promises characters while the
+wire carries bytes. And `errors="replace"` turns the first half of a multi-byte character into
+`U+FFFD` instead of waiting for the rest.
 
-# ⚙️ Installation
+The rebuild frames every message as `<byte count>:<utf-8 payload>`, keeps one decoder per
+connection that holds a partial frame until it is complete, and refuses anything that is not
+exactly one frame. The legacy path is kept beside it, executable, so every claim is
+reproduced with a number.
 
-```bash
-git clone https://github.com/JDevender007/Python.git
+## What this project teaches
 
-cd 11_Networking/Chat_Application
+- A stream is not a sequence of messages; a frame boundary has to be carried in the data
+- Why `split("\n")` cannot survive a message that contains a newline
+- A length prefix that counts **bytes** while the code counts **characters**
+- Keeping partial bytes in the decoder instead of decoding each read separately
+- Why `errors="replace"` corrupts silently where `errors="strict"` would raise
+- Refusing an unfinished frame at end of stream instead of delivering it
+- Refusing a header that is not a decimal byte count, and an empty message
+- An in-memory channel as the whole transport, so the demo needs no socket
+- Counting how many reads land mid-frame, and dividing the share half up
+- Auditing delivered messages against an independent re-read, with negative controls
 
-python -m venv .venv
+## How to run
 
-.venv\Scripts\activate
-
-pip install -r requirements.txt
 ```
-
----
-
-# ▶️ Run
-
-```bash
-# Offline demo: local server + two clients, exchanges messages
 python src/main.py --demo
-
-# Terminal 1: start the server
-python src/main.py server --port 9000
-
-# Terminal 2: connect
-python src/main.py client --port 9000 --nick alice
-
-# Inside the client
-hello everyone
-/join projects
-/who
-/leave
-/quit
+python src/main.py --demo --quiet
+python src/main.py --file data/chat_log.txt --json out.json
+python src/main.py --file data/chat_log.txt --audit
+python -m pytest tests -q
 ```
 
----
+`--file` names the bundled chat log: comment lines start with `;`, and each message is
+`sender | text` where `\n`, `\r`, `\t`, `\\` and `\uXXXX` are escapes. Exit code `2` means the
+log was refused -- a malformed record, an unknown escape, an empty message, or a frame that
+never completes.
 
-# 📡 Protocol
+## Project structure
 
-Messages are UTF-8, newline-terminated, fields separated by `\x1e`:
-
-| Direction | Message | Meaning |
-| --- | --- | --- |
-| C → S | `NICK\x1e<name>` | register nickname (first message) |
-| S → C | `OK\x1e<name>` / `ERR\x1e<reason>` | handshake result |
-| C → S | `MSG\x1e<text>` | chat message to current room |
-| C → S | `JOIN\x1e<room>` / `LEAVE` | switch rooms |
-| C → S | `WHO` / `QUIT` | member list / disconnect |
-| S → C | `MSG\x1e<text>` | broadcast |
-| S → C | `LIST\x1e<name\x1fname...>` | member list reply |
-
----
-
-# 🛠 Technologies
-
-- Python
-- socket
-- threading
-- argparse
-- logging
-
----
-
-# 📚 Concepts Covered
-
-- TCP socket programming (bind, listen, accept)
-- Thread-per-client server design
-- Application-layer protocol design
-- Buffered stream framing with delimiters
-- Shared state guarded by locks
-- Graceful disconnect and cleanup
-- Non-blocking client reads with a reader thread
-- Test-driven development with live sockets
-
----
-
-# ⚠️ Network Use
-
-Binds to `127.0.0.1` by default. Only expose it to networks you own or control — there is no encryption or authentication beyond the nickname.
-
----
-
-# ✅ Testing
-
-```bash
-python -m pytest tests/ -q
+```
+Chat_Application/
+├── README.md
+├── requirements.txt        # pytest==9.1.1
+├── .gitignore
+├── data/
+│   └── chat_log.txt        # 4 messages, 59 framed bytes
+├── src/
+│   ├── chat.py             # framing, decoder, channel, checks, demo
+│   └── main.py             # argparse only
+└── tests/
+    └── test_chat.py        # 117 tests
 ```
 
-**13 tests passed** covering handshake, duplicate nicknames, broadcasting, room isolation, membership, leave/join, disconnect cleanup, unknown commands, and CLI modes.
+## What the demo shows
+
+| message | characters | bytes | legacy reader |
+| --- | --: | --: | --- |
+| `hello there` | 11 | 11 | split across reads |
+| `line one\nline two` | 17 | 17 | **2 messages** |
+| `caf\u00e9` | **4** | **5** | `caf\ufffd` if cut mid-character |
+| `5 > 3 and 2 < 4` | 15 | 15 | split across reads |
+
+- 4 messages are **59** framed bytes, read as **9** chunks of 7 bytes, of which **7** end
+  mid-frame (**78%**) and 2 land exactly on a boundary
+- The decoder delivers exactly **4** messages; the legacy line reader delivers **10**
+  fragments, none of which is a message
+- The one message with an embedded newline becomes **1** message here and **2** legacy
+  messages
+- `caf\u00e9` is **4** characters but **5** bytes, so its frame header says `5`, not `4`, and
+  the frame occupies **7** bytes on the wire
+- Half a frame leaves **6** bytes held and **1** byte still needed; the legacy reader instead
+  produces `5:caf\ufffd` with one replacement character
+- 12/12 audit checks pass, with negative controls that hand the audit a decoder which
+  delivers a partial frame and watch exactly one check fail
+
+## Requirements
+
+Python 3.10+, standard library only (`pathlib`, `argparse`, `dataclasses`). Tests need
+pytest==9.1.1.
 
 ---
-
-# 👨‍💻 Author
-
-**Devender J**
-
-GitHub: **https://github.com/JDevender007**
-
----
-
-<div align="center">
-
-⭐ If you found this project useful, consider giving this repository a star.
-
-</div>
+**Devender J** -- https://github.com/JDevender007

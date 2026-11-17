@@ -1,0 +1,17 @@
+port,attempt,outcome,latency_ms
+21,1,refused,4
+22,1,open,12
+23,1,timeout,800
+23,2,timeout,800
+25,1,refused,3
+53,1,timeout,800
+80,1,open,18
+110,1,refused,6
+143,1,refused,5
+443,1,open,21
+3306,1,refused,7
+5432,1,timeout,800
+5432,2,timeout,800
+8080,1,refused,9
+8443,1,timeout,800
+8443,2,open,26

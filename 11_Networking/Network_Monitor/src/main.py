@@ -1,112 +1,104 @@
-"""Command line entry point for the Network Monitor.
+"""Command line front end for the uptime lab.
 
-Usage
------
-    python src/main.py --demo               # one snapshot, offline-friendly
-    python src/main.py --watch --interval 2 # refresh every 2 seconds
-    python src/main.py --csv out.csv        # write a snapshot to CSV
+Usage:
+    python src/main.py --demo
+    python src/main.py --demo --quiet
+    python src/main.py --file data/state_changes.csv --json out.json
+    python src/main.py --file data/state_changes.csv --audit
 """
 
 from __future__ import annotations
 
 import argparse
-import csv
+import contextlib
+import io
 import json
 import logging
 import sys
 from pathlib import Path
 
-from monitor import format_snapshot, reset_counters, take_snapshot
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-LOG = logging.getLogger("netmon")
-
-BANNER = """
-========================================
- NETWORK MONITOR
-========================================
-"""
-
-
-def write_csv(snapshot, path: Path) -> Path:
-    """Export the interface table of a snapshot to CSV."""
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(
-            fh,
-            fieldnames=["name", "ip", "send_mbps", "recv_mbps",
-                        "total_sent_mb", "total_recv_mb", "errors_in", "errors_out"],
-        )
-        writer.writeheader()
-        for iface in snapshot.interfaces:
-            writer.writerow(iface.to_dict())
-    return path
+from monitor import (                                        # noqa: E402
+    MonitorError,
+    audit,
+    format_bp,
+    measure,
+    render_intervals,
+    report,
+    run_demo,
+)
 
 
-def run_demo() -> int:
-    """Take two snapshots so the rate calculation has a delta to report."""
-    print(BANNER)
-    reset_counters()
-    print("Sampling interfaces (first pass establishes a baseline)...\n")
-    take_snapshot()
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
-    import time
 
-    time.sleep(1.0)
-    snapshot = take_snapshot()
-    print(format_snapshot(snapshot))
-    print("\nDemo completed successfully.")
-    return 0
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="uptime-lab",
+        description="Turn a state-change log into time-weighted availability.",
+    )
+    parser.add_argument("--demo", action="store_true", help="run the offline demo and exit")
+    parser.add_argument("--quiet", action="store_true", help="with --demo, print nothing")
+    parser.add_argument(
+        "--file",
+        default=None,
+        metavar="CHANGES_CSV",
+        help="state-change CSV; window.csv is read from the same folder",
+    )
+    parser.add_argument("--json", default=None, metavar="PATH", help="write a JSON report")
+    parser.add_argument("--audit", action="store_true", help="re-run the checks; exit 1 on failure")
+    return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Host network monitor")
-    parser.add_argument("--demo", action="store_true", help="take two snapshots and exit")
-    parser.add_argument("--watch", action="store_true", help="refresh continuously")
-    parser.add_argument("--interval", type=float, default=2.0, help="refresh interval seconds")
-    parser.add_argument("--count", type=int, default=1, help="number of snapshots in watch mode")
-    parser.add_argument("--csv", type=Path, default=None, help="write interface table to CSV")
-    parser.add_argument("--json", type=Path, default=None, help="write full snapshot to JSON")
-    parser.add_argument("--connections", type=int, default=50, help="max connections listed")
-    parser.add_argument("--top", type=int, default=5, help="number of top talkers")
-    args = parser.parse_args(argv)
-
+    args = build_parser().parse_args(argv)
     if args.demo:
-        return run_demo()
-
+        try:
+            return _run_demo(args.quiet, run_demo)
+        except MonitorError as exc:
+            if not args.quiet:
+                print(f"error: {exc}", file=sys.stderr)
+            return 0
     try:
-        from monitor import require_psutil
+        measured = measure(args.file)
+    except MonitorError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
 
-        require_psutil()
-    except RuntimeError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
-        return 1
+    if args.audit:
+        results = audit(measured)
+        for name, ok in results:
+            print(f"{'PASS' if ok else 'FAIL'}  {name}")
+        failed = [name for name, ok in results if not ok]
+        if failed:
+            print(f"error: {len(failed)} check(s) failed", file=sys.stderr)
+            return 1
+        return 0
 
-    print(BANNER)
-    reset_counters()
-
-    cycles = args.count if args.watch else 1
-    try:
-        for index in range(max(1, cycles)):
-            snapshot = take_snapshot(args.connections, args.top)
-            print(format_snapshot(snapshot))
-            print(f"\n--- snapshot {index + 1}/{cycles} ---")
-
-            if args.csv:
-                print("Wrote", write_csv(snapshot, args.csv))
-            if args.json:
-                args.json.parent.mkdir(parents=True, exist_ok=True)
-                args.json.write_text(json.dumps(snapshot.to_dict(), indent=2), encoding="utf-8")
-                print("Wrote", args.json)
-
-            if args.watch and index < cycles - 1:
-                import time
-
-                time.sleep(max(0.1, args.interval))
-    except KeyboardInterrupt:
-        print("\nStopped.")
-
-    print("\nDone.")
+    if args.json:
+        target = Path(args.json)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            json.dumps(report(measured), indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+    if not args.quiet:
+        print(render_intervals(measured))
+        print(
+            f"uptime {format_bp(measured['uptime_bp'])}% "
+            f"({measured['totals']['up']} s up, {measured['totals']['down']} s down), "
+            f"legacy {format_bp(measured['legacy_bp'])}%"
+        )
     return 0
 
 

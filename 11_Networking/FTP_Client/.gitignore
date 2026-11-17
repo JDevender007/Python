@@ -1,31 +1,19 @@
-# Virtual Environment
-.venv/
-venv/
-
 # Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
 
 # Tests
 .pytest_cache/
 
-# Demo artifacts
-data/
+# Local output
+output/
+*.log
+!data/session.log
 
-# Logs
-logs/*.log
-
-# VS Code
+# Editors
 .vscode/
-
-# JetBrains
 .idea/
 
-# Environment
-.env
-
-# OS Files
+# OS
 Thumbs.db
 .DS_Store

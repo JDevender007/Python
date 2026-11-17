@@ -1,0 +1,7 @@
+seq,changed_at_s,state,note
+1,0,up,monitor attached at the start of the window
+2,100,down,connection pool exhausted
+3,8800,up,pool limit raised and the service restarted
+4,9000,down,disk filled the write-ahead log
+5,9400,up,log rotated
+6,9700,down,certificate renewal failed

@@ -1,4 +1,4 @@
-# Standard library only (ftplib, pathlib, argparse, logging)
+# Standard library only (re, pathlib, argparse, dataclasses)
 
 # Test dependency:
 pytest==9.1.1

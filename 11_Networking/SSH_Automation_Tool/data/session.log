@@ -1,0 +1,18 @@
+# task_id=1
+$ systemctl is-active nginx
+inactive
+? 3
+# task_id=2
+$ grep -q ERROR /var/log/app.log
+? 1
+# task_id=3
+$ df -h /
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/sda1        40G   12G   26G  32% /
+? 0
+# task_id=4
+$ test -d '/srv/app data'
+? 1
+# task_id=5
+$ systemctl restart nginx
+? 0

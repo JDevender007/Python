@@ -1,140 +1,103 @@
-"""Command line entry point for the SSH Automation Tool.
+"""Command line front end for the exit-status lab.
 
-Usage
------
-    python src/main.py --demo                          # fully offline demo
-    python src/main.py --host 127.0.0.1 --user me --password pw --cmd "uname -a"
-    python src/main.py --host ... --key ~/.ssh/id_ed25519 --script cmds.txt
-    python src/main.py --host ... --upload local.txt --remote /tmp/x.txt
-
-Only connect to machines you own or have explicit authorization to manage.
+Usage:
+    python src/main.py --demo
+    python src/main.py --demo --quiet
+    python src/main.py --file data/tasks.csv --json out.json
+    python src/main.py --file data/tasks.csv --audit
 """
 
 from __future__ import annotations
 
 import argparse
-import getpass
+import contextlib
+import io
+import json
 import logging
 import sys
 from pathlib import Path
 
-from ssh_tool import DEFAULT_HOST, SSHError, SSHSession, run_demo
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-LOG = logging.getLogger("ssh")
+from ssh_tool import (                                       # noqa: E402
+    SshError,
+    audit,
+    measure,
+    render_outcomes,
+    report,
+    run_demo,
+)
 
-BANNER = """
-========================================
- SSH AUTOMATION TOOL
-   authorized hosts only
-========================================
-"""
+
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="SSH command & file automation (authorized hosts only)")
-    parser.add_argument("--host", default=DEFAULT_HOST, help="target host (default 127.0.0.1)")
-    parser.add_argument("--port", type=int, default=22, help="SSH port")
-    parser.add_argument("--user", default=None, help="username (prompted if omitted)")
-    parser.add_argument("--password", default=None, help="password (prefer --key or prompt)")
-    parser.add_argument("--key", type=Path, default=None, help="path to a private key file")
-    parser.add_argument("--timeout", type=float, default=10.0, help="connection timeout seconds")
-    parser.add_argument("--cmd", action="append", default=[], help="command to run (repeatable)")
-    parser.add_argument("--script", type=Path, default=None, help="file with one command per line")
-    parser.add_argument("--upload", type=Path, default=None, help="local file to upload")
-    parser.add_argument("--download", default=None, help="remote file to download")
-    parser.add_argument("--remote", default=None, help="remote path for --upload / --download")
-    parser.add_argument("--json", type=Path, default=None, help="write command results to JSON")
+    parser = argparse.ArgumentParser(
+        prog="ssh-lab",
+        description="Judge remote tasks by their exit status and a declared success set.",
+    )
     parser.add_argument("--demo", action="store_true", help="run the offline demo and exit")
+    parser.add_argument("--quiet", action="store_true", help="with --demo, print nothing")
+    parser.add_argument(
+        "--file",
+        default=None,
+        metavar="TASKS_CSV",
+        help="task CSV; session.log is read from the same folder",
+    )
+    parser.add_argument("--json", default=None, metavar="PATH", help="write a JSON report")
+    parser.add_argument("--audit", action="store_true", help="re-run the checks; exit 1 on failure")
     return parser
 
 
-def collect_commands(args: argparse.Namespace) -> list[str]:
-    """Merge --cmd flags with the lines of --script (comments and blanks skipped)."""
-    commands = list(args.cmd)
-    if args.script:
-        for line in args.script.read_text(encoding="utf-8").splitlines():
-            stripped = line.strip()
-            if stripped and not stripped.startswith("#"):
-                commands.append(stripped)
-    return commands
-
-
 def main(argv: list[str] | None = None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
-
+    args = build_parser().parse_args(argv)
     if args.demo:
-        print(BANNER)
-        return run_demo()
-
-    commands = collect_commands(args)
-    has_action = bool(commands or args.upload or args.download)
-    if not has_action:
-        parser.error("choose an action: --cmd, --script, --upload, --download (or --demo)")
-
-    username = args.user or getpass.getuser()
-    password = args.password
-    if password is None and args.key is None:
-        password = getpass.getpass(f"Password for {username}@{args.host}: ")
-
-    session = SSHSession(
-        host=args.host,
-        port=args.port,
-        username=username,
-        password=password,
-        key_path=args.key,
-        timeout=args.timeout,
-    )
-
+        try:
+            return _run_demo(args.quiet, run_demo)
+        except SshError as exc:
+            if not args.quiet:
+                print(f"error: {exc}", file=sys.stderr)
+            return 0
     try:
-        session.connect()
-    except SSHError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
-        return 1
+        measured = measure(args.file)
+    except SshError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
 
-    print(BANNER)
-    exit_code = 0
-    results = []
-    try:
-        for command in commands:
-            result = session.run(command)
-            results.append(result.to_dict())
-            marker = "OK " if result.ok else f"[{result.exit_status}]"
-            print(f"  {marker} $ {command}")
-            if result.stdout:
-                for line in result.stdout.rstrip("\n").splitlines():
-                    print(f"       {line}")
-            if result.stderr:
-                for line in result.stderr.rstrip("\n").splitlines():
-                    print(f"       ! {line}")
-            if not result.ok:
-                exit_code = result.exit_status or 1
-
-        if args.upload:
-            remote = args.remote or f"/tmp/{args.upload.name}"
-            sent = session.upload(args.upload, remote)
-            print(f"  uploaded {args.upload} -> {remote} ({sent} bytes)")
-
-        if args.download:
-            target = Path(args.remote) if args.remote else Path(args.download).name
-            path = session.download(args.download, target)
-            print(f"  downloaded {args.download} -> {path}")
-    except SSHError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
-        return 1
-    finally:
-        session.close()
+    if args.audit:
+        results = audit(measured)
+        for name, ok in results:
+            print(f"{'PASS' if ok else 'FAIL'}  {name}")
+        failed = [name for name, ok in results if not ok]
+        if failed:
+            print(f"error: {len(failed)} check(s) failed", file=sys.stderr)
+            return 1
+        return 0
 
     if args.json:
-        import json
-
-        args.json.parent.mkdir(parents=True, exist_ok=True)
-        args.json.write_text(json.dumps(results, indent=2), encoding="utf-8")
-        print(f"  wrote {args.json}")
-
-    print("Done.")
-    return exit_code
+        target = Path(args.json)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            json.dumps(report(measured), indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+    if not args.quiet:
+        print(render_outcomes(measured))
+        print(
+            f"accepted {measured['ok']}, failed {measured['failed']}; "
+            f"the exit != 0 rule fails {measured['legacy_failed']}"
+        )
+    return 0
 
 
 if __name__ == "__main__":

@@ -1,0 +1,7 @@
+; sender | text
+; \n is a real newline inside one message; \uXXXX is one character.
+; A message is one frame on the wire, however many lines it holds.
+alice | hello there
+bob | line one\nline two
+carol | caf\u00e9
+dave | 5 > 3 and 2 < 4

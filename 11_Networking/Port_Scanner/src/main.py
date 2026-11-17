@@ -1,99 +1,103 @@
-"""Command line entry point for the Port Scanner.
+"""Command line front end for the tri-state scan lab.
 
-Usage
------
-    python src/main.py --demo                       # scan localhost, canned result
-    python src/main.py --host 127.0.0.1 --ports 1-1024
-    python src/main.py --host 127.0.0.1 --ports 80,443 --json out.json
-
-Only scan systems you own or have explicit permission to test.
+Usage:
+    python src/main.py --demo
+    python src/main.py --demo --quiet
+    python src/main.py --file data/scan.csv --json out.json
+    python src/main.py --file data/scan.csv --audit
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import logging
 import sys
 from pathlib import Path
 
-from scanner import DEFAULT_HOST, parse_ports, scan, summarize
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-LOG = logging.getLogger("port_scanner")
-
-BANNER = """
-========================================
- PORT SCANNER
- localhost / authorized targets only
-========================================
-"""
-
-
-def print_table(results) -> None:
-    """Print a simple aligned table of results."""
-    if not results:
-        print("  (no ports scanned)")
-        return
-    header = f"  {'PORT':<8}{'STATE':<10}{'SERVICE':<16}{'LATENCY':<12}ERROR"
-    print(header)
-    print("  " + "-" * (len(header) - 2))
-    for r in results:
-        state = "open" if r.open else "closed"
-        latency = f"{r.latency_ms} ms" if r.open else "-"
-        print(f"  {r.port:<8}{state:<10}{r.service:<16}{latency:<12}{r.error}")
+from scanner import (                                        # noqa: E402
+    ScanError,
+    audit,
+    measure,
+    render_verdicts,
+    report,
+    run_demo,
+)
 
 
-def run_demo() -> int:
-    """Offline-friendly demo: scans localhost with a tiny port set."""
-    print(BANNER)
-    print("Scanning localhost ports 7, 9, 13, 80, 443, 3306 (fast, no privileges needed)...\n")
-    ports = [7, 9, 13, 80, 443, 3306]
-    results = scan(DEFAULT_HOST, ports, timeout=0.3, workers=20)
-    print_table(results)
-    print("\nSummary:", summarize(results))
-    print("\nDemo completed successfully.")
-    return 0
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
+
+
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="scan-lab",
+        description="Classify ports as open, closed or filtered from a probe transcript.",
+    )
+    parser.add_argument("--demo", action="store_true", help="run the offline demo and exit")
+    parser.add_argument("--quiet", action="store_true", help="with --demo, print nothing")
+    parser.add_argument(
+        "--file",
+        default=None,
+        metavar="SCAN_CSV",
+        help="probe CSV; policy.csv is read from the same folder",
+    )
+    parser.add_argument("--json", default=None, metavar="PATH", help="write a JSON report")
+    parser.add_argument("--audit", action="store_true", help="re-run the checks; exit 1 on failure")
+    return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="TCP port scanner (authorized targets only)")
-    parser.add_argument("--host", default=DEFAULT_HOST, help="target host (default: 127.0.0.1)")
-    parser.add_argument("--ports", default=None, help="ports: '80,443' or '1-1024' or mixed")
-    parser.add_argument("--timeout", type=float, default=1.0, help="per-port timeout seconds")
-    parser.add_argument("--workers", type=int, default=100, help="concurrent workers")
-    parser.add_argument("--json", type=Path, default=None, help="write JSON results to this file")
-    parser.add_argument("--demo", action="store_true", help="run the offline demo and exit")
-    args = parser.parse_args(argv)
-
+    args = build_parser().parse_args(argv)
     if args.demo:
-        return run_demo()
-
-    if not args.ports:
-        parser.error("--ports is required (e.g. --ports 1-1024) or use --demo")
-
+        try:
+            return _run_demo(args.quiet, run_demo)
+        except ScanError as exc:
+            if not args.quiet:
+                print(f"error: {exc}", file=sys.stderr)
+            return 0
     try:
-        ports = parse_ports(args.ports)
-    except ValueError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
+        measured = measure(args.file)
+    except ScanError as exc:
+        print(f"error: {exc}", file=sys.stderr)
         return 2
 
-    print(BANNER)
-    LOG.info("Scanning %s (%d ports)", args.host, len(ports))
-    results = scan(args.host, ports, timeout=args.timeout, workers=args.workers)
-    print_table(results)
-    summary = summarize(results)
-    print("\nSummary:", summary)
+    if args.audit:
+        results = audit(measured)
+        for name, ok in results:
+            print(f"{'PASS' if ok else 'FAIL'}  {name}")
+        failed = [name for name, ok in results if not ok]
+        if failed:
+            print(f"error: {len(failed)} check(s) failed", file=sys.stderr)
+            return 1
+        return 0
 
     if args.json:
-        args.json.parent.mkdir(parents=True, exist_ok=True)
-        args.json.write_text(
-            json.dumps({"summary": summary,
-                        "results": [r.to_dict() for r in results]}, indent=2),
-            encoding="utf-8",
+        target = Path(args.json)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            json.dumps(report(measured), indent=2, sort_keys=True) + "\n", encoding="utf-8"
         )
-        print(f"Wrote {args.json}")
-
+    if not args.quiet:
+        counts = measured["counts"]
+        print(render_verdicts(measured))
+        print(
+            f"{counts['open']} open, {counts['closed']} closed, {counts['filtered']} filtered; "
+            f"legacy calls {len(measured['legacy_closed'])} closed"
+        )
     return 0
 
 

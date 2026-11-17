@@ -1,134 +1,105 @@
-<div align="center">
+# Network Monitor
 
-# 📡 Network Monitor
+A state-change log records the **moments** a service changed state. The legacy availability
+report turns that log into a percentage by counting rows:
 
-### A host network monitor that reports interface bandwidth, connection tables, top talkers, and system load — with CSV and JSON export.
-
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![psutil](https://img.shields.io/badge/psutil-powered-14B8A6?style=for-the-badge&logo=python&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-
-</div>
-
----
-
-# 📖 About
-
-Network Monitor samples your machine's network state using `psutil` and prints a readable report: per-interface throughput in Mbps, the active connection table, the processes moving the most data, and CPU/memory load.
-
-Rate calculation works by diffing two counter snapshots, so the first pass establishes a baseline and the second reports real throughput.
-
----
-
-# ✨ Features
-
-- Per-interface send/receive rates in Mbps (delta-based)
-- Total transferred volume and error counters per interface
-- Active TCP/UDP connection table with PIDs
-- Top talkers ranked by cumulative process I/O
-- CPU and memory percentage in the same snapshot
-- Continuous watch mode with configurable interval
-- CSV export of the interface table, JSON export of the full snapshot
-- Graceful degradation when a counter is permission-denied
-- 14 passing pytest tests
-
----
-
-# 📂 Folder Structure
-
-```text
-Network_Monitor/
-│
-├── src/
-│   ├── main.py         # CLI: demo, watch mode, CSV/JSON export
-│   └── monitor.py      # collectors, snapshot model, formatting
-│
-├── tests/
-│   └── test_monitor.py
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
+```python
+uptime = round(100 * sum(1 for row in rows if row["state"] == "up") / len(rows), 1)
 ```
 
----
+A forty-five second blip and an eight-hour outage each cost exactly one row, so the number on
+the dashboard is a count of transitions wearing the word "uptime". In the bundled window the
+service is up for 600 seconds and down for 9400 out of 10000 -- **6.00%** availability -- yet
+three of the six transitions say `up`, and the report prints **50.0%**.
 
-# ⚙️ Installation
+The second defect is smaller and easier to ship: the natural loop that turns transitions into
+durations
 
-```bash
-git clone https://github.com/JDevender007/Python.git
-
-cd 11_Networking/Network_Monitor
-
-python -m venv .venv
-
-.venv\Scripts\activate
-
-pip install -r requirements.txt
+```python
+for current, following in zip(rows, rows[1:]):
+    record(current.state, following.changed_at_s - current.changed_at_s)
 ```
 
----
+never records the state that is **still in force when the window closes**. That quietly deletes
+the final 300 seconds of downtime here, so 9700 seconds get reported instead of 10000 and the
+answer moves to 6.19%. The window's end is an event.
 
-# ▶️ Run
+The rebuild turns the log into half-open intervals that tile the window exactly, refuses a log
+that does not start at the window's start, a log whose states do not alternate, and a
+transition outside the window. Durations are integer seconds, percentages are basis points
+with `divide_half_up`, and MTTR and MTBF come from the intervals rather than from row counts.
 
-```bash
-# Two snapshots so throughput rates are calculated
+## What this project teaches
+
+- A transition log stores events; availability is the **integral** of the state over time
+- Why `up rows / rows` is not a percentage of anything a user experiences
+- The last state has no successor, so a pairwise loop drops the tail
+- The window's end as an event, and half-open intervals that tile it exactly
+- Alternation as an invariant: two `up` rows in a row mean the log, not the service, is wrong
+- Availability in basis points with an explicit half-up division, never a float
+- MTTR as downtime over outages, MTBF as uptime over recoveries -- both from intervals
+- Reporting the longest outage beside the mean so one 8700-second hole is not averaged away
+- Refusing a log that starts mid-window instead of inventing the state before it
+- Auditing every total against an independent per-transition loop
+
+## How to run
+
+```
 python src/main.py --demo
-
-# Refresh every 2 seconds
-python src/main.py --watch --interval 2
-
-# Take 5 snapshots and export them
-python src/main.py --count 5 --csv interfaces.csv --json snapshot.json
+python src/main.py --demo --quiet
+python src/main.py --file data/state_changes.csv --json out.json
+python src/main.py --file data/state_changes.csv --audit
+python -m pytest tests -q
 ```
 
----
+`--file` names the state-change CSV; `window.csv` is read from the same folder. Exit code `2`
+means the input was refused -- a missing column, a non-numeric time, a repeated state, a first
+transition after the window start, or a transition at or beyond the window end.
 
-# 🛠 Technologies
+## Project structure
 
-- Python
-- psutil
-- csv
-- json
-- argparse
-- logging
-
----
-
-# 📚 Concepts Covered
-
-- Counter-based rate calculation (delta / elapsed time)
-- Sampling and baseline management
-- Process and socket inspection
-- Graceful handling of permission errors
-- Dataclass modelling of snapshots
-- Tabular report formatting
-- CSV and JSON serialisation
-- CLI design with argparse
-
----
-
-# ✅ Testing
-
-```bash
-python -m pytest tests/ -q
+```
+Network_Monitor/
+├── README.md
+├── requirements.txt        # pytest==9.1.1
+├── .gitignore
+├── data/
+│   ├── window.csv          # start_s,end_s -> 0,10000
+│   └── state_changes.csv   # 6 transitions: up, down, up, down, up, down
+├── src/
+│   ├── monitor.py          # intervals, totals, MTTR/MTBF, checks, demo
+│   └── main.py             # argparse only
+└── tests/
+    └── test_monitor.py     # 105 tests
 ```
 
-**14 tests passed** covering sampling, rate baselines, reset behaviour, connection and talker shapes, snapshot rendering, and CLI export paths.
+## What the demo shows
+
+| state | start_s | end_s | seconds | share |
+| --- | --: | --: | --: | --: |
+| up | 0 | 100 | 100 | 1.00% |
+| down | 100 | 8800 | **8700** | 87.00% |
+| up | 8800 | 9000 | 200 | 2.00% |
+| down | 9000 | 9400 | 400 | 4.00% |
+| up | 9400 | 9700 | 300 | 3.00% |
+| down | 9700 | 10000 | **300** | 3.00% |
+| **total** | | | **10000** | 100.00% |
+
+- The ledger of time is `up 600 s` and `down 9400 s`: availability is **6.00%**
+- The legacy row count sees **3 of 6** transitions as `up` and prints **50.00%** -- an
+  overstatement of **44.00** percentage points, because a 100-second blip and an 8700-second
+  outage weigh the same
+- The pairwise loop covers **9700 s**, losing the trailing **300 s** of downtime, and reports
+  **6.19%** over the span it did cover
+- `MTTR 3133 s = 9400 s / 3 outages` and `MTBF 200 s = 600 s / 3 recoveries`; the longest
+  outage is **8700 s**, which no mean should be allowed to hide
+- 18/18 audit checks pass, with a negative control that feeds the audit the legacy pairwise
+  reader and watches the tiling check fail
+
+## Requirements
+
+Python 3.10+, standard library only (`csv`, `pathlib`, `argparse`, `dataclasses`). Tests need
+pytest==9.1.1.
 
 ---
-
-# 👨‍💻 Author
-
-**Devender J**
-
-GitHub: **https://github.com/JDevender007**
-
----
-
-<div align="center">
-
-⭐ If you found this project useful, consider giving this repository a star.
-
-</div>
+**Devender J** -- https://github.com/JDevender007

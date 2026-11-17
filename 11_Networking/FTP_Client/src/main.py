@@ -1,100 +1,105 @@
-"""Command line entry point for the FTP Client.
+"""Command line front end for the FTP transcript lab.
 
-Usage
------
-    python src/main.py --demo                       # offline in-memory demo
-    python src/main.py --host 127.0.0.1 --user me --password pw --list
-    python src/main.py --host ... --upload local.txt
-    python src/main.py --host ... --download remote.txt
-
-Only connect to FTP servers you own or are authorized to use.
+Usage:
+    python src/main.py --demo
+    python src/main.py --demo --quiet
+    python src/main.py --file data/session.log --json out.json
+    python src/main.py --file data/session.log --audit
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
+import json
 import logging
 import sys
 from pathlib import Path
 
-from ftp_client import DEFAULT_HOST, FTPClient, FTPError, run_demo
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-LOG = logging.getLogger("ftp")
+from ftp import (                                            # noqa: E402
+    FtpError,
+    audit,
+    format_permille,
+    measure,
+    render_replies,
+    report,
+    run_demo,
+)
 
-BANNER = """
-========================================
- FTP CLIENT
- authorized servers only
-========================================
-"""
+
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="FTP client (authorized servers only)")
-    parser.add_argument("--host", default=DEFAULT_HOST, help="FTP host (default 127.0.0.1)")
-    parser.add_argument("--port", type=int, default=21, help="FTP port")
-    parser.add_argument("--user", default="anonymous", help="username")
-    parser.add_argument("--password", default="anonymous@", help="password")
+    parser = argparse.ArgumentParser(
+        prog="ftp-transcript",
+        description="Decode an FTP control transcript and check a transfer's byte count.",
+    )
     parser.add_argument("--demo", action="store_true", help="run the offline demo and exit")
-    parser.add_argument("--list", action="store_true", help="list remote directory")
-    parser.add_argument("--path", default="", help="remote path for --list")
-    parser.add_argument("--upload", type=Path, default=None, help="local file to upload")
-    parser.add_argument("--download", default=None, help="remote file to download")
-    parser.add_argument("--remote-name", default=None, help="remote name for --upload")
-    parser.add_argument("--mkdir", default=None, help="create a remote directory")
-    parser.add_argument("--delete", default=None, help="delete a remote file")
-    parser.add_argument("--timeout", type=float, default=10.0, help="socket timeout seconds")
+    parser.add_argument("--quiet", action="store_true", help="with --demo, print nothing")
+    parser.add_argument(
+        "--file",
+        default=None,
+        metavar="SESSION_LOG",
+        help="control transcript; payload.txt is read from the same folder",
+    )
+    parser.add_argument("--json", default=None, metavar="PATH", help="write a JSON report")
+    parser.add_argument("--audit", action="store_true", help="re-run the checks; exit 1 on failure")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
-
+    args = build_parser().parse_args(argv)
     if args.demo:
-        print(BANNER)
-        return run_demo()
-
-    actions = [args.list, args.upload, args.download, args.mkdir, args.delete]
-    if not any(actions):
-        parser.error("choose an action: --list, --upload, --download, --mkdir, --delete (or --demo)")
-
-    client = FTPClient(host=args.host, port=args.port, timeout=args.timeout)
+        try:
+            return _run_demo(args.quiet, run_demo)
+        except FtpError as exc:
+            if not args.quiet:
+                print(f"error: {exc}", file=sys.stderr)
+            return 0
     try:
-        banner = client.connect(args.user, args.password)
-        print(BANNER)
-        print("Server:", banner)
+        measured = measure(args.file)
+    except FtpError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
 
-        if args.list:
-            entries = client.list(args.path)
-            if not entries:
-                print("  (empty)")
-            for entry in entries:
-                print(" ", entry)
+    results = audit(measured)
+    if args.audit:
+        for name, ok in results:
+            print(f"{'PASS' if ok else 'FAIL'}  {name}")
+        failed = [name for name, ok in results if not ok]
+        if failed:
+            print(f"error: {len(failed)} check(s) failed", file=sys.stderr)
+            return 1
+        return 0
 
-        if args.upload:
-            sent = client.upload(args.upload, args.remote_name)
-            print(f"Uploaded {args.upload} ({sent} bytes)")
-
-        if args.download:
-            path = client.download(args.download)
-            print(f"Downloaded -> {path}")
-
-        if args.mkdir:
-            client.make_directory(args.mkdir)
-            print(f"Created directory {args.mkdir}")
-
-        if args.delete:
-            client.delete(args.delete)
-            print(f"Deleted {args.delete}")
-    except FTPError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
-        return 1
-    finally:
-        client.close()
-
-    print("Done.")
+    if args.json:
+        target = Path(args.json)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            json.dumps(report(measured), indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+    if not args.quiet:
+        print(render_replies(measured))
+        transfer = measured["transfer"]
+        print(
+            f"transfer {transfer.received}/{transfer.declared} bytes "
+            f"({format_permille(transfer.permille)}%), "
+            + ("complete" if transfer.complete else "incomplete")
+        )
     return 0
 
 

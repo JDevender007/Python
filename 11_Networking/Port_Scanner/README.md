@@ -1,138 +1,116 @@
-<div align="center">
+# Port Scanner
 
-# 🔍 Port Scanner
+A port scan has **three** answers, not two. A `SYN` is answered by a completed handshake
+(*open*), by a reset (*closed* -- the packet arrived and nothing was listening), or by nothing
+at all (*filtered* -- a firewall dropped it, the host is down, or the reply is late). The
+legacy scanner asks one membership question:
 
-### A fast multithreaded TCP port scanner with service detection, latency reporting, and JSON export.
-
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-
-</div>
-
----
-
-# 📖 About
-
-Port Scanner is a command line tool that probes TCP ports on a target host using a thread pool, then reports which ports are open, the service usually bound to each port, and the connection latency.
-
-It is designed for **authorized testing only** — the default target is `127.0.0.1`, and you should only scan hosts you own or have explicit permission to test.
-
----
-
-# ✨ Features
-
-- Multithreaded scanning with a configurable worker pool
-- Port lists (`80,443`), ranges (`1-1024`), or mixed (`22,80-82`)
-- Well-known service name detection
-- Per-port connection latency measurement
-- Summary of open vs closed ports
-- JSON export for later analysis
-- Safe defaults: localhost, bounded port counts, short timeouts
-- 15 passing pytest tests
-
----
-
-# 📂 Folder Structure
-
-```text
-Port_Scanner/
-│
-├── src/
-│   ├── main.py         # CLI entry point and reporting
-│   └── scanner.py      # thread pool, probing, parsing, summaries
-│
-├── tests/
-│   └── test_scanner.py
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
+```python
+open_ports = {row.port for row in rows if row.outcome == "open"}
+closed = sorted(set(ports) - open_ports)
 ```
 
----
+Everything that did not accept a connection is called **closed**, which is a claim the network
+never made. In the bundled scan of 13 ports the truth is **4 open, 6 closed, 3 filtered**; the
+legacy report prints **4 open, 9 closed, 0 filtered**. A firewall that silently drops traffic
+becomes indistinguishable from a host with nothing on that port -- the two conclusions a scan
+exists to separate.
 
-# ⚙️ Installation
+Two more defects live in the same impatience:
 
-```bash
-git clone https://github.com/JDevender007/Python.git
+**A timeout is not a latency.** The legacy average adds each timed-out probe's full 800 ms wait
+to the responses it did get, so probes that answered in **11 ms** on average are reported as
+**307 ms**. A timeout is the absence of a reply, not a slow one.
 
-cd 11_Networking/Port_Scanner
+**A retry resolves doubt; it does not create certainty.** The policy allows two attempts per
+port. A timeout is retried and a refusal is not, and the strongest evidence wins: port 8443
+timed out once and then answered, so it is open, not "still unknown". The legacy code retried
+the same way and then discarded what the retry learned by collapsing every non-open port to
+`closed`.
 
-python -m venv .venv
+The rebuild keeps the three states distinct all the way to the report, averages latency only
+over probes that answered, and validates the transcript against the policy -- a "timeout" that
+returned in 4 ms, an answer at the timeout boundary, a gap in the attempt numbers, or a third
+attempt under a two-attempt policy are all refused by name. The scan is a bundled transcript:
+no socket is opened.
 
-.venv\Scripts\activate
+## What this project teaches
 
-pip install -r requirements.txt
+- A scan result is tri-state: open, closed, filtered -- and `not open` is not `closed`
+- A refusal as *evidence* (the host answered) versus a timeout as *absence of evidence*
+- Evidence precedence: `open` > `refused` > `timeout`, with the later attempt breaking ties
+- Retries as a way to resolve uncertainty, and a policy that bounds them
+- Why a timeout must not enter a latency average, and what the difference looks like
+- Validating a transcript: a fast "timeout", an answer at the boundary, a gap in attempts
+- Classifying by port with a deterministic order, and counting states that must sum to the ports
+- Reporting the ports behind each count instead of only the totals
+- Auditing classification against an independent tally, with a collapsing negative control
+- Keeping the whole scan offline and byte-for-byte reproducible
+
+## How to run
+
 ```
-
----
-
-# ▶️ Run
-
-```bash
-# Offline demo (scans a few localhost ports)
 python src/main.py --demo
-
-# Scan a range on localhost
-python src/main.py --host 127.0.0.1 --ports 1-1024
-
-# Specific ports with a JSON report
-python src/main.py --host 127.0.0.1 --ports 22,80,443 --json results.json
+python src/main.py --demo --quiet
+python src/main.py --file data/scan.csv --json out.json
+python src/main.py --file data/scan.csv --audit
+python -m pytest tests -q
 ```
 
----
+`--file` names the probe CSV; `policy.csv` is read from the same folder. Exit code `2` means
+the input was refused -- a missing column, a port outside 1..65535, an unknown outcome, a
+timeout whose latency is not the policy's wait, an answer at or past the timeout, or an attempt
+number that is out of sequence or over the retry budget.
 
-# ⚠️ Ethical Use
+## Project structure
 
-Scan only systems you own or have written permission to test. Unauthorized scanning may be illegal in your jurisdiction. This tool defaults to `127.0.0.1` and caps scans at 10,000 ports to discourage misuse.
-
----
-
-# 🛠 Technologies
-
-- Python
-- socket
-- concurrent.futures
-- argparse
-- json
-- logging
-
----
-
-# 📚 Concepts Covered
-
-- TCP connection handling
-- Thread pools and concurrency
-- Socket timeouts and error classification
-- Range and list parsing with validation
-- Latency measurement
-- JSON serialisation
-- CLI design with argparse
-- Test-driven development with live sockets
-
----
-
-# ✅ Testing
-
-```bash
-python -m pytest tests/ -q
+```
+Port_Scanner/
+├── README.md
+├── requirements.txt        # pytest==9.1.1
+├── .gitignore
+├── data/
+│   ├── policy.csv          # timeout_ms,retries -> 800,2
+│   └── scan.csv            # 16 probes across 13 ports
+├── src/
+│   ├── scanner.py          # validation, classification, latency, checks, demo
+│   └── main.py             # argparse only
+└── tests/
+    └── test_scanner.py     # 107 tests
 ```
 
-**15 tests passed** covering port parsing, open/closed probing against a real local server, scan ordering, summarisation, JSON output, and CLI error handling.
+## What the demo shows
+
+| port | service | attempts | evidence | state |
+| --: | --- | --: | --- | --- |
+| 21 | ftp | 1 | refused | closed |
+| 22 | ssh | 1 | open | **open** |
+| 23 | telnet | 2 | timeout | **filtered** |
+| 25 | smtp | 1 | refused | closed |
+| 53 | dns | 1 | timeout | **filtered** |
+| 80 | http | 1 | open | **open** |
+| 110 | pop3 | 1 | refused | closed |
+| 143 | imap | 1 | refused | closed |
+| 443 | https | 1 | open | **open** |
+| 3306 | mysql | 1 | refused | closed |
+| 5432 | postgres | 2 | timeout | **filtered** |
+| 8080 | http-alt | 1 | refused | closed |
+| 8443 | https-alt | 2 | open | **open** |
+
+- Here: **4 open, 6 closed, 3 filtered**. Legacy: **4 open, 9 closed, 0 filtered** -- the
+  difference is exactly the three ports that never answered (`23, 53, 5432`)
+- `8443` timed out on attempt 1 and answered on attempt 2, so the verdict is `open` with
+  `attempts = 2`; three ports were retried in total
+- The six timeouts account for **4800 ms** of waiting. Answered probes average **11 ms**;
+  the legacy average is **307 ms** -- a difference of 296 ms that only exists because a
+  non-answer was booked as a slow answer
+- 18/18 audit checks pass, with a negative control whose classifier collapses `filtered` into
+  `closed` and watches the independent tally disagree
+
+## Requirements
+
+Python 3.10+, standard library only (`csv`, `pathlib`, `argparse`, `dataclasses`). Tests need
+pytest==9.1.1.
 
 ---
-
-# 👨‍💻 Author
-
-**Devender J**
-
-GitHub: **https://github.com/JDevender007**
-
----
-
-<div align="center">
-
-⭐ If you found this project useful, consider giving this repository a star.
-
-</div>
+**Devender J** -- https://github.com/JDevender007

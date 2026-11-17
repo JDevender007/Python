@@ -1,0 +1,25 @@
+S> 220-Offline lab FTP server
+S> 220-No network: this transcript is the server
+S> 220 Ready
+C> USER student
+S> 331 Password required for student
+C> PASS lab
+S> 230 Logged in
+C> FEAT
+S> 211-Features:
+S> 211- UTF8
+S> 211- MDTM
+S> 211- SIZE
+S> 211- REST STREAM
+S> 211 End
+C> PASV
+S> 227 Entering Passive Mode (10,0,0,5,19,137)
+C> TYPE I
+S> 200 Type set to I
+C> SIZE report.csv
+S> 213 1234
+C> RETR report.csv
+S> 150 Opening BINARY mode data connection for report.csv (1234 bytes)
+S> 226 Transfer complete
+C> QUIT
+S> 221 Bye

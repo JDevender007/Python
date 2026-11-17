@@ -1,0 +1,6 @@
+task_id,command,ok_codes,note
+1,systemctl is-active nginx,0,is the unit running right now
+2,grep -q ERROR /var/log/app.log,0;1,exit 1 means the pattern is absent
+3,df -h /,0,report root filesystem usage
+4,test -d '/srv/app data',0,path holding a space
+5,systemctl restart nginx,0,restart the unit

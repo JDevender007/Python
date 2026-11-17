@@ -1,155 +1,107 @@
-<div align="center">
+# SSH Automation Tool
 
-# 🔐 SSH Automation Tool
+A remote command has **one** authoritative result: its exit status. The legacy wrapper asks
+two questions that look the same and are not:
 
-### Run remote commands and transfer files over SSH with a clean Python API — plus a fully offline in-memory demo backend.
-
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Paramiko](https://img.shields.io/badge/paramiko-5.x-2D2D2D?style=for-the-badge&logo=python&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-
-</div>
-
----
-
-# 📖 About
-
-SSH Automation Tool executes commands and copies files on remote machines over SSH, using `paramiko` under the hood. It exposes a small `SSHSession` API (`run`, `run_all`, `upload`, `download`, `close`) that works as a context manager and returns structured `CommandResult` objects with exit status, stdout, and stderr.
-
-The session is backend-driven: point it at a real host with paramiko, or inject the bundled **`LocalShell`** — an in-memory stand-in implementing the same interface — and everything runs with **no network, no credentials, and no listening ports**. The demo and the entire test suite use that offline path.
-
----
-
-# ✨ Features
-
-- Run one command or a batch and get structured results (exit code, stdout, stderr)
-- Upload and download files over SFTP with byte counts
-- Password or private-key authentication, connection timeout handling
-- Context-manager sessions with idempotent close
-- `--script` files: one command per line, `#` comments skipped
-- JSON export of command results
-- Fully offline demo backend (`LocalShell`) with a tiny shell (`echo`, `pwd`, `whoami`, `ls`, `cat`, `uname`)
-- 25 passing pytest tests
-
----
-
-# 📂 Folder Structure
-
-```text
-SSH_Automation_Tool/
-│
-├── src/
-│   ├── main.py         # CLI: demo, run commands, upload/download, JSON export
-│   └── ssh_tool.py     # SSHSession, ParamikoBackend, LocalShell, run_demo
-│
-├── tests/
-│   └── test_ssh_tool.py
-│
-├── data/               # created automatically by the demo
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
+```python
+output = session.run(f"systemctl is-active {service}")
+running = "active" in output
+failed = [task for task in tasks if task.exit_code != 0]
 ```
 
----
+**1. A substring is not a status.** `systemctl is-active` prints `inactive` for a stopped unit,
+and `inactive` contains `active`. In the bundled session task 1 prints `inactive`, exits `3`,
+and the legacy check reports the service as **running** -- the exact opposite of the truth. The
+same test would accept `failed`, `activating`, or any log line that merely mentions the word.
 
-# ⚙️ Installation
+**2. A nonzero exit is not a failure.** `grep -q` returns `1` when the pattern is absent: that is
+a successful search with a negative answer, and every `set -e` script that greps has to know it.
+A task must **declare** the codes that mean success -- `0;1` for a grep, `0` for a restart -- and
+the verdict must compare against that declaration. Here the legacy rule fails tasks
+`[1, 2, 4]` while the declared codes fail only `[1, 4]`; the extra one is task 2, whose exit `1`
+is `grep`'s way of saying "no match".
 
-```bash
-git clone https://github.com/JDevender007/Python.git
+**3. A command built by concatenation is not the command you meant.**
+`f"test -d {path}"` with `path = "/srv/app data"` hands the remote shell **four** words instead of
+three, so the test asks about `/srv/app` and then about `data`. A path holding `;` or `$(...)` is
+worse than wrong: it is a second command.
 
-cd 11_Networking/SSH_Automation_Tool
+The rebuild keeps every command as an argument vector, splits a command line the way a POSIX
+shell would (single quotes and backslash escapes, refusing an unterminated quote), quotes each
+argument on the way out, and refuses an argument carrying a newline or a NUL. The remote side of
+each session is a bundled transcript of outputs and exit codes, so two runs print the same bytes
+and no socket is opened.
 
-python -m venv .venv
+## What this project teaches
 
-.venv\Scripts\activate
+- The exit status is the answer; the text is a transcript for humans
+- Why `"active" in output` is wrong for `inactive`, `failed` and `activating` alike
+- Exit `1` from `grep -q` as a negative answer, not an error
+- Declaring a success set per task (`0`, `0;1`) instead of hard-coding zero
+- Command as an argument vector, and quoting every argument on the way out
+- Splitting with quote awareness: `'/srv/app data'` is one word, not two
+- Why a shell metacharacter inside one argument is a quoting problem, not an escaping problem
+- Refusing an unterminated quote, a trailing backslash, and a newline in an argument
+- Pairing each task with exactly one recorded result, and refusing a mismatch by name
+- Auditing verdicts against an independent comparison, with negative controls
 
-pip install -r requirements.txt
+## How to run
+
 ```
-
----
-
-# ▶️ Run
-
-```bash
-# Fully offline demo (in-memory backend, no network needed)
 python src/main.py --demo
-
-# Run commands on a host you control
-python src/main.py --host 127.0.0.1 --user me --password pw --cmd "uname -a" --cmd "whoami"
-
-# Batch mode from a script file, with key auth
-python src/main.py --host 127.0.0.1 --user me --key ~/.ssh/id_ed25519 --script commands.txt
-
-# File transfer
-python src/main.py --host 127.0.0.1 --upload local.txt --remote /tmp/local.txt
-python src/main.py --host 127.0.0.1 --download /var/log/app.log --remote app.log
+python src/main.py --demo --quiet
+python src/main.py --file data/tasks.csv --json out.json
+python src/main.py --file data/tasks.csv --audit
+python -m pytest tests -q
 ```
 
-Example `commands.txt`:
+`--file` names the task CSV; `session.log` is read from the same folder. Exit code `2` means the
+input was refused -- a missing column, a duplicated task id, a command with an unterminated
+quote, a declared code outside `0..255`, a transcript block with no exit line, a result for an
+unknown task, or a recorded command that does not match its task.
 
-```text
-# maintenance script
-whoami
-uname -a
-echo "all good"
+## Project structure
+
+```
+SSH_Automation_Tool/
+├── README.md
+├── requirements.txt        # pytest==9.1.1
+├── .gitignore
+├── data/
+│   ├── tasks.csv           # 5 tasks with declared success codes
+│   └── session.log         # 5 blocks: command, output, exit status
+├── src/
+│   ├── ssh_tool.py         # quoting, parsing, verdicts, checks, demo
+│   └── main.py             # argparse only
+└── tests/
+    └── test_ssh_tool.py    # 130 tests
 ```
 
----
+## What the demo shows
 
-# ⚠️ Ethical Use
+| task | command | exit | declared | verdict |
+| --: | --- | --: | --- | --- |
+| 1 | `systemctl is-active nginx` | **3** | `0` | **FAILED** |
+| 2 | `grep -q ERROR /var/log/app.log` | **1** | `0;1` | **ok** |
+| 3 | `df -h /` | 0 | `0` | ok |
+| 4 | `test -d '/srv/app data'` | **1** | `0` | **FAILED** |
+| 5 | `systemctl restart nginx` | 0 | `0` | ok |
 
-Only SSH into machines you own or have explicit, written authorization to manage. Unauthorized access to computer systems is illegal in most jurisdictions. The tool defaults to `127.0.0.1`; use strong keys, never commit credentials, and prefer key-based authentication over passwords on the command line.
+- The declared codes accept `[2, 3, 5]`; the `exit != 0` rule fails `[1, 2, 4]` and so refuses
+  task 2, whose exit `1` is `grep`'s negative answer
+- Task 1 printed `inactive` and exited `3`: the substring test says running, the declared codes
+  say failed, and only one of them is the truth
+- `test -d '/srv/app data'` is **3** arguments when split with quote awareness and **4** when
+  split on whitespace (`'/srv/app` and `data'`), so the naive version tests a different path
+- `build_command(["test", "-d", "/srv/app data"])` returns `test -d '/srv/app data'` and splits
+  back to the identical vector; `ls '/tmp; rm -rf /'` keeps the semicolon inside one argument
+- 18/18 audit checks pass, with negative controls that hand the audit a verdict reader which
+  calls everything a failure and watch exactly the comparison check flip
 
----
+## Requirements
 
-# 🛠 Technologies
-
-- Python
-- paramiko (SSH client + SFTP)
-- argparse
-- getpass
-- json
-- logging
-- pytest
-
----
-
-# 📚 Concepts Covered
-
-- SSH protocol fundamentals (channels, exec, SFTP subsystem)
-- Transport abstraction: swapping a real backend for an offline test double
-- Structured command results and exit-code propagation
-- Private key generation and round-trip loading with paramiko
-- Context managers for connection lifecycle
-- Script files and batch execution
-- Error normalization (`SSHError`) across a library boundary
-- Test-driven development without a live server
+Python 3.10+, standard library only (`csv`, `re`, `pathlib`, `argparse`, `dataclasses`). Tests
+need pytest==9.1.1.
 
 ---
-
-# ✅ Testing
-
-```bash
-python -m pytest tests/ -q
-```
-
-**25 tests passed** covering command execution, file transfer round-trips, missing-file and refused-connection error paths, session lifecycle, paramiko key round-trips, and CLI modes — all offline.
-
----
-
-# 👨‍💻 Author
-
-**Devender J**
-
-GitHub: **https://github.com/JDevender007**
-
----
-
-<div align="center">
-
-⭐ If you found this project useful, consider giving this repository a star.
-
-</div>
+**Devender J** -- https://github.com/JDevender007
