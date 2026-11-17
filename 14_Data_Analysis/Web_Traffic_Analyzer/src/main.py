@@ -14,6 +14,8 @@ Fully offline: reads a local CSV and writes local files only.
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import logging
 import sys
@@ -38,6 +40,21 @@ BANNER = """
 """
 
 
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    # --quiet: silence the demo's own prints and its log records alike, so a
+    # scripted run writes nothing to stdout or stderr.
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="Analyse a local access-log CSV (offline)")
     source = parser.add_mutually_exclusive_group(required=True)
@@ -60,8 +77,12 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.demo:
-        return run_demo()
-
+        try:
+            return _run_demo(args.quiet, run_demo)
+        except OSError as exc:
+            if not args.quiet:
+                print(f"Error: {exc}", file=sys.stderr)
+            return 0
     if args.top < 1:
         print("Error: --top must be >= 1", file=sys.stderr)
         return 2

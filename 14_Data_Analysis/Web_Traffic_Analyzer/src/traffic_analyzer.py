@@ -1,4 +1,4 @@
-"""Web server access-log analysis: loading, validation, and reporting — offline.
+"""Web server access-log analysis: loading, validation, and reporting - offline.
 
 Reads a CSV of HTTP requests (timestamp, method, path, status, bytes,
 duration, client, session), validates it, and produces a TrafficReport with
@@ -306,7 +306,7 @@ DEMO_CSV = Path(__file__).resolve().parent.parent / "data" / "traffic_sample.csv
 
 
 def run_demo(csv_path: Path | None = None) -> int:
-    """Analyse the bundled sample access log — fully offline."""
+    """Analyse the bundled sample access log - fully offline."""
     print("=" * 68)
     print(" WEB TRAFFIC ANALYZER - offline demo")
     print(" Bundled sample access log; no network, no servers.")

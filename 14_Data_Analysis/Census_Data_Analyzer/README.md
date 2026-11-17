@@ -33,7 +33,7 @@ The loader validates every row — unique region IDs, positive whole-number popu
 - Indicator correlation matrix (income, poverty, bachelor, unemployment, age, urban)
 - Highest-income / highest-poverty rankings by district name; income IQR ratio
 - JSON report export; bundled deterministic sample (120 regions, 6 states)
-- 44 passing pytest tests
+- 50 passing pytest tests
 
 ---
 
@@ -147,7 +147,7 @@ CSV ──► validate rows ──► weighted analysis
 python -m pytest tests/ -q
 ```
 
-**44 tests passed** covering every validation rule (duplicate IDs, household/population invariant, rate fractions, ranges), exact weighted-mean math (weighted 17,500 vs unweighted 15,000 on a hand-built frame), state partitioning, urban/rural coverage, correlation symmetry, ranking correctness, rendering, demo idempotency, and every CLI path — all offline.
+**50 tests passed** covering every validation rule (duplicate IDs, household/population invariant, rate fractions, ranges), exact weighted-mean math (weighted 17,500 vs unweighted 15,000 on a hand-built frame), state partitioning, urban/rural coverage, correlation symmetry, ranking correctness, rendering, demo idempotency, and every CLI path — all offline.
 
 ---
 

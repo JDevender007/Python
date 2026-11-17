@@ -11,7 +11,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from main import main  # noqa: E402
+from main import _run_demo, main  # noqa: E402
 from stock_analyzer import (  # noqa: E402
     DEMO_CSV,
     REQUIRED_COLUMNS,
@@ -411,3 +411,62 @@ def test_cli_requires_source(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent.name == "data"
+
+
+def test_cli_demo_quiet_prints_nothing(capsys):
+    """--demo --quiet writes nothing to stdout or to stderr."""
+    assert main(["--demo", "--quiet"]) == 0
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
+
+def test_quiet_demo_returns_the_demo_status():
+    """Quiet mode hides output but still reports what the demo returned."""
+    assert _run_demo(True, lambda: 7) == 7
+    assert _run_demo(False, lambda: 7) == 7
+
+
+def test_quiet_demo_restores_logging(monkeypatch):
+    """Logging is disabled only for the duration of the quiet demo."""
+    import logging
+
+    before = logging.root.manager.disable
+    seen = []
+
+    def probe():
+        seen.append(logging.root.manager.disable)
+        return 0
+
+    _run_demo(True, probe)
+    assert seen == [logging.CRITICAL]
+    assert logging.root.manager.disable == before
+
+
+# --------------------------------------------------------------------------- #
+# Indicators: the arithmetic behind the dashboard
+# --------------------------------------------------------------------------- #
+def test_sma_needs_a_full_window_before_it_reports():
+    """A moving average of three is undefined until the third close."""
+    closes = pd.Series([1.0, 2.0, 3.0, 4.0, 5.0])
+    values = sma(closes, 3)
+    assert values.iloc[:2].isna().all()
+    assert values.iloc[2:].tolist() == [2.0, 3.0, 4.0]
+
+
+def test_sma_rejects_a_window_below_one():
+    with pytest.raises(StockError):
+        sma(pd.Series([1.0, 2.0]), 0)
+
+
+def test_max_drawdown_reports_the_peak_and_the_trough():
+    """A 12 to 6 fall is a 50% drawdown, and the dates must name it."""
+    closes = pd.Series(
+        [10.0, 12.0, 6.0, 8.0],
+        index=pd.to_datetime(
+            ["2024-01-02", "2024-01-03", "2024-01-04", "2024-01-05"]
+        ),
+    )
+    pct, peak, trough = max_drawdown(closes)
+    assert pct == 50.0
+    assert (peak, trough) == ("2024-01-03", "2024-01-04")

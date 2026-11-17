@@ -32,7 +32,7 @@ Everything runs on local files. The bundled **deterministic** sample (3 syntheti
 - Per-ticker detail: trend vs SMA, best/worst day, drawdown window
 - JSON report export and PNG price chart (matplotlib Agg, headless)
 - Bundled deterministic sample: ALPHA / BETA / GAMMA, 504 days each (1,512 bars)
-- 45 passing pytest tests
+- 51 passing pytest tests
 
 ---
 
@@ -149,7 +149,7 @@ CSV ──► validate bars ──► per-ticker series
 python -m pytest tests/ -q
 ```
 
-**45 tests passed** covering every validation rule (bar consistency, duplicates, positivity), indicator math against hand-computed series, drawdown date reporting, per-ticker and market-level analysis, correlation symmetry, rendering, demo idempotency, and every CLI path — all offline with bundled data.
+**51 tests passed** covering every validation rule (bar consistency, duplicates, positivity), indicator math against hand-computed series, drawdown date reporting, per-ticker and market-level analysis, correlation symmetry, rendering, demo idempotency, and every CLI path — all offline with bundled data.
 
 ---
 

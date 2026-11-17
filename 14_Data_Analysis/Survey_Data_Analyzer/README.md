@@ -32,7 +32,7 @@ Everything runs on local files: the bundled **deterministic** sample (500 respon
 - Group comparisons for department, gender, and remote — count, mean satisfaction, mean recommend, top-box %
 - Satisfaction bucket (Low 1–2 / Mid 3 / High 4–5) × group cross-tab in row percentages
 - JSON report export; bundled deterministic sample dataset (500 responses)
-- 44 passing pytest tests
+- 50 passing pytest tests
 
 ---
 
@@ -147,7 +147,7 @@ The demo verifies itself: bucket shares sum to 100%, the department-weighted mea
 python -m pytest tests/ -q
 ```
 
-**44 tests passed** covering every validation rule (ranges, duplicates, blanks, fractional scores), exact NPS and satisfaction math on hand-built frames, weighted-mean reconciliation, crosstab row sums, rendering, demo idempotency, and every CLI path — all offline.
+**50 tests passed** covering every validation rule (ranges, duplicates, blanks, fractional scores), exact NPS and satisfaction math on hand-built frames, weighted-mean reconciliation, crosstab row sums, rendering, demo idempotency, and every CLI path — all offline.
 
 ---
 

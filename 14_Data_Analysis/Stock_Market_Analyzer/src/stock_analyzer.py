@@ -1,4 +1,4 @@
-"""Stock market analysis from a local OHLCV CSV — fully offline.
+"""Stock market analysis from a local OHLCV CSV - fully offline.
 
 Provides price loading/validation, technical indicators (SMA, EMA, RSI,
 MACD), risk/return statistics (volatility, Sharpe, max drawdown), a
@@ -6,7 +6,7 @@ cross-ticker correlation matrix, and a comparison report.
 
 Sample data is bundled and deterministic; no market data is ever fetched
 from the network. Past performance of synthetic data proves nothing about
-real markets — this is an analytics exercise, not investment advice.
+real markets - this is an analytics exercise, not investment advice.
 """
 
 from __future__ import annotations
@@ -331,7 +331,7 @@ DEMO_CSV = Path(__file__).resolve().parent.parent / "data" / "stocks_sample.csv"
 
 
 def run_demo(csv_path: Path | None = None) -> int:
-    """Analyse the bundled sample market data — fully offline."""
+    """Analyse the bundled sample market data - fully offline."""
     print("=" * 72)
     print(" STOCK MARKET ANALYZER - offline demo")
     print(" Bundled synthetic OHLCV data; no network, no market feeds.")

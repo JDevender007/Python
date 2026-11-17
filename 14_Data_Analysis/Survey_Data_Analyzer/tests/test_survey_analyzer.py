@@ -11,7 +11,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from main import main  # noqa: E402
+from main import _run_demo, main  # noqa: E402
 from survey_analyzer import (  # noqa: E402
     DEMO_CSV,
     GROUP_COLUMNS,
@@ -367,3 +367,57 @@ def test_cli_requires_source(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+def test_cli_demo_quiet_prints_nothing(capsys):
+    """--demo --quiet writes nothing to stdout or to stderr."""
+    assert main(["--demo", "--quiet"]) == 0
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
+
+def test_quiet_demo_returns_the_demo_status():
+    """Quiet mode hides output but still reports what the demo returned."""
+    assert _run_demo(True, lambda: 7) == 7
+    assert _run_demo(False, lambda: 7) == 7
+
+
+def test_quiet_demo_restores_logging(monkeypatch):
+    """Logging is disabled only for the duration of the quiet demo."""
+    import logging
+
+    before = logging.root.manager.disable
+    seen = []
+
+    def probe():
+        seen.append(logging.root.manager.disable)
+        return 0
+
+    _run_demo(True, probe)
+    assert seen == [logging.CRITICAL]
+    assert logging.root.manager.disable == before
+
+
+# --------------------------------------------------------------------------- #
+# Distributions: every response is counted exactly once
+# --------------------------------------------------------------------------- #
+def test_satisfaction_counts_cover_every_response():
+    report = analyze(load_survey(DEMO_CSV))
+    assert sum(report.satisfaction_dist.values()) == report.n_responses
+
+
+def test_group_tables_cover_every_response():
+    """A group-by that drops rows would understate the department totals."""
+    report = analyze(load_survey(DEMO_CSV))
+    for column in GROUP_COLUMNS:
+        assert int(report.by_group[column]["responses"].sum()) == report.n_responses
+
+
+def test_nps_is_promoters_minus_detractors_on_a_fixed_sample():
+    """Three 10s and one 1 give 75% promoters, 25% detractors, NPS 50."""
+    split = nps_scores(pd.Series([10, 10, 10, 1]))
+    assert split["promoter_pct"] == 75.0
+    assert split["detractor_pct"] == 25.0
+    assert split["nps"] == 50.0
+    assert split["passive_pct"] == 0.0

@@ -11,9 +11,10 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from main import main  # noqa: E402
+from main import _run_demo, main  # noqa: E402
 from sales_analyzer import (  # noqa: E402
     DEMO_CSV,
+    PERIOD_CODES,
     PERIODS,
     REQUIRED_COLUMNS,
     SalesError,
@@ -332,3 +333,99 @@ def test_cli_requires_source(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+def test_cli_demo_quiet_prints_nothing(capsys):
+    """--demo --quiet writes nothing to stdout or to stderr."""
+    assert main(["--demo", "--quiet"]) == 0
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
+
+def test_quiet_demo_returns_the_demo_status():
+    """Quiet mode hides output but still reports what the demo returned."""
+    assert _run_demo(True, lambda: 7) == 7
+    assert _run_demo(False, lambda: 7) == 7
+
+
+def test_quiet_demo_restores_logging(monkeypatch):
+    """Logging is disabled only for the duration of the quiet demo."""
+    import logging
+
+    before = logging.root.manager.disable
+    seen = []
+
+    def probe():
+        seen.append(logging.root.manager.disable)
+        return 0
+
+    _run_demo(True, probe)
+    assert seen == [logging.CRITICAL]
+    assert logging.root.manager.disable == before
+
+
+# --------------------------------------------------------------------------- #
+# Report invariants: the parts must add up to the whole
+# --------------------------------------------------------------------------- #
+def test_segment_revenue_sums_to_the_total():
+    """Every order sits in exactly one region, so the shares must add up."""
+    report = analyze(load_sales(DEMO_CSV))
+    by_region = float(report.by_segment["region"]["revenue"].sum())
+    assert round(by_region, 2) == round(report.total_revenue, 2)
+
+
+def test_segment_orders_sum_to_the_order_count():
+    """A segmentation that loses orders is a bug the totals would hide."""
+    report = analyze(load_sales(DEMO_CSV))
+    for segment in ("region", "category"):
+        assert int(report.by_segment[segment]["orders"].sum()) == report.total_orders
+
+
+def test_avg_order_value_is_revenue_over_orders():
+    report = analyze(load_sales(DEMO_CSV))
+    assert report.avg_order_value == round(
+        report.total_revenue / report.total_orders, 2
+    )
+
+
+def test_avg_daily_revenue_counts_both_end_dates():
+    report = analyze(load_sales(DEMO_CSV))
+    span = (report.frame["date"].max() - report.frame["date"].min()).days + 1
+    assert report.avg_daily_revenue == round(report.total_revenue / span, 2)
+
+
+def test_top_products_are_ordered_by_revenue():
+    report = analyze(load_sales(DEMO_CSV))
+    top = report.top_products(3)
+    assert len(top) == 3
+    revenues = [float(value) for value in top["revenue"]]
+    assert revenues == sorted(revenues, reverse=True)
+
+
+def test_moving_average_with_a_window_of_one_is_the_raw_series():
+    """A window of one is the series itself, so the trend adds nothing."""
+    report = analyze(load_sales(DEMO_CSV), window=1)
+    raw = [round(float(value), 2) for value in report.by_period["revenue"]]
+    smoothed = [round(float(value), 2) for value in report.moving_average]
+    assert smoothed == raw
+
+
+def test_render_report_caps_the_peak_bar_at_twenty_four():
+    text = render_report(analyze(load_sales(DEMO_CSV)))
+    assert "#" * 24 in text
+    assert "#" * 25 not in text
+
+
+def test_to_dict_survives_a_json_round_trip():
+    report = analyze(load_sales(DEMO_CSV))
+    payload = json.loads(json.dumps(report.to_dict()))
+    assert payload["total_orders"] == report.total_orders
+    assert payload["date_range"] == [report.date_min, report.date_max]
+    bucketed = sum(entry["revenue"] for entry in payload["by_period"])
+    assert abs(bucketed - report.total_revenue) < 0.05
+
+
+def test_period_codes_cover_every_period():
+    """A period the CLI accepts must have a resample code behind it."""
+    assert tuple(PERIOD_CODES) == PERIODS

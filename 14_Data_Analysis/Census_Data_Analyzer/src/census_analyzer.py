@@ -1,4 +1,4 @@
-"""Census data analysis: loading, validation, and demographic reporting — offline.
+"""Census data analysis: loading, validation, and demographic reporting - offline.
 
 Reads a CSV of regional census indicators, validates it, and produces a
 CensusReport with population and household totals, population/household
@@ -325,7 +325,7 @@ DEMO_CSV = Path(__file__).resolve().parent.parent / "data" / "census_sample.csv"
 
 
 def run_demo(csv_path: Path | None = None) -> int:
-    """Analyse the bundled sample census data — fully offline."""
+    """Analyse the bundled sample census data - fully offline."""
     print("=" * 70)
     print(" CENSUS DATA ANALYZER - offline demo")
     print(" Bundled synthetic indicators; no network, no APIs.")

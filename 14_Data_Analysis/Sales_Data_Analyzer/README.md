@@ -33,7 +33,7 @@ Everything runs on local files: the bundled 704-order sample ships in `data/`, a
 - Top-N products and a moving-average trend line
 - JSON report export and PNG chart export (matplotlib Agg)
 - Bundled deterministic sample dataset (704 orders across 2024)
-- 40 passing pytest tests
+- 52 passing pytest tests
 
 ---
 
@@ -133,7 +133,7 @@ ORD-1001,2024-01-05,North,Toys,Puzzle 1000pc,2,16.50,33.00
 python -m pytest tests/ -q
 ```
 
-**40 tests passed** covering every validation rule (missing columns, bad dates, non-numeric/negative/zero values, stale revenue), all period buckets, growth, segment partitions, top products, moving averages, rendering, demo idempotency, and every CLI path — all offline.
+**52 tests passed** covering every validation rule (missing columns, bad dates, non-numeric/negative/zero values, stale revenue), all period buckets, growth, segment partitions, top products, moving averages, rendering, demo idempotency, and every CLI path — all offline.
 
 ---
 

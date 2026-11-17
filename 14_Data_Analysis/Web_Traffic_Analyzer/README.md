@@ -32,7 +32,7 @@ Everything runs on local files: the bundled **deterministic** sample (1,664 requ
 - 24-hour traffic profile with peak hour; busiest-days summary
 - Top clients by requests; bandwidth formatting (B/KB/MB/GB)
 - JSON report export; bundled deterministic sample (1,664 requests, 643 sessions)
-- 50 passing pytest tests
+- 53 passing pytest tests
 
 ---
 
@@ -145,7 +145,7 @@ CSV ──► validate rows ──► optional --since/--until window ──► 
 python -m pytest tests/ -q
 ```
 
-**50 tests passed** covering every validation rule (timestamps, methods, paths, statuses, negatives, blanks), date-window filtering (since/until/ordering/empty/bad format), exact status-class and error-rate math, top/slowest path ordering, hourly/daily sums, formatting helpers, rendering, demo idempotency, and every CLI path — all offline.
+**53 tests passed** covering every validation rule (timestamps, methods, paths, statuses, negatives, blanks), date-window filtering (since/until/ordering/empty/bad format), exact status-class and error-rate math, top/slowest path ordering, hourly/daily sums, formatting helpers, rendering, demo idempotency, and every CLI path — all offline.
 
 ---
 

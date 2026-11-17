@@ -11,7 +11,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 
-from main import main  # noqa: E402
+from main import _run_demo, main  # noqa: E402
 from census_analyzer import (  # noqa: E402
     CORR_COLUMNS,
     DEMO_CSV,
@@ -386,3 +386,65 @@ def test_cli_requires_source(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+def test_cli_demo_quiet_prints_nothing(capsys):
+    """--demo --quiet writes nothing to stdout or to stderr."""
+    assert main(["--demo", "--quiet"]) == 0
+    captured = capsys.readouterr()
+    assert captured.out == ""
+    assert captured.err == ""
+
+
+def test_quiet_demo_returns_the_demo_status():
+    """Quiet mode hides output but still reports what the demo returned."""
+    assert _run_demo(True, lambda: 7) == 7
+    assert _run_demo(False, lambda: 7) == 7
+
+
+def test_quiet_demo_restores_logging(monkeypatch):
+    """Logging is disabled only for the duration of the quiet demo."""
+    import logging
+
+    before = logging.root.manager.disable
+    seen = []
+
+    def probe():
+        seen.append(logging.root.manager.disable)
+        return 0
+
+    _run_demo(True, probe)
+    assert seen == [logging.CRITICAL]
+    assert logging.root.manager.disable == before
+
+
+# --------------------------------------------------------------------------- #
+# Totals and weighting
+# --------------------------------------------------------------------------- #
+def test_report_totals_match_the_frame():
+    """The report's totals are the frame's totals, not a rounded restatement."""
+    frame = load_census(DEMO_CSV)
+    report = analyze(frame)
+    assert report.regions == len(frame)
+    assert report.population_total == int(frame["population"].sum())
+    assert report.households_total == int(frame["households"].sum())
+
+
+def test_weighted_mean_is_the_population_weighted_ratio():
+    frame = load_census(DEMO_CSV)
+    expected = float(
+        (frame["poverty_rate"] * frame["population"]).sum()
+        / frame["population"].sum()
+    )
+    assert weighted_mean(frame, "poverty_rate", "population") == pytest.approx(expected)
+    assert weighted_mean(frame, "poverty_rate", "population") != pytest.approx(
+        float(frame["poverty_rate"].mean())
+    )
+
+
+def test_weighted_mean_refuses_a_zero_total_weight():
+    """A rate weighted by nothing has no value to report."""
+    frame = load_census(DEMO_CSV).head(3).copy()
+    frame["population"] = 0
+    with pytest.raises(CensusError):
+        weighted_mean(frame, "poverty_rate", "population")

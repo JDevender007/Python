@@ -1,9 +1,9 @@
-"""Survey response analysis: loading, validation, and reporting — offline.
+"""Survey response analysis: loading, validation, and reporting - offline.
 
 Reads a CSV of survey responses, validates it, and produces a SurveyReport
 with response counts, Likert distributions, top/bottom-box analysis, NPS,
 group comparisons (department / gender / remote), and a satisfaction
-cross-tabulation. Local file analysis only — no network, no APIs.
+cross-tabulation. Local file analysis only - no network, no APIs.
 """
 
 from __future__ import annotations
@@ -295,7 +295,7 @@ DEMO_CSV = Path(__file__).resolve().parent.parent / "data" / "survey_sample.csv"
 
 
 def run_demo(csv_path: Path | None = None) -> int:
-    """Analyse the bundled sample survey — fully offline."""
+    """Analyse the bundled sample survey - fully offline."""
     print("=" * 68)
     print(" SURVEY DATA ANALYZER - offline demo")
     print(" Bundled sample responses; no network, no APIs.")
