@@ -1,0 +1,13 @@
+# A flat check-in export: one row per person per check-in.
+# Ten rows for March 2024, three of them on the last day of the month.
+code,full_name,group,stamp
+STU001,Aarav Sharma,Batch A,2024-03-01 09:05
+STU001,Aarav Sharma,Batch A,2024-03-04 09:35
+STU001,Aarav Sharma,Batch A,2024-03-05 09:48
+STU001,Aarav Sharma,Batch A,2024-03-31 09:10
+STU002,Priya Nair,Batch A,2024-03-01 09:20
+STU002,Priya Nair,Batch A,2024-03-04 09:02
+STU002,Priya Nair,Batch A,2024-03-31 09:12
+STU003,Rohan Das,Batch B,2024-03-05 08:55
+STU003,Rohan Das,Batch B,2024-03-06 09:40
+STU003,Rohan Das,Batch B,2024-03-31 09:00

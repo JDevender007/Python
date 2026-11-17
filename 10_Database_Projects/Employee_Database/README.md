@@ -1,143 +1,81 @@
-<div align="center">
+# Employee Database
 
-# 🗄️ Employee Database
+Three HR reports, one seed file, three different head counts. A `COUNT(*)` after a
+`LEFT JOIN` counts the phantom row that the outer join guarantees; a filter moved from
+`ON` to `WHERE` silently deletes every department with no active staff; and the mean of
+department averages is not the average of the payroll. This project teaches that **an
+aggregate counts rows, not people -- and the join decides which rows exist**.
 
-### A SQLite-backed employee records system with full CRUD, powerful reporting queries, and a friendly command line interface.
+The three defective queries and the defective averaging are kept as executable objects
+and run beside the corrected ones on the same data.
 
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+## What this project teaches
 
-</div>
+- `COUNT(*)` vs `COUNT(e.id)` after an outer join, and why one of them means "people"
+- The difference between a filter in `ON` and a filter in `WHERE` on a `LEFT JOIN`
+- Why a report that gets *shorter* is not an error you will notice
+- Why an average of averages needs weights, and how to show the gap
+- Integer paise parsed from decimal text, with no float in any money path
+- `divide_half_up` as the only rounding rule in a payroll report
+- Validating a seed file by name: unknown departments, duplicate codes, bad flags, bad dates
+- Reconciling totals: department sums must equal the payroll total
+- Auditing an aggregate against an independently computed one
 
----
+## How to run
 
-# 📖 About
-
-Employee Database is a command line application that manages departments and employees using Python's built-in `sqlite3` module. It ships with a normalised schema, sample data, full CRUD operations, and business reports such as department salary summaries, top earners, and total payroll cost.
-
-The project demonstrates database design, SQL joins and aggregates, modular programming, type hints, and test-driven development with pytest.
-
----
-
-# ✨ Features
-
-- Automatic schema creation with foreign keys and indexes
-- Seeded sample data (4 departments, 8 employees)
-- Create, read, update, soft-delete and hard-delete employees
-- Case-insensitive search across name, email, code and designation
-- Department salary report with head count, totals and averages
-- Top earners and payroll cost summaries
-- Interactive numbered menu or one-shot `--demo` mode
-- 8 passing pytest tests
-
----
-
-# 📂 Folder Structure
-
-```text
-Employee_Database/
-│
-├── src/
-│   ├── main.py         # CLI entry point, menu and demo runner
-│   ├── database.py     # connection, schema and seed data
-│   └── queries.py      # CRUD operations and reporting queries
-│
-├── tests/
-│   └── test_employee_db.py
-│
-├── data/               # created automatically (employees.db)
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
 ```
-
----
-
-# ⚙️ Installation
-
-```bash
-git clone https://github.com/JDevender007/Python.git
-
-cd 10_Database_Projects/Employee_Database
-
-python -m venv .venv
-
-.venv\Scripts\activate
-
-pip install -r requirements.txt
-```
-
----
-
-# ▶️ Run
-
-```bash
-# Scripted demo (no input required)
 python src/main.py --demo
-
-# Interactive menu
-python src/main.py
-
-# Use a custom database file
-python src/main.py --db my_employees.db
+python src/main.py --demo --quiet
+python src/main.py --file data/employees.csv --json out.json
+python src/main.py --file data/employees.csv --audit
+python -m pytest tests -q
 ```
 
----
+`--file` names the employees CSV; `departments.csv` is read from the same folder. Exit
+code `2` means the input was refused, with `error: ...` on stderr.
 
-# 🗃️ Schema
+## Project structure
 
-- **departments** — `id`, `name`, `location`
-- **employees** — `id`, `employee_code`, `full_name`, `email`, `department_id`, `designation`, `salary`, `joined_on`, `is_active`
-
----
-
-# 🛠 Technologies
-
-- Python
-- sqlite3
-- argparse
-- logging
-- pytest
-
----
-
-# 📚 Concepts Covered
-
-- Relational database design
-- SQL (JOIN, GROUP BY, aggregates, constraints)
-- CRUD operations
-- Foreign keys and indexes
-- Soft deletes
-- Modular programming
-- Type hints and docstrings
-- Exception handling
-- Test-driven development
-
----
-
-# ✅ Testing
-
-```bash
-python -m pytest tests/ -q
+```
+Employee_Database/
+├── README.md
+├── requirements.txt        # pytest==9.1.1
+├── .gitignore
+├── data/
+│   ├── departments.csv     # 5 departments, one of them empty
+│   └── employees.csv       # 8 employees, 2 marked inactive
+├── src/
+│   ├── payroll.py          # every rule, query, check and the demo
+│   └── main.py             # argparse only
+└── tests/
+    └── test_payroll.py     # 88 tests
 ```
 
-**8 tests passed** covering schema creation, seeding, CRUD, duplicate detection, search, and reporting queries.
+## What the demo shows
+
+| department | head | total | average | COUNT(*) |
+| --- | --: | --: | --: | --: |
+| Engineering | 3 | 2510000.00 | 836666.67 | 3 |
+| Finance | 2 | 1980000.00 | 990000.00 | 2 |
+| Human Resources | 1 | 490000.00 | 490000.00 | 1 |
+| Research | 0 | 0.00 | 0.00 | **1** |
+| Sales | 0 | 0.00 | 0.00 | **1** |
+| **total** | **6** | **4980000.00** | **830000.00** | **8** |
+
+- `COUNT(*)` reports 8 heads for 6 active employees: the two empty departments each
+  contribute one phantom row
+- Moving `is_active = 1` into `WHERE` returns only 3 departments, dropping Research and
+  Sales entirely
+- Total payroll `4980000.00` over 6 people averages `830000.00`, while averaging the three
+  non-empty department averages reports `772222.22` -- a gap of `57777.78`
+- Engineering's `836666.67` is `divide_half_up(251000000, 3)`, not a float
+- 13/13 audit checks pass, plus negative controls that make the head-count and average
+  checks fail on purpose
+
+## Requirements
+
+Python 3.10+, standard library only (`sqlite3`, `csv`, `argparse`, `re`). Tests need
+pytest==9.1.1.
 
 ---
-
-# 👨‍💻 Author
-
-**Devender J**
-
-GitHub: **https://github.com/JDevender007**
-
----
-
-<div align="center">
-
-⭐ If you found this project useful, consider giving this repository a star.
-
-</div>
+**Devender J** -- https://github.com/JDevender007

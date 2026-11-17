@@ -1,145 +1,85 @@
-<div align="center">
+# Hospital Database
 
-# 🏥 Hospital Database
+Two patients have no blood group recorded, and that one fact makes three ordinary
+reports wrong in three different ways. `WHERE blood_group <> 'O+'` returns 3 patients when
+the wards hold 5, because `NULL <> 'O+'` is NULL and not TRUE. A completeness report
+printing `COUNT(*)` beside "with blood group" claims 6 of 6 when the true figure is 4. A
+"three most common groups" report ordered by group leads with the unnamed NULL group and
+drops two real ones. This project teaches that **NULL is not a value, and no predicate says
+what you think it says**.
 
-### A SQLite hospital management database covering patients, doctors, appointments, billing, and revenue reporting.
+All three defective queries are kept as executable strings and run beside the corrected
+versions on the same seed files.
 
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+## What this project teaches
 
-</div>
+- `!=` is not the complement of `=` when a column can be NULL
+- `COUNT(*)` counts rows while `COUNT(column)` counts values, and why that matters for missing data
+- `ORDER BY` sorts NULLs first in SQLite, so a `LIMIT` can spend a slot on nothing
+- Writing the correct complement as `col IS NULL OR col <> ?`
+- Reporting missing data explicitly instead of letting it disappear from a filter
+- An anti-join (`LEFT JOIN ... WHERE b.id IS NULL`) for patients with no bills
+- Integer cents parsed from decimal text, and `divide_half_up` for the average bill
+- Validating nullable seed fields by name, with empty meaning NULL rather than an empty string
+- Auditing counts against independently derived ones
 
----
+## How to run
 
-# 📖 About
-
-Hospital Database is a command line application that models the core operations of a small clinic: registering patients and doctors, booking and completing appointments, issuing and settling bills, and reporting revenue and doctor workload.
-
-It is built entirely on Python's standard library `sqlite3` module with a normalised schema, foreign keys, constraints, indexes, and seeded sample data so it runs immediately after cloning.
-
----
-
-# ✨ Features
-
-- Normalised schema: doctors, patients, appointments, bills
-- Patient registration with outstanding balance lookup
-- Appointment booking, scheduling view, discharge and cancellation
-- Bill issuing and payment tracking
-- Revenue report by day with collected vs pending split
-- Specialty workload report per doctor
-- Case-insensitive patient search
-- Interactive menu or one-shot `--demo` mode
-- 10 passing pytest tests
-
----
-
-# 📂 Folder Structure
-
-```text
-Hospital_Database/
-│
-├── src/
-│   ├── main.py         # CLI entry point, menu and demo runner
-│   ├── database.py     # connection, schema and seed data
-│   └── queries.py      # CRUD operations and reporting queries
-│
-├── tests/
-│   └── test_hospital_db.py
-│
-├── data/               # created automatically (hospital.db)
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
 ```
-
----
-
-# ⚙️ Installation
-
-```bash
-git clone https://github.com/JDevender007/Python.git
-
-cd 10_Database_Projects/Hospital_Database
-
-python -m venv .venv
-
-.venv\Scripts\activate
-
-pip install -r requirements.txt
-```
-
----
-
-# ▶️ Run
-
-```bash
-# Scripted demo (no input required)
 python src/main.py --demo
-
-# Interactive menu
-python src/main.py
-
-# Use a custom database file
-python src/main.py --db my_hospital.db
+python src/main.py --demo --quiet
+python src/main.py --file data/patients.csv --json out.json
+python src/main.py --file data/patients.csv --audit
+python -m pytest tests -q
 ```
 
----
+`--file` names the patients CSV; `doctors.csv`, `appointments.csv` and `bills.csv` are read
+from the same folder. Exit code `2` means the input was refused, with `error: ...` on
+stderr.
 
-# 🗃️ Schema
+## Project structure
 
-- **doctors** — `id`, `license_no`, `full_name`, `specialty`, `phone`
-- **patients** — `id`, `mrn`, `full_name`, `date_of_birth`, `gender`, `phone`, `blood_group`
-- **appointments** — `id`, `patient_id`, `doctor_id`, `scheduled_on`, `slot`, `reason`, `status`
-- **bills** — `id`, `appointment_id`, `patient_id`, `amount`, `paid`, `issued_on`
-
----
-
-# 🛠 Technologies
-
-- Python
-- sqlite3
-- argparse
-- logging
-- pytest
-
----
-
-# 📚 Concepts Covered
-
-- Relational database design
-- Foreign keys and referential actions (CASCADE, SET NULL, RESTRICT)
-- CHECK constraints and indexes
-- SQL joins, grouping and conditional aggregates
-- Appointment lifecycle management
-- Billing and revenue reporting
-- Modular programming
-- Test-driven development
-
----
-
-# ✅ Testing
-
-```bash
-python -m pytest tests/ -q
+```
+Hospital_Database/
+├── README.md
+├── requirements.txt        # pytest==9.1.1
+├── .gitignore
+├── data/
+│   ├── doctors.csv         # 3 doctors
+│   ├── patients.csv        # 6 patients, 2 without a blood group
+│   ├── appointments.csv    # 5 appointments
+│   └── bills.csv           # 5 bills, integer-cent amounts as text
+├── src/
+│   ├── hospital.py         # every rule, query, check and the demo
+│   └── main.py             # argparse only
+└── tests/
+    └── test_hospital.py    # 99 tests
 ```
 
-**10 tests passed** covering schema, seeding, registration, booking, discharge, billing, search, scheduling, and reporting.
+## What the demo shows
+
+| blood group | patients |
+| --- | --: |
+| A+ | 1 |
+| AB+ | 1 |
+| B+ | 1 |
+| O+ | 1 |
+| (not recorded) | 2 |
+| **total** | **6** |
+
+- `<> 'O+'` returns **3**; the correct complement (`IS NULL OR <>`) returns **5**
+- `COUNT(*)` claims **6** labelled rows; `COUNT(blood_group)` finds **4**
+- Legacy `ORDER BY blood_group LIMIT 3` gives `(not recorded)=2, A+=1, AB+=1`, losing B+
+  and O+; the corrected report returns only recorded groups
+- Billing: billed `8583.33` = collected `4300.00` + pending `4283.33`, average
+  `1716.67` by `divide_half_up(858333, 5)`
+- Exactly one patient (Joseph Mathew) has no bills, found by an anti-join
+- 15/15 audit checks pass, with negative controls that make the group counts fail on purpose
+
+## Requirements
+
+Python 3.10+, standard library only (`sqlite3`, `csv`, `argparse`, `re`). Tests need
+pytest==9.1.1.
 
 ---
-
-# 👨‍💻 Author
-
-**Devender J**
-
-GitHub: **https://github.com/JDevender007**
-
----
-
-<div align="center">
-
-⭐ If you found this project useful, consider giving this repository a star.
-
-</div>
+**Devender J** -- https://github.com/JDevender007

@@ -1,0 +1,5 @@
+id,customer_id,kind,summary,created_on
+1,1,call,Introduced premium plan,2026-01-08
+2,1,email,Sent pricing deck,2026-01-09
+3,2,meeting,On-site product demo,2026-01-10
+4,3,note,Asked about bulk discount,2026-01-11

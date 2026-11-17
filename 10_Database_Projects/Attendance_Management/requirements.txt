@@ -1,4 +1,1 @@
-# Standard library only (sqlite3, csv, argparse, logging)
-
-# Test dependency:
 pytest==9.1.1

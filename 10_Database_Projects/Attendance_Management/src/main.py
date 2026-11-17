@@ -1,188 +1,146 @@
-"""Command line entry point for Attendance Management.
+"""Command line front end for the attendance lab.
 
-Usage
------
-    python src/main.py --demo          # scripted walkthrough, no input needed
-    python src/main.py                 # interactive menu
-    python src/main.py --db path.db    # use a custom database file
+Usage:
+    python src/main.py --demo
+    python src/main.py --demo --quiet
+    python src/main.py --file data/attendance_log.csv --json out.json
+    python src/main.py --from 2024-03-04 --to 2024-03-31
+    python src/main.py --audit
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
+import json
 import logging
-import sqlite3
+import sys
 from pathlib import Path
 
-from database import open_initialised
-from queries import (
-    add_person,
-    clear_day,
-    csv_to_text,
-    day_sheet,
-    defaulters_report,
-    export_csv,
-    import_csv,
-    list_people,
-    mark_by_code,
-    mark_attendance,
-    monthly_report,
-    search_people,
-    status_summary,
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from attendance import (                                     # noqa: E402
+    GRACE,
+    DomainError,
+    audit,
+    build_database,
+    late_report,
+    legacy_logs_between,
+    logs_between,
+    measure,
+    problems,
+    read_log,
+    run_demo,
 )
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-LOG = logging.getLogger("attendance")
-
-MENU = """
-==============================
-   ATTENDANCE MANAGEMENT
-==============================
- 1) List people
- 2) Search people
- 3) Mark attendance
- 4) Day sheet
- 5) Clear a day
- 6) Monthly report
- 7) Defaulters (< 75%)
- 8) Status summary
- 9) Export CSV
-10) Import CSV
- 0) Exit
-==============================
-"""
-
-
-def _rows(rows) -> str:
-    """Render a list of sqlite3.Row objects as a padded text table."""
-    if not rows:
-        return "  (no rows)"
-    data = [dict(r) for r in rows]
-    headers = list(data[0].keys())
-    widths = {h: max(len(str(h)), *(len(str(row[h])) for row in data)) for h in headers}
-    line = "  " + " | ".join(h.ljust(widths[h]) for h in headers)
-    sep = "  " + "-+-".join("-" * widths[h] for h in headers)
-    body = "\n".join(
-        "  " + " | ".join(str(row[h]).ljust(widths[h]) for h in headers) for row in data
-    )
-    return "\n".join([line, sep, body])
-
-
-def _reset_demo_rows(conn) -> None:
-    """Remove rows created by a previous demo run so the demo stays re-runnable."""
-    conn.execute("DELETE FROM people WHERE code LIKE 'STU9%'")
-    conn.execute("DELETE FROM attendance WHERE day = '2026-02-01'")
-    conn.commit()
-
-
-def run_demo(conn) -> None:
-    """Non-interactive walkthrough used for smoke testing."""
-    _reset_demo_rows(conn)
-
-    print("== People ==")
-    print(_rows(list_people(conn)))
-
-    print("\n== Day sheet 2026-01-06 ==")
-    print(_rows(day_sheet(conn, "2026-01-06")))
-
-    new_id = add_person(conn, "STU901", "Demo Student", "Batch C")
-    print(f"\nRegistered person id={new_id}")
-
-    mark_attendance(conn, new_id, "2026-02-01", "present", "demo")
-    mark_by_code(conn, "STU901", "2026-02-02", "late", "demo")
-    print("Marked 2026-02-01 present, 2026-02-02 late")
-
-    # upsert: re-marking the same day must update, not duplicate
-    mark_attendance(conn, new_id, "2026-02-01", "absent", "changed my mind")
-    sheet = day_sheet(conn, "2026-02-01")
-    print("Upsert check -> " + ", ".join(
-        f"{r['code']}={r['status']}" for r in sheet if r["code"] == "STU901"
-    ))
-
-    print("\n== Monthly report 2026-01 ==")
-    print(_rows(monthly_report(conn, "2026-01")))
-
-    print("\n== Defaulters (< 75%) ==")
-    print(_rows(defaulters_report(conn, "2026-01", 75.0)))
-
-    print("\n== Status summary (2026-01-06) ==")
-    print("  " + ", ".join(f"{k}={v}" for k, v in status_summary(conn, "2026-01-06").items()))
-
-    csv_path = Path(__file__).resolve().parent.parent / "data" / "attendance_export.csv"
-    export_csv(conn, csv_path, month="2026-01")
-    print(f"\nExported {csv_path.name}")
-    imported = import_csv(conn, csv_path)
-    print(f"Re-imported {imported} rows (upsert, no duplicates)")
-
-    print("\n== Search 'batch c' ==")
-    print(_rows(search_people(conn, "batch c")))
-
-    cleared = clear_day(conn, "2026-02-01")
-    print(f"\nCleared {cleared} row(s) for 2026-02-01")
-    print("\nDemo completed successfully.")
-
-
-def interactive(conn) -> None:
-    """Simple numbered menu loop."""
-    while True:
-        print(MENU)
-        choice = input("Select option: ").strip()
-        try:
-            if choice == "1":
-                print(_rows(list_people(conn)))
-            elif choice == "2":
-                print(_rows(search_people(conn, input("  Search term: "))))
-            elif choice == "3":
-                code = input("  Person code: ")
-                day = input("  Date (YYYY-MM-DD): ")
-                status = input("  Status (present/absent/late/leave): ")
-                print(f"  {mark_by_code(conn, code, day, status, input('  Note: '))}.")
-            elif choice == "4":
-                print(_rows(day_sheet(conn, input("  Date (YYYY-MM-DD): "))))
-            elif choice == "5":
-                print(f"  Deleted {clear_day(conn, input('  Date (YYYY-MM-DD): '))} row(s).")
-            elif choice == "6":
-                print(_rows(monthly_report(conn, input("  Month (YYYY-MM): "))))
-            elif choice == "7":
-                month = input("  Month (YYYY-MM): ")
-                threshold = float(input("  Threshold [75]: ") or 75)
-                print(_rows(defaulters_report(conn, month, threshold)))
-            elif choice == "8":
-                print("  " + ", ".join(
-                    f"{k}={v}" for k, v in status_summary(conn, input("  Date (YYYY-MM-DD, blank=all): ") or None).items()
-                ))
-            elif choice == "9":
-                path = export_csv(conn, input("  Output path: "), input("  Month filter (YYYY-MM, blank=all): ") or None)
-                print(f"  Exported {path}")
-            elif choice == "10":
-                print(f"  Imported {import_csv(conn, input('  CSV path: '))} rows.")
-            elif choice == "0":
-                print("Goodbye.")
-                return
-            else:
-                print("  Unknown option.")
-        except (ValueError, sqlite3.Error, FileNotFoundError) as exc:
-            print(f"  Error: {exc}")
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Attendance Management CLI")
-    parser.add_argument("--demo", action="store_true", help="run a scripted demo and exit")
-    parser.add_argument("--db", type=Path, default=None, help="path to the SQLite database")
+    parser = argparse.ArgumentParser(
+        prog="attendance-lab",
+        description="Read check-in timestamps as dates and integer minutes.")
+    parser.add_argument("--file", default=None, metavar="PATH",
+                        help="a check-in CSV (default: the bundled one)")
+    parser.add_argument("--from", dest="start", default="2024-03-01",
+                        metavar="YYYY-MM-DD", help="the first day of the range")
+    parser.add_argument("--to", dest="end", default="2024-03-31",
+                        metavar="YYYY-MM-DD", help="the last day of the range")
+    parser.add_argument("--audit", action="store_true",
+                        help="print every check with its verdict")
+    parser.add_argument("--json", default=None, metavar="PATH",
+                        help="write the report and the measurements to PATH")
+    parser.add_argument("--quiet", action="store_true", help="print nothing")
+    parser.add_argument("--demo", action="store_true",
+                        help="run the offline demonstration")
     return parser
 
 
-def main() -> int:
-    args = build_parser().parse_args()
-    conn = open_initialised(args.db)
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
     try:
-        if args.demo:
-            run_demo(conn)
-        else:
-            interactive(conn)
+        with contextlib.redirect_stdout(io.StringIO()), \
+                contextlib.redirect_stderr(io.StringIO()):
+            return func(*args, **kwargs)
     finally:
+        logging.disable(level)
+
+
+def main(argv=None) -> int:
+    args = build_parser().parse_args(argv)
+
+    if args.demo:
+        try:
+            return _run_demo(args.quiet, run_demo)
+        except DomainError as error:
+            if not args.quiet:
+                print(f"error: {error}", file=sys.stderr)
+            return 0
+
+    try:
+        people, logs = read_log(args.file)
+        conn = build_database(people, logs)
+    except DomainError as error:
+        print(f"error: {error}", file=sys.stderr)
+        return 2
+
+    try:
+        report = late_report(conn, args.start, args.end)
+        rows = logs_between(conn, args.start, args.end)
+        legacy_rows = legacy_logs_between(conn, args.start, args.end)
+    except DomainError as error:
         conn.close()
-    return 0
+        print(f"error: {error}", file=sys.stderr)
+        return 2
+
+    if not args.quiet:
+        print(f"  {len(rows)} check-ins from {args.start} to {args.end}, "
+              f"grace {GRACE}")
+        print(f"  {'code':<8}{'name':<17}{'days':>5}{'late':>6}"
+              f"{'minutes':>9}{'mean':>6}")
+        for row in report:
+            print(f"  {row['code']:<8}{row['full_name']:<17}{row['days']:>5}"
+                  f"{row['late_days']:>6}{row['late_minutes']:>9}"
+                  f"{row['average']:>6}")
+        print(f"  the legacy BETWEEN reads {len(legacy_rows)} of "
+              f"{len(rows)} rows")
+
+    checks = []
+    measured: dict = {}
+    if args.audit:
+        measured = measure(conn)
+        checks = audit(measured, make_database=build_database)
+        if not args.quiet:
+            print()
+            for name, okay in checks:
+                print(f"  {'PASS' if okay else 'FAIL'}  {name}")
+
+    failed = problems(checks)
+    if failed and not args.quiet:
+        print(f"  {len(failed)} check(s) failed", file=sys.stderr)
+
+    if args.json:
+        destination = Path(args.json)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "from": args.start,
+            "to": args.end,
+            "check_ins": len(rows),
+            "legacy_check_ins": len(legacy_rows),
+            "report": report,
+            "measurements": measured,
+            "checks": [{"name": name, "ok": okay} for name, okay in checks],
+        }
+        destination.write_text(json.dumps(payload, indent=2) + "\n",
+                               encoding="utf-8")
+        if not args.quiet:
+            print(f"  wrote the report to {destination}")
+
+    conn.close()
+    return 1 if failed else 0
 
 
 if __name__ == "__main__":

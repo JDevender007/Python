@@ -1,145 +1,95 @@
-<div align="center">
+# Inventory Database
 
-# 📦 Inventory Database
+A stock ledger stores a **signed** entry per movement: a receipt is positive, an issue is
+negative, an adjustment is whatever the stocktake says. The legacy system stored positive
+magnitudes and rebuilt the sign at query time with a `CASE` branch -- and because that
+branch names `out` explicitly and lets everything else fall into the `ELSE`, a `-30`
+water-damage write-off is read back as `+30`. The shelf reports 70 lamps where 10 remain,
+and the numbers never reconcile against the stocktake. This project teaches that **the sign
+belongs in the data, not in a `CASE` branch**.
 
-### A SQLite inventory management system with suppliers, products, stock movements, low-stock alerts, and valuation reports.
+The same system prices each category with `SUM(units) * p.unit_price`, a bare column beside
+an aggregate. SQLite returns the price of an arbitrary row in the group, so a category worth
+`40954.00` is reported at `22954.00` -- and the query never errors.
 
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![SQLite](https://img.shields.io/badge/SQLite-3-003B57?style=for-the-badge&logo=sqlite&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
+Both defective queries are kept as executable strings and run beside the corrected ones on
+the same seed files.
 
-</div>
+## What this project teaches
 
----
+- A ledger entry carries its own sign, and a query that re-derives it creates a second source of truth
+- Why `CASE ... ELSE` silently absorbs every label the author forgot (`adjustment`)
+- The exact arithmetic of the bug: a mis-signed adjustment is off by *twice* its magnitude
+- Refusing a sign/label mismatch by name instead of quietly normalising it
+- A bare column beside an aggregate: legal SQL, arbitrary answer, no error
+- `SUM(a * b)` (per-row product) vs `SUM(a) * b` (one row's `b` for the whole group)
+- Integer cents parsed from decimal text, and `divide_half_up` for the average stock value
+- Low stock as `on hand <= reorder_level`, inclusive of the boundary
+- Reporting a negative on-hand explicitly rather than letting a filter hide it
+- Auditing a total against an independent product-by-product loop
 
-# 📖 About
+## How to run
 
-Inventory Database is a command line application for tracking products, suppliers, and stock movements. Every stock change is recorded as an append-only movement (in, out, or adjustment), so current quantities and valuation are always derived from history rather than a mutable counter.
-
-It demonstrates relational design, ledger-style data modelling, stock validation, and reporting with SQL aggregates.
-
----
-
-# ✨ Features
-
-- Suppliers and products with foreign key integrity
-- Append-only stock movement ledger (in / out / adjustment)
-- Insufficient-stock guard on outbound movements
-- Automatic on-hand calculation from movement history
-- Low-stock alerts against per-product reorder levels
-- Stock valuation report and category summary
-- Case-insensitive search across SKU, name, category, supplier
-- Interactive menu or one-shot `--demo` mode (re-runnable)
-- 11 passing pytest tests
-
----
-
-# 📂 Folder Structure
-
-```text
-Inventory_Database/
-│
-├── src/
-│   ├── main.py         # CLI entry point, menu and demo runner
-│   ├── database.py     # connection, schema and seed data
-│   └── queries.py      # CRUD operations and reporting queries
-│
-├── tests/
-│   └── test_inventory_db.py
-│
-├── data/               # created automatically (inventory.db)
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
 ```
-
----
-
-# ⚙️ Installation
-
-```bash
-git clone https://github.com/JDevender007/Python.git
-
-cd 10_Database_Projects/Inventory_Database
-
-python -m venv .venv
-
-.venv\Scripts\activate
-
-pip install -r requirements.txt
-```
-
----
-
-# ▶️ Run
-
-```bash
-# Scripted demo (no input required, safe to run repeatedly)
 python src/main.py --demo
-
-# Interactive menu
-python src/main.py
-
-# Use a custom database file
-python src/main.py --db my_inventory.db
+python src/main.py --demo --quiet
+python src/main.py --file data/movements.csv --json out.json
+python src/main.py --file data/movements.csv --audit
+python -m pytest tests -q
 ```
 
----
+`--file` names the movements CSV; `products.csv` and `suppliers.csv` are read from the same
+folder. Exit code `2` means the input was refused, with `error: ...` on stderr -- including
+a receipt with negative units or an issue with positive ones.
 
-# 🗃️ Schema
+## Project structure
 
-- **suppliers** — `id`, `name`, `contact`, `email`, `city`
-- **products** — `id`, `sku`, `name`, `category`, `unit_price`, `reorder_level`, `supplier_id`
-- **stock_movements** — `id`, `product_id`, `movement`, `quantity`, `note`, `created_on`
-
----
-
-# 🛠 Technologies
-
-- Python
-- sqlite3
-- argparse
-- logging
-- pytest
-
----
-
-# 📚 Concepts Covered
-
-- Relational database design
-- Ledger / append-only data modelling
-- Derived state (on-hand computed from movements)
-- CHECK constraints and indexes
-- Business rule validation in the data layer
-- SQL grouping and conditional aggregates
-- Inventory valuation
-- Modular programming and type hints
-- Test-driven development
-
----
-
-# ✅ Testing
-
-```bash
-python -m pytest tests/ -q
+```
+Inventory_Database/
+├── README.md
+├── requirements.txt        # pytest==9.1.1
+├── .gitignore
+├── data/
+│   ├── suppliers.csv       # 3 suppliers
+│   ├── products.csv        # 6 products, prices as decimal text
+│   └── movements.csv       # 13 signed movements: 6 in, 5 out, 2 adjustments
+├── src/
+│   ├── ledger.py           # every rule, query, check and the demo
+│   └── main.py             # argparse only
+└── tests/
+    └── test_ledger.py      # 127 tests
 ```
 
-**11 tests passed** covering stock in/out, insufficient-stock guard, low-stock alerts, valuation, search, history, and category summaries.
+## What the demo shows
+
+| sku | product | in | out | adj | on hand | legacy |
+| --- | --- | --: | --: | --: | --: | --: |
+| SKU1001 | Wireless Mouse | 1 | 1 | 1 | 37 | **47** |
+| SKU1002 | Mechanical Keyboard | 1 | 1 | 0 | 9 | 9 |
+| SKU1003 | USB-C Cable 1m | 1 | 1 | 0 | 125 | 125 |
+| SKU1004 | Notebook A5 | 1 | 1 | 0 | 180 | 180 |
+| SKU1005 | Desk Lamp LED | 1 | 0 | 1 | 10 | **70** |
+| SKU1006 | Office Chair | 1 | 1 | 0 | 5 | 5 |
+| **total** | | 6 | 5 | 2 | **366** | **436** |
+
+- The four SKUs with **no adjustment** agree exactly. Only the two with an adjustment are
+  wrong, and each is off by twice the adjustment: `+10` for the `-5` shrinkage and `+60` for
+  the `-30` write-off
+- The `CASE` branch reports `436` units against a ledger of `366` -- a `70`-unit
+  overstatement made of two write-offs read as receipts
+- Low stock (`on hand <= reorder level`) is `SKU1002 9/10`, `SKU1005 10/15`,
+  `SKU1006 5/5`; the legacy report sees `SKU1005` at 70 and drops it from the list
+- The bare-column category report prices the one-product categories correctly, but
+  multiplies Electronics' 46 units by one product's `499.00` and Furniture's 15 units by one
+  product's `899.00`, reporting `75534.00` against a true value of `121534.00`
+- `divide_half_up(12153400, 6)` gives the `20255.67` average stock value per product
+- 20/20 audit checks pass, with negative controls that make the signed-sum checks fail on
+  purpose
+
+## Requirements
+
+Python 3.10+, standard library only (`sqlite3`, `csv`, `argparse`, `re`). Tests need
+pytest==9.1.1.
 
 ---
-
-# 👨‍💻 Author
-
-**Devender J**
-
-GitHub: **https://github.com/JDevender007**
-
----
-
-<div align="center">
-
-⭐ If you found this project useful, consider giving this repository a star.
-
-</div>
+**Devender J** -- https://github.com/JDevender007

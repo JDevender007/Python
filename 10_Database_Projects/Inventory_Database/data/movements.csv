@@ -1,0 +1,14 @@
+id,product_id,movement,quantity,note,created_on
+1,1,in,60,Opening stock,2026-01-02
+2,2,in,25,Opening stock,2026-01-02
+3,3,in,200,Opening stock,2026-01-02
+4,4,in,300,Opening stock,2026-01-02
+5,5,in,40,Opening stock,2026-01-02
+6,6,in,12,Opening stock,2026-01-02
+7,1,out,-18,Order #4501,2026-01-08
+8,3,out,-75,Order #4502,2026-01-09
+9,4,out,-120,Order #4503,2026-01-10
+10,2,out,-16,Order #4504,2026-01-11
+11,6,out,-7,Order #4505,2026-01-12
+12,1,adjustment,-5,Stocktake shrinkage,2026-01-15
+13,5,adjustment,-30,Water damage write-off,2026-01-16

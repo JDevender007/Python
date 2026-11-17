@@ -1,0 +1,7 @@
+id,mrn,full_name,date_of_birth,gender,phone,blood_group
+1,MRN0001,Ramesh Kumar,1985-04-12,Male,+91-911111111,O+
+2,MRN0002,Lakshmi Devi,1992-11-03,Female,+91-911111112,A+
+3,MRN0003,Amit Patel,1978-07-25,Male,+91-911111113,B+
+4,MRN0004,Sara Joseph,2010-01-19,Female,+91-911111114,AB+
+5,MRN0005,Noor Bano,1996-02-29,Female,+91-911111115,
+6,MRN0006,Joseph Mathew,1965-09-30,Male,+91-911111116,

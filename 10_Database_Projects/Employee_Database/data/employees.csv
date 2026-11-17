@@ -1,0 +1,9 @@
+id,employee_code,full_name,email,department_id,designation,salary,joined_on,is_active
+1,EMP001,Aarav Sharma,aarav.sharma@example.com,1,Software Engineer,720000.00,2021-06-14,1
+2,EMP002,Priya Nair,priya.nair@example.com,1,Senior Engineer,1150000.00,2018-02-05,1
+3,EMP003,Rohan Das,rohan.das@example.com,1,QA Engineer,640000.00,2022-09-01,1
+4,EMP004,Sneha Iyer,sneha.iyer@example.com,2,Accountant,580000.00,2020-03-17,1
+5,EMP005,Vikram Rao,vikram.rao@example.com,2,Finance Manager,1400000.00,2016-11-23,1
+6,EMP006,Ananya Menon,ananya.menon@example.com,3,HR Executive,490000.00,2023-01-09,1
+7,EMP007,Karan Malhotra,karan.malhotra@example.com,4,Sales Executive,450000.00,2022-05-30,0
+8,EMP008,Meera Pillai,meera.pillai@example.com,4,Regional Sales Head,1250000.00,2017-08-12,0

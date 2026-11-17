@@ -1,0 +1,6 @@
+id,patient_id,doctor_id,scheduled_on,slot,reason,status
+1,1,1,2026-01-05,09:00,Chest pain follow-up,completed
+2,2,1,2026-01-05,10:30,Hypertension review,completed
+3,3,2,2026-01-06,11:00,Knee pain,scheduled
+4,4,3,2026-01-06,12:15,Annual check-up,scheduled
+5,1,2,2026-01-07,09:45,Back pain,scheduled

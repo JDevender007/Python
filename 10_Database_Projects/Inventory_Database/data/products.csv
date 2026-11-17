@@ -1,0 +1,7 @@
+id,sku,name,category,unit_price,reorder_level,supplier_id
+1,SKU1001,Wireless Mouse,Electronics,499.00,20,1
+2,SKU1002,Mechanical Keyboard,Electronics,2499.00,10,1
+3,SKU1003,USB-C Cable 1m,Accessories,199.00,50,2
+4,SKU1004,Notebook A5,Stationery,79.00,100,3
+5,SKU1005,Desk Lamp LED,Furniture,899.00,15,3
+6,SKU1006,Office Chair,Furniture,6499.00,5,2
