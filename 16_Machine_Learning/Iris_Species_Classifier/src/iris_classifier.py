@@ -1,4 +1,4 @@
-"""Iris species classifier: k-NN training, evaluation, and prediction — offline.
+"""Iris species classifier: k-NN training, evaluation, and prediction - offline.
 
 Loads the bundled iris CSV, trains a k-nearest-neighbours classifier with a
 stratified train/test split, evaluates it (accuracy, per-class precision /
@@ -267,7 +267,7 @@ DEMO_CSV = Path(__file__).resolve().parent.parent / "data" / "iris.csv"
 
 
 def run_demo(csv_path: Path | None = None) -> int:
-    """Train and evaluate on the bundled iris sample — fully offline."""
+    """Train and evaluate on the bundled iris sample - fully offline."""
     print("=" * 64)
     print(" IRIS SPECIES CLASSIFIER - offline demo")
     print(" Bundled CSV; scikit-learn k-NN; no network, no downloads.")

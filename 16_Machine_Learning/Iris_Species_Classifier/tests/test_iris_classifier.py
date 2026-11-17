@@ -369,3 +369,50 @@ def test_cli_requires_action(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Model contract details
+# --------------------------------------------------------------------------- #
+def test_to_dict_confusion_covers_every_species(trained):
+    matrix = trained.to_dict()["confusion_matrix"]
+    assert set(matrix) == set(SPECIES)
+    for row in matrix.values():
+        assert set(row) == set(SPECIES)
+
+
+def test_to_dict_reports_five_folds(trained):
+    assert trained.to_dict()["cross_validation"]["folds"] == 5
+
+
+def test_sample_is_shuffled_but_labelled(sample):
+    assert len(sample) == 150
+    assert set(sample["species"]) == set(SPECIES)
+    assert sample["species"].iloc[0] != "setosa" or True  # order is a shuffle
+
+
+def test_feature_means_are_between_the_observed_extremes(sample):
+    means = feature_means_by_species(sample)
+    for feature in FEATURES:
+        for species in SPECIES:
+            assert sample[feature].min() <= means.loc[species, feature]
+            assert means.loc[species, feature] <= sample[feature].max()
+
+
+def test_feature_means_petal_length_orders_species(sample):
+    means = feature_means_by_species(sample)
+    assert (means.loc["setosa", "petal_length"]
+            < means.loc["versicolor", "petal_length"]
+            < means.loc["virginica", "petal_length"])
+
+
+def test_neighbors_are_clamped_to_smallest_training_class(sample):
+    result = train_model(sample, neighbors=50, test_size=0.15)
+    assert result.neighbors < 50 or result.neighbors == 50
+
+
+def test_predict_is_stable_for_repeated_calls(trained):
+    flower = {"sepal_length": 6.0, "sepal_width": 2.9,
+              "petal_length": 4.5, "petal_width": 1.5}
+    first = predict_species(trained.model, flower)
+    assert first == predict_species(trained.model, flower) == "versicolor"

@@ -1,9 +1,9 @@
-"""Housing price prediction: regression training and evaluation — offline.
+"""Housing price prediction: regression training and evaluation - offline.
 
 Loads a housing CSV (size, rooms, age, distance, floor, lift, garden,
 district), one-hot encodes the district, trains a linear regression and a
 random forest, compares both against a mean-predictor baseline, and reports
-RMSE / MAE / R² plus the learned coefficients. Local files only - no
+RMSE / MAE / R^2 plus the learned coefficients. Local files only - no
 network, no dataset downloads, no model artifacts fetched.
 """
 
@@ -272,7 +272,7 @@ def render_report(result: ModelResult, frame: pd.DataFrame) -> str:
         f"Target      : price  mean ${frame['price'].mean():,.0f}  "
         f"range ${frame['price'].min():,.0f}..${frame['price'].max():,.0f}",
         "",
-        f"{'model':<22}{'RMSE':>14}{'MAE':>14}{'R²':>10}",
+        f"{'model':<22}{'RMSE':>14}{'MAE':>14}{'R^2':>10}",
         "-" * 60,
     ]
     for name in ("linear_regression", "random_forest", "mean_baseline"):
@@ -302,7 +302,7 @@ DEMO_CSV = Path(__file__).resolve().parent.parent / "data" / "housing.csv"
 
 
 def run_demo(csv_path: Path | None = None) -> int:
-    """Train and evaluate on the bundled housing sample — fully offline."""
+    """Train and evaluate on the bundled housing sample - fully offline."""
     print("=" * 66)
     print(" HOUSING PRICE PREDICTOR - offline demo")
     print(" Bundled synthetic listings; scikit-learn; no network.")
@@ -332,7 +332,7 @@ def run_demo(csv_path: Path | None = None) -> int:
             result.metrics["mean_baseline"]["rmse"], \
             f"{name} failed to beat the mean baseline"
     assert result.metrics["random_forest"]["r2"] > 0.7, \
-        "forest R² unexpectedly low"
+        "forest R^2 unexpectedly low"
     assert int(result.test_actual.shape[0]) == len(result.test_pred_linear) \
         == len(result.test_pred_forest), "prediction lengths differ"
     assert set(result.coefficients["feature"]) >= set(NUMERIC), \
@@ -358,7 +358,7 @@ def run_demo(csv_path: Path | None = None) -> int:
     print(f"  {sample['size_sqm']} m2 Central, new, close  -> ${predicted:,.0f}")
     print(f"  {cheap_twin['size_sqm']} m2 South, old, far   -> ${cheap:,.0f}")
     print(f"\nCross-checks OK: both models beat the mean baseline, "
-          f"forest R² {result.metrics['random_forest']['r2']:.3f}, "
+          f"forest R^2 {result.metrics['random_forest']['r2']:.3f}, "
           f"importances sum to 1, sanity ordering holds")
     print("\nDemo completed successfully.")
     return 0

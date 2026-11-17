@@ -402,3 +402,33 @@ def test_cli_requires_action(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Pipeline and probability details
+# --------------------------------------------------------------------------- #
+def test_message_text_joins_subject_and_body():
+    text = message_text({"subject": "Big sale", "body": "click here now"})
+    assert "Big sale" in text and "click here now" in text
+
+
+def test_result_to_dict_keys(trained):
+    payload = trained.to_dict()
+    assert set(payload) == {"holdout", "vocabulary_size", "confusion_matrix"}
+    assert set(payload["holdout"]) == {"accuracy", "precision_spam",
+                                       "recall_spam", "f1"}
+
+
+def test_classify_probabilities_sum_to_one(trained):
+    label, probability = classify(
+        trained, "congratulations you won a free prize claim now")
+    assert label in {"spam", "ham"}
+    assert 0.5 <= probability <= 1.0
+
+
+def test_render_report_is_ascii(trained, sample):
+    render_report(trained, sample).encode("ascii")
+
+
+def test_build_pipeline_returns_a_fresh_instance():
+    assert build_pipeline() is not build_pipeline()

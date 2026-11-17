@@ -1,4 +1,4 @@
-"""Spam email classifier: bag-of-words Naive Bayes — offline.
+"""Spam email classifier: bag-of-words Naive Bayes - offline.
 
 Loads a CSV of labelled messages (spam/ham), featurises subject+body with
 a word/char n-gram bag-of-words, trains Multinomial Naive Bayes on a
@@ -246,7 +246,7 @@ DEMO_CSV = Path(__file__).resolve().parent.parent / "data" / "messages.csv"
 
 
 def run_demo(csv_path: Path | None = None) -> int:
-    """Train and evaluate on the bundled message sample — fully offline."""
+    """Train and evaluate on the bundled message sample - fully offline."""
     print("=" * 66)
     print(" SPAM EMAIL CLASSIFIER - offline demo")
     print(" Bundled labelled messages; scikit-learn; no network.")

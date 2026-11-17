@@ -35,7 +35,7 @@ The loader validates the dataset: numeric finite features, a strict binary `0/1`
 - JSON export of the full comparison; `--list` prints the registry
 - Deterministic: seeded splits and estimators, identical results every run
 - Bundled deterministic sample: 320 rows, 5 features, balanced classes
-- 44 passing pytest tests
+- 51 passing pytest tests
 
 ---
 
@@ -165,7 +165,7 @@ The demo's cross-checks re-run the whole harness and assert determinism, metric 
 python -m pytest tests/ -q
 ```
 
-**44 tests passed** covering every validation rule (binary labels, row/class minimums, non-finite values, constant features), the registry contract, evaluation correctness (a monkeypatched spy proves `cv_means` really equals the nanmean of the per-fold scores and that the 5th scoring call is the hold-out), confusion-matrix row counts, ranking/best/`to_dict` behaviour, report sections, demo idempotency, and every CLI path — all offline.
+**51 tests passed** covering every validation rule (binary labels, row/class minimums, non-finite values, constant features), the registry contract, evaluation correctness (a monkeypatched spy proves `cv_means` really equals the nanmean of the per-fold scores and that the 5th scoring call is the hold-out), confusion-matrix row counts, ranking/best/`to_dict` behaviour, report sections, demo idempotency, and every CLI path — all offline. Extra cases pin the row/feature counts and fold label on the harness result, `to_dict` model order following the ranking, bounded hold-out and CV metrics, ASCII-only report text, and the row floor.
 
 ---
 

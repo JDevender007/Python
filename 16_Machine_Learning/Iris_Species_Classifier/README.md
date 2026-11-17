@@ -31,7 +31,7 @@ The loader validates sepal/petal ranges (a petal width of 9.9 cm is rejected, no
 - Strict validation: measurement ranges, known species labels, class counts
 - k is clamped to the smallest training class instead of crashing
 - JSON metrics export; bundled dataset copy (150 rows, balanced classes)
-- 44 passing pytest tests
+- 51 passing pytest tests
 
 ---
 
@@ -150,7 +150,7 @@ Cross-validation runs on the *training portion only* — the hold-out test split
 python -m pytest tests/ -q
 ```
 
-**44 tests passed** covering every validation rule (ranges, unknown species, class sizes, non-numeric cells), metric correctness (accuracy recomputed from predictions, confusion matrix row counts), determinism across seeds, k clamping, prediction edge cases (missing/non-numeric/out-of-range measurements), parsing helpers, demo idempotency, and every CLI path — all offline.
+**51 tests passed** covering every validation rule (ranges, unknown species, class sizes, non-numeric cells), metric correctness (accuracy recomputed from predictions, confusion matrix row counts), determinism across seeds, k clamping, prediction edge cases (missing/non-numeric/out-of-range measurements), parsing helpers, demo idempotency, and every CLI path — all offline. Extra cases pin the confusion matrix covering every species, the five-fold record, per-species means lying inside the observed range, petal-length ordering across species, k clamping, and stable repeat predictions.
 
 ---
 

@@ -421,3 +421,46 @@ def test_cli_requires_action(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Metrics contract
+# --------------------------------------------------------------------------- #
+def test_harness_counts_match_the_frame(harness, sample):
+    assert harness.rows == len(sample)
+    assert harness.features == len(sample.columns) - 1
+
+
+def test_harness_folds_recorded(harness):
+    assert harness.folds == 3
+    assert all(score.folds == 3 for score in harness.scores)
+
+
+def test_harness_to_dict_models_follow_the_ranking(harness):
+    payload = harness.to_dict()
+    assert [m["name"] for m in payload["models"]] == [
+        s.name for s in harness.ranking]
+    assert payload["best_model"] == harness.best.name
+
+
+def test_every_holdout_metric_is_bounded(sample):
+    score = evaluate_model("logistic_regression", sample)
+    for metric in ("accuracy", "precision", "recall", "f1", "roc_auc"):
+        assert 0.0 <= score.holdout[metric] <= 1.0
+
+
+def test_cv_metrics_are_bounded(sample):
+    score = evaluate_model("decision_tree", sample)
+    for metric in METRICS:
+        assert 0.0 <= score.cv_means[metric] <= 1.0
+        assert score.cv_stds[metric] >= 0.0
+
+
+def test_render_report_is_ascii(harness, sample):
+    render_report(harness, sample).encode("ascii")
+
+
+def test_minimum_rows_below_floor_rejected(tmp_path):
+    rows = _grid(n=40)
+    with pytest.raises(HarnessError):
+        load_dataset(_csv(tmp_path, rows))

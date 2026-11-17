@@ -33,7 +33,7 @@ Everything runs on local files: the bundled **deterministic** sample (360 custom
 - JSON export of the sweep and all cluster profiles
 - Deterministic: identical labels across runs
 - Bundled deterministic sample: 360 customers, 3 latent groups
-- 45 passing pytest tests
+- 51 passing pytest tests
 
 ---
 
@@ -150,7 +150,7 @@ CSV ──► validate ──► StandardScaler ──► silhouette sweep (k = 
 python -m pytest tests/ -q
 ```
 
-**45 tests passed** covering every validation rule (IDs, ranges, constants, row counts), silhouette sweep bounds and determinism, k selection and forced k, label partitioning, profile math (sizes sum to n, shares to 100%, ranks 1..k, cluster means recomputed from raw rows), `assign()` reproducing training labels and routing new customers to the right tier, demo idempotency, and every CLI path — all offline.
+**51 tests passed** covering every validation rule (IDs, ranges, constants, row counts), silhouette sweep bounds and determinism, k selection and forced k, label partitioning, profile math (sizes sum to n, shares to 100%, ranks 1..k, cluster means recomputed from raw rows), `assign()` reproducing training labels and routing new customers to the right tier, demo idempotency, and every CLI path — all offline. Extra cases pin a single-k sweep, silhouette bounds, `k` present in the sweep, integer labels from `assign()`, shares summing to 100, and string sweep keys in `to_dict()`.
 
 ---
 

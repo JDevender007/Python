@@ -1,4 +1,4 @@
-"""Customer segmentation with k-means — clustering and profiling, offline.
+"""Customer segmentation with k-means - clustering and profiling, offline.
 
 Loads a customer CSV (frequency, spend, tenure), standardises the
 features, sweeps k with silhouette scores to pick a cluster count, fits
@@ -263,7 +263,7 @@ DEMO_CSV = Path(__file__).resolve().parent.parent / "data" / "customers.csv"
 
 
 def run_demo(csv_path: Path | None = None) -> int:
-    """Cluster the bundled customer sample — fully offline."""
+    """Cluster the bundled customer sample - fully offline."""
     print("=" * 70)
     print(" CUSTOMER SEGMENTATION - offline demo")
     print(" Bundled sample; scikit-learn k-means; no network.")

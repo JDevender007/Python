@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import sys
 from pathlib import Path
 
@@ -24,7 +25,7 @@ from segment import (  # noqa: E402
     segment,
     sweep_k,
 )
-from main import main  # noqa: E402
+from main import _run_demo, main  # noqa: E402
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
@@ -403,3 +404,39 @@ def test_cli_requires_action(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Sweep and profile invariants
+# --------------------------------------------------------------------------- #
+def test_sweep_k_single_k_returns_one_score(sample):
+    scores = sweep_k(sample, range(3, 4))
+    assert list(scores) == [3]
+    assert isinstance(scores[3], float)
+
+
+def test_sweep_k_scores_within_silhouette_bounds(sample):
+    for score in sweep_k(sample).values():
+        assert -1.0 <= score <= 1.0
+
+
+def test_chosen_k_is_present_in_scores(clustered):
+    assert clustered.k in clustered.scores
+
+
+def test_assign_returns_integer_labels(sample, clustered):
+    import numpy as np
+
+    labels = clustered.assign(sample)
+    assert labels.shape == (len(sample),)
+    assert np.issubdtype(labels.dtype, np.integer)
+
+
+def test_profiles_share_pct_sums_to_100(clustered):
+    assert clustered.profiles["share_pct"].sum() == pytest.approx(100.0, abs=0.01)
+
+
+def test_to_dict_sweep_keys_are_strings(clustered):
+    payload = clustered.to_dict()
+    assert all(isinstance(key, str) for key in payload["sweep"])
+    assert set(payload["sweep"]) == {str(k) for k in clustered.scores}

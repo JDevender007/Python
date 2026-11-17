@@ -1,4 +1,4 @@
-"""Model evaluation harness: cross-validated model comparison — offline.
+"""Model evaluation harness: cross-validated model comparison - offline.
 
 Loads a binary-classification dataset, evaluates several scikit-learn
 models with stratified k-fold cross-validation plus a hold-out split
@@ -310,7 +310,7 @@ def render_report(result: HarnessResult, frame: pd.DataFrame) -> str:
         f"split + 25% hold-out",
         f"Ranking by  : mean CV F1",
         "",
-        f"{'model':<22}{'CV acc':>9}{'CV f1':>9}{'±':>7}"
+        f"{'model':<22}{'CV acc':>9}{'CV f1':>9}{'+/-':>7}"
         f"{'CV auc':>9}{'hold f1':>10}",
         "-" * 66,
     ]
@@ -328,7 +328,7 @@ def render_report(result: HarnessResult, frame: pd.DataFrame) -> str:
     lines += [
         "",
         f"Best model: {best.name} "
-        f"(CV F1 {best.cv_means['f1']:.3f} ± {best.cv_stds['f1']:.3f})",
+        f"(CV F1 {best.cv_means['f1']:.3f} +/- {best.cv_stds['f1']:.3f})",
         "",
         "Hold-out confusion matrix:",
         f"  {'':11}{'pred 0':>8}{'pred 1':>8}",
@@ -354,7 +354,7 @@ DEMO_CSV = Path(__file__).resolve().parent.parent / "data" / "dataset.csv"
 
 
 def run_demo(csv_path: Path | None = None, folds: int = 5) -> int:
-    """Evaluate every model on the bundled sample — fully offline."""
+    """Evaluate every model on the bundled sample - fully offline."""
     print("=" * 74)
     print(" MODEL EVALUATION HARNESS - offline demo")
     print(" Bundled sample; scikit-learn models; no network.")

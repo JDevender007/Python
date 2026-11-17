@@ -33,7 +33,7 @@ The loader validates labels against `spam`/`ham`, rejects empty subjects/bodies,
 - JSON metrics export (with the classification attached when `--classify` is used)
 - Deterministic: seeded split, stable predictions
 - Bundled deterministic sample: 140 messages (70 spam / 70 ham)
-- 46 passing pytest tests
+- 51 passing pytest tests
 
 ---
 
@@ -158,7 +158,7 @@ The probability threshold is 0.5: `P(spam) ≥ 0.5` → spam. On the bundled tem
 python -m pytest tests/ -q
 ```
 
-**46 tests passed** covering every validation rule (labels, empty text, row/class minimums, single-class files), pipeline structure, metric correctness (accuracy recomputed from predictions, confusion row counts), determinism across seeds, classification edge cases (empty, non-string, huge, unseen words), demo idempotency, and every CLI path — all offline.
+**51 tests passed** covering every validation rule (labels, empty text, row/class minimums, single-class files), pipeline structure, metric correctness (accuracy recomputed from predictions, confusion row counts), determinism across seeds, classification edge cases (empty, non-string, huge, unseen words), demo idempotency, and every CLI path — all offline. Extra cases pin the assembled message text, the `to_dict` key set, probability bounds and label agreement, ASCII-only report text, and fresh pipeline instances.
 
 ---
 
