@@ -379,7 +379,7 @@ def test_cli_demo_exits_zero(capsys):
     out = capsys.readouterr().out
     assert "Cross-checks OK" in out
     assert "Demo completed successfully." in out
-    assert "Virtual sensors, offline CSV logging" in out  # banner shown
+    assert "SENSOR SIMULATOR - offline demo" in out  # header shown
 
 
 def test_cli_log_writes_csv_and_json(tmp_path, capsys):
@@ -464,9 +464,8 @@ def test_cli_requires_action(capsys):
 
 def test_cli_quiet_suppresses_banner(capsys):
     assert main(["--demo", "--quiet"]) == 0
-    out = capsys.readouterr().out
-    assert "Virtual sensors, offline CSV logging" not in out
-    assert "Demo completed successfully." in out
+    captured = capsys.readouterr()
+    assert captured.out == "" and captured.err == ""  # --quiet is silent
 
 
 def test_project_has_bundled_sample():

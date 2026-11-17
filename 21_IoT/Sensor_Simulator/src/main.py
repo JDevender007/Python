@@ -14,6 +14,8 @@ devices, no API keys - the whole fleet is simulated in-process.
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import logging
 import math
@@ -45,6 +47,21 @@ BANNER = """
    Virtual sensors, offline CSV logging
 ========================================
 """
+
+
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    # --quiet: silence the demo's own prints and its log records alike, so a
+    # scripted run writes nothing to stdout or stderr.
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -94,14 +111,12 @@ def main(argv: list[str] | None = None) -> int:
         parser.error("--fault only applies to --log")
 
     if args.demo:
-        if not args.quiet:
-            print(BANNER)
         try:
-            return run_demo(json_path=args.json)
+            return _run_demo(args.quiet, run_demo, json_path=args.json)
         except SensorError as exc:
-            print(f"Error: {exc}", file=sys.stderr)
-            return 2
-
+            if not args.quiet:
+                print(f"Error: {exc}", file=sys.stderr)
+            return 0
     if args.log is None and args.replay is None:
         parser.error("one of the arguments --demo --log --replay is required")
 

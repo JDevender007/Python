@@ -1,4 +1,4 @@
-﻿"""Sensor data analysis: rolling statistics, anomalies, gaps, flatlines.
+"""Sensor data analysis: rolling statistics, anomalies, gaps, flatlines.
 
 Loads a bundled multi-sensor CSV, then answers the questions an operator
 actually asks of a telemetry export: what is normal, what is an outlier,

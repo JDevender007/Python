@@ -1,4 +1,4 @@
-﻿"""Tests for the Sensor Data Analyzer project."""
+"""Tests for the Sensor Data Analyzer project."""
 
 from __future__ import annotations
 
