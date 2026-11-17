@@ -1,4 +1,4 @@
-﻿"""A tiny generative adversarial network trained on two moons - offline.
+"""A tiny generative adversarial network trained on two moons - offline.
 
 A 2-layer MLP generator maps 8-dimensional noise to 2-D points; a 2-layer
 MLP discriminator scores them against a bundled two-moons dataset. Both

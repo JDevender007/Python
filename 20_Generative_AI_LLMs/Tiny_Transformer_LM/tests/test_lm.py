@@ -348,6 +348,11 @@ def test_run_demo_direct(capsys):
 def test_run_demo_is_idempotent(capsys):
     assert main(["--demo", "--quiet"]) == 0
     assert main(["--demo", "--quiet"]) == 0
+    captured = capsys.readouterr()
+    assert captured.out == "" and captured.err == ""
+
+    assert main(["--demo"]) == 0
+    assert main(["--demo"]) == 0
     out = capsys.readouterr().out
     assert out.count("Demo completed successfully.") == 2
     assert out.count("Cross-checks OK") == 2
