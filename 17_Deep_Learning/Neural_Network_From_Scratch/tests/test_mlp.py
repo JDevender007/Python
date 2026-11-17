@@ -375,3 +375,65 @@ def test_cli_requires_action(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Activation functions and network internals
+# --------------------------------------------------------------------------- #
+def test_sigmoid_is_monotonically_increasing():
+    values = np.array([-4.0, -2.0, 0.0, 2.0, 4.0])
+    out = sigmoid(values)
+    assert np.all(np.diff(out) > 0)
+
+
+def test_relu_clips_negatives_and_keeps_positives():
+    out = relu(np.array([-3.0, -0.5, 0.0, 2.5]))
+    assert list(out) == [0.0, 0.0, 0.0, 2.5]
+
+
+def test_tanh_is_odd_symmetric():
+    out = tanh(np.array([-1.5, 1.5]))
+    assert out[0] == pytest.approx(-out[1])
+
+
+def test_parse_layers_single_hidden_layer():
+    assert parse_layers("8") == (8,)
+
+
+def test_parse_layers_rejects_zero():
+    with pytest.raises(MLPError):
+        parse_layers("8,0")
+
+
+def test_forward_bounds_and_cache_length(trained):
+    model = trained.model
+    out, cache = model.forward(np.zeros((3, model.sizes[0])))
+    assert out.shape == (1, 3)
+    assert len(cache) == len(model.sizes) - 1
+    assert np.all((out > 0) & (out < 1))
+
+
+def test_predict_proba_matches_thresholded_labels(trained):
+    model = trained.model
+    x = np.zeros((2, model.sizes[0]))
+    probabilities = model.predict_proba(x)
+    assert list(model.predict(x)) == [int(p >= 0.5) for p in probabilities]
+
+
+def test_forward_is_repeatable_for_the_same_input(trained):
+    model = trained.model
+    x = np.ones((4, model.sizes[0]))
+    first, _ = model.forward(x)
+    second, _ = model.forward(x)
+    assert np.array_equal(first, second)
+
+
+def test_train_result_to_dict_keys(trained):
+    payload = trained.to_dict()
+    for key in ("train_accuracy", "test_accuracy",
+                "baseline_accuracy", "rows", "epochs"):
+        assert key in payload
+
+
+def test_gradient_check_reports_small_error():
+    assert gradient_check(hidden=(5,), samples=6) < 1e-4

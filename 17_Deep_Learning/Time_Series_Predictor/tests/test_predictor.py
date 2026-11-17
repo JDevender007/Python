@@ -390,3 +390,51 @@ def test_cli_requires_action(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Windowing and result contract
+# --------------------------------------------------------------------------- #
+def test_make_windows_target_is_the_value_after_the_window():
+    values = np.arange(10, dtype=np.float32)
+    xs, ys = make_windows(values, window=3, start=3, stop=6)
+    assert len(xs) == len(ys) == 3
+    assert list(ys) == [3.0, 4.0, 5.0]
+    assert list(xs[0]) == [0.0, 1.0, 2.0]
+
+
+def test_make_windows_rejects_window_larger_than_series():
+    with pytest.raises(SeriesError):
+        make_windows(np.arange(3, dtype=np.float32), window=5, start=0, stop=3)
+
+
+def test_result_to_dict_reports_split(trained):
+    payload = trained.to_dict()
+    assert payload["train_rows"] + payload["test_rows"] == payload["rows"]
+
+
+def test_result_to_dict_has_error_metrics(trained):
+    payload = trained.to_dict()
+    for key in ("test_rmse", "test_mae", "baseline_rmse", "baseline_mae"):
+        assert key in payload
+
+
+def test_metrics_are_non_negative(trained):
+    assert trained.test_rmse >= 0.0
+    assert trained.test_mae >= 0.0
+    assert trained.baseline_rmse >= 0.0
+
+
+def test_history_losses_are_finite(trained):
+    assert all(np.isfinite(entry["loss"]) for entry in trained.history)
+
+
+def test_forecast_is_close_to_the_last_value(trained, sample):
+    values = sample["value"].to_numpy(dtype=np.float32)[-trained.window:]
+    prediction = trained.forecast(values)
+    assert np.isfinite(prediction)
+    assert abs(prediction - float(values[-1])) < 5.0
+
+
+def test_render_report_is_ascii(trained):
+    render_report(trained).encode("ascii")

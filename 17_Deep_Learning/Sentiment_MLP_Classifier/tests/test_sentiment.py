@@ -419,3 +419,30 @@ def test_cli_requires_action(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Result contract
+# --------------------------------------------------------------------------- #
+def test_result_to_dict_reports_row_split(trained):
+    payload = trained.to_dict()
+    assert payload["train_rows"] + payload["test_rows"] == payload["rows"]
+
+
+def test_result_to_dict_has_vocabulary_size(trained):
+    assert trained.to_dict()["vocab_size"] == trained.vocab_size
+    assert trained.vocab_size > 0
+
+
+def test_predict_matches_probability_threshold(trained):
+    label, probability = trained.predict("I absolutely loved this movie")
+    assert label == (1 if probability >= 0.5 else 0)
+
+
+def test_probabilities_are_in_unit_interval(trained):
+    assert np.all(trained.probabilities >= 0.0)
+    assert np.all(trained.probabilities <= 1.0)
+
+
+def test_render_report_is_ascii(trained):
+    render_report(trained).encode("ascii")

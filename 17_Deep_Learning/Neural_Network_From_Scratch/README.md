@@ -37,7 +37,7 @@ Everything runs on local files: the bundled **deterministic** sample (600 rows, 
 - Strict validation: layer sizes, learning rate, epochs, batch size, data schema
 - JSON export of params + metrics; deterministic across runs
 - Bundled deterministic sample: 600 concentric-circle rows (300/300)
-- 41 passing pytest tests
+- 51 passing pytest tests
 
 ---
 
@@ -173,7 +173,7 @@ Why circles are the right demo: with inputs (x, y) only, the optimal boundary is
 python -m pytest tests/ -q
 ```
 
-**41 tests passed** covering activation maths, every config and data validation rule, gradient checks on two architectures (the core correctness proof), loss reduction, baseline lift, determinism and seed-sensitivity, split arithmetic, learning-curve length, `to_dict` JSON safety, report sections, demo idempotency, and every CLI path — all offline.
+**51 tests passed** covering activation maths, every config and data validation rule, gradient checks on two architectures (the core correctness proof), loss reduction, baseline lift, determinism and seed-sensitivity, split arithmetic, learning-curve length, `to_dict` JSON safety, report sections, demo idempotency, and every CLI path — all offline. Extra cases pin activation monotonicity/odd symmetry, one- and zero-layer parsing, forward cache length and probability bounds, thresholded labels matching `predict_proba`, repeatable forwards, the result key set, and a gradient check under 1e-4.
 
 ---
 

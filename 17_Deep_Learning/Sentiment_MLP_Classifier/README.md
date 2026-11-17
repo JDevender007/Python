@@ -34,7 +34,7 @@ Everything runs on local files: the vocabulary is capped at 3000 tokens, tokens 
 - Strict validation: binary labels, ≥ 100 rows, ≥ 20 per class, non-empty texts
 - `--classify "text"` with bundled-data fallback; JSON metrics export
 - Deterministic: seeded split, init, and shuffle — identical results every run
-- 47 passing pytest tests
+- 52 passing pytest tests
 
 ---
 
@@ -166,7 +166,7 @@ Why bag-of-words + MLP works here: the templated vocabulary splits cleanly — p
 python -m pytest tests/ -q
 ```
 
-**47 tests passed** covering every validation rule (schema, binary/fractional labels, class minimums, empty texts, empty-row dropping), vectorizer behaviour, model config errors, training metrics, confusion-vs-metric consistency, determinism and seed sensitivity, loss reduction, `predict()` edge cases (empty, non-string, phrase ordering, agreement with hold-out outputs), report sections, demo idempotency, and every CLI path — all offline.
+**52 tests passed** covering every validation rule (schema, binary/fractional labels, class minimums, empty texts, empty-row dropping), vectorizer behaviour, model config errors, training metrics, confusion-vs-metric consistency, determinism and seed sensitivity, loss reduction, `predict()` edge cases (empty, non-string, phrase ordering, agreement with hold-out outputs), report sections, demo idempotency, and every CLI path — all offline. Extra cases pin the train/test split in `to_dict`, the vocabulary size, label agreement with the probability threshold, probability bounds, and ASCII-only report text.
 
 ---
 

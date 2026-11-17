@@ -402,3 +402,32 @@ def test_cli_requires_action(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Tensors and CLI parsing details
+# --------------------------------------------------------------------------- #
+def test_to_tensor_shapes(sample):
+    import torch
+
+    x, y = to_tensor(sample)
+    assert tuple(x.shape) == (len(sample), 64)
+    assert tuple(y.shape) == (len(sample),)
+    assert x.dtype == torch.float32 and y.dtype == torch.long
+
+
+def test_to_tensor_scales_into_unit_interval(sample):
+    x, _ = to_tensor(sample)
+    assert float(x.min()) >= 0.0 and float(x.max()) <= 1.0
+
+
+def test_to_tensor_labels_cover_every_class(sample):
+    _, y = to_tensor(sample)
+    assert set(y.tolist()) == set(CLASSES)
+
+
+def test_parse_pixels_returns_floats():
+    text = ",".join(str(i % 17) for i in range(64))
+    values = parse_pixels(text)
+    assert len(values) == 64
+    assert all(isinstance(v, float) for v in values)

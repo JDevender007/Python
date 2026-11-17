@@ -34,7 +34,7 @@ Everything runs on local files: the bundled **deterministic** sample (1200 point
 - Strict validation: window ≥ 5, enough windows per segment, finite values, ≥ 400 points
 - Deterministic: seeded weight init, shuffle, and split
 - Bundled deterministic sample: 1200-point dual-sine series with trend
-- 43 passing pytest tests
+- 51 passing pytest tests
 
 ---
 
@@ -162,7 +162,7 @@ Two leakage guards worth noting: the **z-score uses only pre-split statistics**,
 python -m pytest tests/ -q
 ```
 
-**43 tests passed** covering every validation rule (schema, finiteness, duplicate timestamps, minimum length, constant series, window/hyperparameter bounds), window-construction math, seeded model equality, training metrics and split arithmetic, determinism and seed sensitivity, forecast edge cases (wrong length, NaN), report sections, demo idempotency, and every CLI path — all offline.
+**51 tests passed** covering every validation rule (schema, finiteness, duplicate timestamps, minimum length, constant series, window/hyperparameter bounds), window-construction math, seeded model equality, training metrics and split arithmetic, determinism and seed sensitivity, forecast edge cases (wrong length, NaN), report sections, demo idempotency, and every CLI path — all offline. Extra cases pin window targets to the value after the window, the oversized-window error, split arithmetic and error-metric keys in `to_dict`, non-negative errors, finite losses, a forecast near the last observation, and ASCII-only report text.
 
 ---
 

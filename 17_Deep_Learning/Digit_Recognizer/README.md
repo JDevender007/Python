@@ -34,7 +34,7 @@ Training is fully reproducible: seeded weight initialisation, a seeded shuffle g
 - `--predict "0,0,5,..."` with bundled-data fallback; JSON metrics export
 - Deterministic: seeded init, shuffle, and split — identical results every run
 - Bundled dataset: 1797 images from sklearn's `load_digits`, stored as CSV
-- 46 passing pytest tests
+- 50 passing pytest tests
 
 ---
 
@@ -163,7 +163,7 @@ Details worth knowing:
 python -m pytest tests/ -q
 ```
 
-**46 tests passed** covering every validation rule (pixel ranges, labels, class minimums, row counts), seeded initialisation equality, tensor scaling, training metrics, confusion/support arithmetic, misclassified-count consistency, determinism and seed sensitivity, prediction edge cases (wrong length, out of range, NaN), ASCII rendering shape, parsing helpers, demo idempotency, and every CLI path — all offline.
+**50 tests passed** covering every validation rule (pixel ranges, labels, class minimums, row counts), seeded initialisation equality, tensor scaling, training metrics, confusion/support arithmetic, misclassified-count consistency, determinism and seed sensitivity, prediction edge cases (wrong length, out of range, NaN), ASCII rendering shape, parsing helpers, demo idempotency, and every CLI path — all offline. Extra cases pin tensor shapes/dtypes, unit-interval scaling, every class present in the labels, and `parse_pixels()` returning floats.
 
 ---
 
