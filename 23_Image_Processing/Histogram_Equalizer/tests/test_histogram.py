@@ -332,9 +332,8 @@ def test_cli_demo_exits_zero(capsys):
 
 def test_cli_demo_quiet(capsys):
     assert main(["--demo", "--quiet"]) == 0
-    out = capsys.readouterr().out
-    assert "global CDF + CLAHE-style limiting" not in out  # BANNER hidden
-    assert "Cross-checks OK" in out
+    captured = capsys.readouterr()
+    assert captured.out == "" and captured.err == ""  # --quiet is silent
 
 
 def test_cli_global_on_file(capsys):
@@ -403,3 +402,50 @@ def test_project_has_sample_data():
     assert NOISY_IMG.is_file()
     assert LOW_IMG.parent == PROJECT_ROOT / "data"
     assert set(METHODS) == {"global", "clahe"}
+
+
+# --------------------------------------------------------------------------- #
+# Histogram arithmetic and metric edge cases
+# --------------------------------------------------------------------------- #
+def test_histogram_counts_sum_to_the_pixel_count(lowcontrast):
+    assert int(histogram(lowcontrast).sum()) == lowcontrast.size
+
+
+def test_histogram_has_a_bin_per_shade(lowcontrast):
+    assert len(histogram(lowcontrast)) == BINS
+
+
+def test_cumulative_counts_end_at_the_pixel_count(lowcontrast):
+    cdf = cumulative_counts(lowcontrast)
+    assert int(cdf[-1]) == lowcontrast.size
+
+
+def test_histogram_stats_keys(lowcontrast):
+    stats = histogram_stats(lowcontrast)
+    assert set(stats) == {"mean", "std", "min", "max", "range",
+                          "occupied", "pixels"}
+    assert stats["pixels"] == lowcontrast.size
+
+
+def test_mse_is_zero_for_identical_images(lowcontrast):
+    assert mse(lowcontrast, lowcontrast) == 0.0
+
+
+def test_mse_matches_a_hand_computed_value():
+    first = np.zeros((2, 2), dtype=np.uint8)
+    second = np.full((2, 2), 10, dtype=np.uint8)
+    assert mse(first, second) == pytest.approx(100.0)
+
+
+def test_psnr_is_infinite_for_identical_images(lowcontrast):
+    assert psnr(lowcontrast, lowcontrast) == float("inf")
+
+
+def test_mse_rejects_shape_mismatch(lowcontrast):
+    with pytest.raises(HistError, match="shape mismatch"):
+        mse(lowcontrast, lowcontrast[:-1, :])
+
+
+def test_equalize_rejects_unknown_method(lowcontrast):
+    with pytest.raises(HistError, match="unknown method"):
+        equalize(lowcontrast, method="adaptive")

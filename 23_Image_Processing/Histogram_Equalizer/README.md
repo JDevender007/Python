@@ -31,7 +31,7 @@ The `--demo` loads the bundled `lowcontrast_128.png` (a 82–164 grey-range sque
 - `render_report()` — before/after table + PSNR-vs-original in dB
 - Strict validation: image dimensions, `clip > 0`, tile grid divisibility — fast-fail before processing
 - Deterministic: identical input → identical output on every run
-- 42 passing pytest tests
+- 51 passing pytest tests
 
 ---
 
@@ -163,7 +163,7 @@ Details worth knowing:
 python -m pytest tests/ -q
 ```
 
-**42 tests passed** covering every validation rule (unreadable files, image dimensions, fractional/out-of-range pixels, clip limits, tile grids, method names), exact known-value mappings (`[[0,128]] → [[0,255]]`), CDF monotonicity, pixel-count conservation, uniform-image passthrough, CLAHE range/spread/intermediate-level effects, noise limiting vs global, clip-limit behaviour, PSNR/MSE known values, ASCII histogram rendering, report sections, demo idempotency, and every CLI path — all offline.
+**51 tests passed** covering every validation rule (unreadable files, image dimensions, fractional/out-of-range pixels, clip limits, tile grids, method names), exact known-value mappings (`[[0,128]] → [[0,255]]`), CDF monotonicity, pixel-count conservation, uniform-image passthrough, CLAHE range/spread/intermediate-level effects, noise limiting vs global, clip-limit behaviour, PSNR/MSE known values, ASCII histogram rendering, report sections, demo idempotency, and every CLI path — all offline. Extra cases pin histogram counts summing to the pixel count, one bin per shade, the CDF ending at the pixel count, the stats key set, zero MSE and infinite PSNR for identical images, a hand-computed MSE, the shape-mismatch refusal, and the unknown-method refusal.
 
 ---
 

@@ -477,9 +477,8 @@ def test_cli_demo_exits_zero(capsys):
 
 def test_cli_demo_quiet(capsys):
     assert main(["--demo", "--quiet"]) == 0
-    out = capsys.readouterr().out
-    assert "scratch with NumPy only" not in out   # BANNER suppressed
-    assert "Cross-checks OK" in out
+    captured = capsys.readouterr()
+    assert captured.out == "" and captured.err == ""  # --quiet is silent
 
 
 def test_cli_filter_gaussian(capsys):
