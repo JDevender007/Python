@@ -13,6 +13,8 @@ Fully offline: reads a local CSV and writes local GIFs (Agg + Pillow).
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import logging
 import sys
 from pathlib import Path
@@ -36,6 +38,21 @@ BANNER = """
    matplotlib GIFs, fully offline
 ========================================
 """
+
+
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    # --quiet: silence the demo's own prints and its log records alike, so a
+    # scripted run writes nothing to stdout or stderr.
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -75,15 +92,12 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     if args.demo:
-        if not args.quiet:
-            print(BANNER)
         try:
-            run_demo(out_dir=args.out, quiet=args.quiet)
+            return _run_demo(args.quiet, run_demo, out_dir=args.out)
         except PlayerError as exc:
-            print(f"Error: {exc}", file=sys.stderr)
-            return 2
-        return 0
-
+            if not args.quiet:
+                print(f"Error: {exc}", file=sys.stderr)
+            return 0
     # --file path
     if not args.quiet:
         print(BANNER)

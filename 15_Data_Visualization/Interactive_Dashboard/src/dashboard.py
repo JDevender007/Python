@@ -135,9 +135,9 @@ def render_kpis(kpis: dict[str, Any]) -> str:
 def _kpi_header(kpis: dict[str, Any]) -> str:
     return (
         f"<b>Segment Performance Dashboard</b><br>"
-        f"revenue ${kpis['total_revenue']:,.0f} · margin {kpis['margin_pct']}% · "
+        f"revenue ${kpis['total_revenue']:,.0f} - margin {kpis['margin_pct']}% - "
         f"growth {kpis['revenue_growth_pct']:+.1f}%<br>"
-        f"orders {kpis['total_orders']:,} · AOV ${kpis['aov']:,.0f} · "
+        f"orders {kpis['total_orders']:,} - AOV ${kpis['aov']:,.0f} - "
         f"best: {kpis['best_segment']} / {kpis['best_month']}"
     )
 
@@ -274,8 +274,9 @@ DEMO_CSV = Path(__file__).resolve().parent.parent / "data" / "dashboard_sample.c
 DEFAULT_OUTPUT = Path(__file__).resolve().parent.parent / "output"
 
 
-def run_demo(out_dir: Path | None = None, quiet: bool = False) -> int:
-    """Build the bundled dashboard — fully offline, self-contained HTML."""
+def run_demo(out_dir: Path | None = None, quiet: bool = False,
+             note: str | None = None) -> int:
+    """Build the bundled dashboard - fully offline, self-contained HTML."""
     if not quiet:
         print("=" * 60)
         print(" INTERACTIVE DASHBOARD - offline demo")
@@ -315,7 +316,7 @@ def run_demo(out_dir: Path | None = None, quiet: bool = False) -> int:
 
     # document-level checks: the page must not load any remote resource
     # (a stray src="https://..." string inside plotly.js's mapbox dead code
-    # is harmless — it never executes without mapbox traces)
+    # is harmless - it never executes without mapbox traces)
     assert "<script src=" not in html, "must not load external scripts"
     assert not re.search(r"<link[^>]*href=[\"']https?://", html), \
         "must not load external stylesheets"
@@ -327,7 +328,13 @@ def run_demo(out_dir: Path | None = None, quiet: bool = False) -> int:
         assert segment in html, f"{segment} missing from dashboard"
 
     if not quiet:
-        print(f"\nWrote {path} ({path.stat().st_size:,} bytes, self-contained)")
+        try:
+            shown = path.resolve().relative_to(Path.cwd().resolve())
+        except ValueError:
+            shown = path
+        print(f"\nWrote {shown} ({path.stat().st_size:,} bytes, self-contained)")
+        if note:
+            print(note)
         print(f"Cross-checks OK: KPIs match the frame, {len(figure.data)} traces, "
               f"3-button metric switcher, self-contained HTML (no remote resources)")
         print("\nDemo completed successfully.")

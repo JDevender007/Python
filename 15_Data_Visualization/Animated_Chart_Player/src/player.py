@@ -1,4 +1,4 @@
-"""Animated chart player: animated GIFs from a league score table — offline.
+"""Animated chart player: animated GIFs from a league score table - offline.
 
 Loads a CSV of weekly team scores and renders animated GIFs with
 matplotlib's FuncAnimation saved through the Pillow writer: a progressive
@@ -300,7 +300,7 @@ DEFAULT_OUTPUT = Path(__file__).resolve().parent.parent / "output"
 
 
 def run_demo(out_dir: Path | None = None, quiet: bool = False) -> int:
-    """Render every animation from the bundled sample — fully offline."""
+    """Render every animation from the bundled sample - fully offline."""
     if not quiet:
         print("=" * 60)
         print(" ANIMATED CHART PLAYER - offline demo")

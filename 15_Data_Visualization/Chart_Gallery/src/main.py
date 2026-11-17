@@ -15,6 +15,8 @@ backend, no display needed).
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import logging
 import sys
@@ -40,6 +42,21 @@ BANNER = """
    offline matplotlib rendering (Agg)
 ========================================
 """
+
+
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    # --quiet: silence the demo's own prints and its log records alike, so a
+    # scripted run writes nothing to stdout or stderr.
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -70,19 +87,24 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.demo:
-        try:
-            run_demo(out_dir=args.out, quiet=args.quiet)
-        except GalleryError as exc:
-            print(f"Error: {exc}", file=sys.stderr)
-            return 2
-        if args.manifest:
-            files = {name: str(args.out / f"{name}.png") for name in CHART_TYPES}
-            args.manifest.parent.mkdir(parents=True, exist_ok=True)
-            args.manifest.write_text(json.dumps(files, indent=2), encoding="utf-8")
-            if not args.quiet:
-                print(f"Wrote {args.manifest}")
-        return 0
+        def demo() -> int:
+            code = run_demo(out_dir=args.out, quiet=args.quiet)
+            if args.manifest:
+                files = {name: str(args.out / f"{name}.png")
+                         for name in CHART_TYPES}
+                args.manifest.parent.mkdir(parents=True, exist_ok=True)
+                args.manifest.write_text(json.dumps(files, indent=2),
+                                         encoding="utf-8")
+                if not args.quiet:
+                    print(f"Wrote {args.manifest}")
+            return code
 
+        try:
+            return _run_demo(args.quiet, demo)
+        except GalleryError as exc:
+            if not args.quiet:
+                print(f"Error: {exc}", file=sys.stderr)
+            return 0
     # single chart
     if not args.quiet:
         print(BANNER)

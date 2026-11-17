@@ -1,4 +1,4 @@
-"""Report generator: data-driven HTML and Markdown reports — offline.
+"""Report generator: data-driven HTML and Markdown reports - offline.
 
 Loads a CSV of monthly channel performance, computes summary statistics,
 renders charts with matplotlib (Agg), embeds them as base64 data URIs, and
@@ -172,7 +172,7 @@ def summarize(frame: pd.DataFrame) -> ReportSummary:
     else:
         summary.notes.append(
             f"Revenue fell {growth:+.1f}% from {monthly.index[-2]} to "
-            f"{monthly.index[-1]} — investigate the dip.")
+            f"{monthly.index[-1]} - investigate the dip.")
     top_share = float(summary.by_channel["share_pct"].iloc[0])
     summary.notes.append(
         f"{summary.best_channel} leads with {top_share:.1f}% of total revenue.")
@@ -276,7 +276,7 @@ def render_markdown(summary: ReportSummary, title: str) -> str:
     lines = [
         f"# {title}",
         "",
-        f"_{int(totals['rows'])} rows · {int(totals['months'])} months · "
+        f"_{int(totals['rows'])} rows - {int(totals['months'])} months - "
         f"{int(totals['channels'])} channels_",
         "",
         "## Key metrics",
@@ -305,7 +305,7 @@ def render_markdown(summary: ReportSummary, title: str) -> str:
               "| Month | Revenue | Growth |", "| --- | ---: | ---: |"]
     for month, row in summary.monthly.iterrows():
         growth = row["growth_pct"]
-        growth_text = "—" if pd.isna(growth) else f"{growth:+.1f}%"
+        growth_text = "-" if pd.isna(growth) else f"{growth:+.1f}%"
         lines.append(f"| {month} | {_money(row['revenue'])} | {growth_text} |")
 
     lines += ["", "## Insights", ""]
@@ -343,7 +343,7 @@ def render_html(summary: ReportSummary, title: str) -> str:
     for month, row in summary.monthly.iterrows():
         growth = row["growth_pct"]
         growth_class = "up" if (not pd.isna(growth) and growth >= 0) else "down"
-        growth_text = "—" if pd.isna(growth) else f"{growth:+.1f}%"
+        growth_text = "-" if pd.isna(growth) else f"{growth:+.1f}%"
         month_rows += (
             f"<tr><td>{esc(str(month))}</td>"
             f"<td class='num'>{_money(row['revenue'])}</td>"
@@ -470,7 +470,7 @@ DEMO_TITLE = "Channel Performance Report - 2025"
 
 
 def run_demo(out_dir: Path | None = None, quiet: bool = False) -> int:
-    """Generate HTML + Markdown reports from the bundled sample — offline."""
+    """Generate HTML + Markdown reports from the bundled sample - offline."""
     if not quiet:
         print("=" * 64)
         print(" REPORT GENERATOR - offline demo")

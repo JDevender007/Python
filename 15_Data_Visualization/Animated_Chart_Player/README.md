@@ -32,7 +32,7 @@ The bundled **deterministic** sample (4 teams × 12 weeks) ships in `data/`. `--
 - GIF frame counting via Pillow for verification
 - `--anim` single animation, `--fps` speed control (1–30), `--out` folder
 - Bundled deterministic sample: 48 rows (4 teams × 12 weeks)
-- 49 passing pytest tests
+- 52 passing pytest tests
 
 ---
 
@@ -160,7 +160,7 @@ The bar race re-sorts via `rankings_at()` — sorted by score descending with al
 python -m pytest tests/ -q
 ```
 
-**49 tests passed** covering every validation rule (incomplete grids, duplicates, non-finite scores, single team/week), frame helpers (lengths, values, sorted rankings, tie-breaks), all three animations built and rendered (GIF > 5 KB, exactly 12 frames, no figure leaks), deterministic re-render, fps/animation-name errors, demo idempotency, and every CLI path — all offline.
+**52 tests passed** covering every validation rule (incomplete grids, duplicates, non-finite scores, single team/week), frame helpers (lengths, values, sorted rankings, tie-breaks), all three animations built and rendered (GIF > 5 KB, exactly 12 frames, no figure leaks), deterministic re-render, fps/animation-name errors, demo idempotency, and every CLI path — all offline. Additional cases pin the `scores_through()` prefix contract (empty before week 1, full series past the last week) and the sorted `teams()` helper.
 
 ---
 

@@ -300,3 +300,66 @@ def test_cli_requires_action(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Data helpers in depth
+# --------------------------------------------------------------------------- #
+def test_pivot_defaults_to_revenue(sample):
+    pd.testing.assert_frame_equal(pivot(sample), pivot(sample, "revenue"))
+
+
+def test_pivot_orders_column_totals(sample):
+    assert int(pivot(sample, "orders").values.sum()) == int(sample["orders"].sum())
+
+
+def test_pivot_unknown_column_raises_keyerror(sample):
+    with pytest.raises(KeyError):
+        pivot(sample, "profit")
+
+
+def test_summary_table_columns(sample):
+    table = summary_table(sample)
+    assert set(table.columns) == {"revenue", "cost", "orders",
+                                  "margin", "margin_pct", "aov"}
+
+
+def test_summary_table_sorted_by_revenue(sample):
+    revenue = list(summary_table(sample)["revenue"])
+    assert revenue == sorted(revenue, reverse=True)
+
+
+def test_summary_table_totals_match_frame(sample):
+    table = summary_table(sample)
+    assert abs(float(table["cost"].sum()) - float(sample["cost"].sum())) < 0.01
+    assert abs(float(table["margin"].sum())
+               - (float(sample["revenue"].sum()) - float(sample["cost"].sum()))) < 0.01
+
+
+def test_summary_aov_is_revenue_over_orders(sample):
+    table = summary_table(sample)
+    for region, row in table.iterrows():
+        assert row["aov"] == pytest.approx(round(row["revenue"] / row["orders"], 1))
+
+
+def test_every_chart_has_a_title(sample):
+    for name, (function, _) in CHART_TYPES.items():
+        figure = function(sample)
+        try:
+            assert figure.axes[0].get_title(), f"{name} has no title"
+        finally:
+            plt.close(figure)
+
+
+def test_registry_descriptions_are_non_empty():
+    for name, description in list_charts():
+        assert name in CHART_TYPES
+        assert description.strip(), f"{name} has an empty description"
+
+
+def test_pie_chart_has_one_wedge_per_region(sample):
+    figure = CHART_TYPES["pie"][0](sample)
+    try:
+        assert len(figure.axes[0].patches) == sample["region"].nunique()
+    finally:
+        plt.close(figure)

@@ -395,3 +395,21 @@ def test_cli_requires_action(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# Pure helpers beyond the basics
+# --------------------------------------------------------------------------- #
+def test_scores_through_before_first_week_is_empty(sample):
+    assert scores_through(sample, 0) == {}
+
+
+def test_scores_through_past_last_week_keeps_full_series(sample):
+    series = scores_through(sample, 99)
+    assert set(series) == set(teams(sample))
+    assert all(len(values) == len(weeks(sample)) for values in series.values())
+
+
+def test_teams_helper_matches_frame_values(sample):
+    assert teams(sample) == sorted(sample["team"].unique())
+    assert teams(sample)[0] == min(sample["team"])

@@ -14,6 +14,8 @@ Fully offline: reads a local CSV, writes local PNGs (Agg backend).
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import logging
 import sys
@@ -40,6 +42,21 @@ BANNER = """
    offline stats + matplotlib (Agg)
 ========================================
 """
+
+
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    # --quiet: silence the demo's own prints and its log records alike, so a
+    # scripted run writes nothing to stdout or stderr.
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -75,20 +92,23 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     if args.demo:
-        try:
-            run_demo(out_dir=args.out, quiet=args.quiet)
-        except StatsError as exc:
-            print(f"Error: {exc}", file=sys.stderr)
-            return 2
-        if args.json:
-            payload = analyze(load_measurements(DEMO_CSV)).to_dict()
-            args.json.parent.mkdir(parents=True, exist_ok=True)
-            args.json.write_text(json.dumps(payload, indent=2),
-                                 encoding="utf-8")
-            if not args.quiet:
-                print(f"\nWrote {args.json}")
-        return 0
+        def demo() -> int:
+            code = run_demo(out_dir=args.out, quiet=args.quiet)
+            if args.json:
+                payload = analyze(load_measurements(DEMO_CSV)).to_dict()
+                args.json.parent.mkdir(parents=True, exist_ok=True)
+                args.json.write_text(json.dumps(payload, indent=2),
+                                     encoding="utf-8")
+                if not args.quiet:
+                    print(f"\nWrote {args.json}")
+            return code
 
+        try:
+            return _run_demo(args.quiet, demo)
+        except StatsError as exc:
+            if not args.quiet:
+                print(f"Error: {exc}", file=sys.stderr)
+            return 0
     # --file path
     if not args.quiet:
         print(BANNER)

@@ -32,7 +32,7 @@ Everything runs on local files. The bundled **deterministic** sample (4 segments
 - Strict CSV validation: `YYYY-MM` months, non-negative values, whole-number orders, unique (month, segment) rows
 - KPI math proven against the frame: revenue, margin, growth (first → last month), AOV
 - Bundled deterministic sample: 48 rows (4 segments × 12 months)
-- 39 passing pytest tests
+- 50 passing pytest tests
 
 ---
 
@@ -156,7 +156,7 @@ The figure holds 17 traces: 12 line traces (4 segments × 3 metrics) where only 
 python -m pytest tests/ -q
 ```
 
-**39 tests passed** covering loading/validation rules, exact KPI math on a hand-built two-month frame (growth 50.0%, margin 3.0%, AOV 10.0), figure structure (17 traces, 9 default-visible, 3-button switcher with 17-slot vectors, range slider, subplot titles), self-contained HTML (no external resources, >1 MB), demo idempotency/quiet/missing-sample, and every CLI path — all offline.
+**50 tests passed** covering loading/validation rules, exact KPI math on a hand-built two-month frame (growth 50.0%, margin 3.0%, AOV 10.0), figure structure (17 traces, 9 default-visible, 3-button switcher with 17-slot vectors, range slider, subplot titles), self-contained HTML (no external resources, >1 MB), demo idempotency/quiet/missing-sample, and every CLI path — all offline. Extra cases pin the exact KPI key set, best segment/month against `groupby`, the AOV and margin-percent identities, every report label, ASCII-only KPI text, the `METRICS` tuple, the figure type, and segment whitespace stripping.
 
 ---
 

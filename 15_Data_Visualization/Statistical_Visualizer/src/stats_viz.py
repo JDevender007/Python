@@ -1,4 +1,4 @@
-"""Statistical visualization: descriptive stats, inference, and charts — offline.
+"""Statistical visualization: descriptive stats, inference, and charts - offline.
 
 Loads a CSV measurement table, computes descriptive statistics (mean, median,
 std, quartiles, IQR, z-scores, outlier fences, skewness), a two-sample
@@ -396,7 +396,7 @@ def chart_means(groups: dict[str, Any]):
 
 
 def chart_regression(x: Any, y: Any):
-    """Scatter with least-squares line and r² annotation."""
+    """Scatter with least-squares line and r^2 annotation."""
     xs, ys = np.asarray(list(x), dtype=float), np.asarray(list(y), dtype=float)
     fit = correlation(xs, ys)
     figure, axis = _figure()
@@ -404,7 +404,7 @@ def chart_regression(x: Any, y: Any):
     line = np.linspace(xs.min(), xs.max(), 50)
     axis.plot(line, fit["slope"] * line + fit["intercept"], "r-", linewidth=2,
               label=f"y = {fit['slope']:.2f}x + {fit['intercept']:.2f}")
-    axis.set_title(f"Regression (r = {fit['r']:.3f}, r² = {fit['r2']:.3f})")
+    axis.set_title(f"Regression (r = {fit['r']:.3f}, r^2 = {fit['r2']:.3f})")
     axis.set_xlabel("X")
     axis.set_ylabel("Y")
     axis.legend()
@@ -573,7 +573,7 @@ def render_report(report: StatsReport) -> str:
         f"({'reject' if cmp_['p_value'] < 0.05 else 'retain'} H0)",
         "",
         f"Age vs score: r = {report.age_fit['r']:+.3f}  "
-        f"r² = {report.age_fit['r2']:.3f}  "
+        f"r^2 = {report.age_fit['r2']:.3f}  "
         f"slope = {report.age_fit['slope']:+.3f}",
         f"  {report.age_fit['r2'] * 100:.1f}% of score variance is explained by age",
     ]
@@ -595,7 +595,7 @@ DEFAULT_OUTPUT = Path(__file__).resolve().parent.parent / "output"
 
 
 def run_demo(out_dir: Path | None = None, quiet: bool = False) -> int:
-    """Analyse the bundled sample and render all six charts — fully offline."""
+    """Analyse the bundled sample and render all six charts - fully offline."""
     if not quiet:
         print("=" * 68)
         print(" STATISTICAL VISUALIZER - offline demo")

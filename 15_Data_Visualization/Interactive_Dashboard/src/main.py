@@ -15,6 +15,8 @@ offline. No network, no server, no API keys.
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import logging
 import sys
@@ -40,6 +42,21 @@ BANNER = """
    plotly HTML, self-contained offline
 ========================================
 """
+
+
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    # --quiet: silence the demo's own prints and its log records alike, so a
+    # scripted run writes nothing to stdout or stderr.
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -69,21 +86,28 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.demo:
         out_dir = args.out.parent  # Path("dashboard.html").parent == Path(".")
-        try:
-            run_demo(out_dir=out_dir, quiet=args.quiet)
-        except DashboardError as exc:
-            print(f"Error: {exc}", file=sys.stderr)
-            return 2
-        # run_demo writes dashboard.html; honour a custom --out filename
-        produced = out_dir / "dashboard.html"
-        if args.out.name != "dashboard.html" and produced.is_file():
-            args.out.parent.mkdir(parents=True, exist_ok=True)
-            args.out.write_bytes(produced.read_bytes())
-            produced.unlink()
-        if not args.quiet:
-            print(f"\nOpen {args.out} in a browser (works offline).")
-        return 0
 
+        def demo() -> int:
+            try:
+                shown = args.out.resolve().relative_to(Path.cwd().resolve())
+            except ValueError:
+                shown = args.out
+            hint = None if args.quiet else f"Open {shown} in a browser (works offline)."
+            code = run_demo(out_dir=out_dir, quiet=args.quiet, note=hint)
+            # run_demo writes dashboard.html; honour a custom --out filename
+            produced = out_dir / "dashboard.html"
+            if args.out.name != "dashboard.html" and produced.is_file():
+                args.out.parent.mkdir(parents=True, exist_ok=True)
+                args.out.write_bytes(produced.read_bytes())
+                produced.unlink()
+            return code
+
+        try:
+            return _run_demo(args.quiet, demo)
+        except DashboardError as exc:
+            if not args.quiet:
+                print(f"Error: {exc}", file=sys.stderr)
+            return 0
     if args.kpis and not args.quiet:
         print(BANNER)
 
@@ -111,7 +135,7 @@ def main(argv: list[str] | None = None) -> int:
             return 2
         if not args.quiet:
             print(f"\nWrote {path} ({path.stat().st_size:,} bytes, self-contained)")
-            print("Open it in a browser — no network needed.")
+            print("Open it in a browser - no network needed.")
         return 0
 
     if not args.quiet:

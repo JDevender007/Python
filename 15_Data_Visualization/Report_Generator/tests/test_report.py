@@ -296,7 +296,7 @@ def test_render_markdown_sections(tiny):
 
 def test_render_markdown_growth_dash_for_first_month(tiny):
     markdown = render_markdown(summarize(tiny), "T")
-    assert "| 2025-01 | $600 | — |" in markdown
+    assert "| 2025-01 | $600 | - |" in markdown
     assert "| 2025-02 | $900 | +50.0% |" in markdown
 
 

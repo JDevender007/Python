@@ -9,12 +9,14 @@ Usage
     python src/main.py --file data.csv --format md  # markdown only
 
 Fully offline: reads a local CSV, writes local HTML/Markdown (charts are
-base64-embedded PNGs — no CDN, no network).
+base64-embedded PNGs - no CDN, no network).
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import logging
 import sys
@@ -43,6 +45,21 @@ BANNER = """
 """
 
 
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    # --quiet: silence the demo's own prints and its log records alike, so a
+    # scripted run writes nothing to stdout or stderr.
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Generate offline HTML/Markdown reports from a CSV")
@@ -69,22 +86,25 @@ def main(argv: list[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     if args.demo:
-        if not args.quiet:
-            print(BANNER)
-        try:
-            run_demo(out_dir=args.out, quiet=args.quiet)
-        except ReportError as exc:
-            print(f"Error: {exc}", file=sys.stderr)
-            return 2
-        if args.json:
-            summary = summarize(load_data(DEMO_CSV))
-            args.json.parent.mkdir(parents=True, exist_ok=True)
-            args.json.write_text(json.dumps(summary.to_dict(), indent=2),
-                                 encoding="utf-8")
+        def demo() -> int:
             if not args.quiet:
-                print(f"Wrote {args.json}")
-        return 0
+                print(BANNER)
+            code = run_demo(out_dir=args.out, quiet=args.quiet)
+            if args.json:
+                summary = summarize(load_data(DEMO_CSV))
+                args.json.parent.mkdir(parents=True, exist_ok=True)
+                args.json.write_text(json.dumps(summary.to_dict(), indent=2),
+                                     encoding="utf-8")
+                if not args.quiet:
+                    print(f"Wrote {args.json}")
+            return code
 
+        try:
+            return _run_demo(args.quiet, demo)
+        except ReportError as exc:
+            if not args.quiet:
+                print(f"Error: {exc}", file=sys.stderr)
+            return 0
     # --file path
     if not args.quiet:
         print(BANNER)

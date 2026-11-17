@@ -394,3 +394,78 @@ def test_cli_requires_action(capsys):
 def test_project_has_sample_data():
     assert DEMO_CSV.is_file()
     assert DEMO_CSV.parent == PROJECT_ROOT / "data"
+
+
+# --------------------------------------------------------------------------- #
+# KPI contract and HTML assembly
+# --------------------------------------------------------------------------- #
+EXPECTED_KPI_KEYS = {
+    "rows", "segments", "months", "total_revenue", "total_cost", "margin",
+    "margin_pct", "total_orders", "aov", "revenue_growth_pct",
+    "best_segment", "best_month",
+}
+
+
+def test_kpis_key_set_is_complete(sample):
+    assert set(compute_kpis(sample)) == EXPECTED_KPI_KEYS
+
+
+def test_kpis_best_segment_matches_groupby(sample):
+    by_segment = sample.groupby("segment")["revenue"].sum()
+    assert compute_kpis(sample)["best_segment"] == str(by_segment.idxmax())
+
+
+def test_kpis_best_month_matches_groupby(sample):
+    by_month = sample.groupby("month")["revenue"].sum()
+    assert compute_kpis(sample)["best_month"] == str(by_month.idxmax())
+
+
+def test_kpis_aov_and_margin_pct_math(sample):
+    kpis = compute_kpis(sample)
+    assert kpis["aov"] == pytest.approx(
+        round(kpis["total_revenue"] / kpis["total_orders"], 2))
+    assert kpis["margin_pct"] == pytest.approx(
+        round(kpis["margin"] / kpis["total_revenue"] * 100, 2))
+
+
+def test_metrics_constant_is_exactly_three():
+    assert METRICS == ("revenue", "cost", "orders")
+
+
+def test_render_kpis_has_every_label(tiny):
+    text = render_kpis(compute_kpis(tiny))
+    for label in ("Total revenue", "Total cost", "Margin", "Orders",
+                  "Avg order value", "Revenue growth (first->last month)",
+                  "Best segment", "Best month"):
+        assert label in text
+
+
+def test_render_kpis_is_ascii(tiny):
+    render_kpis(compute_kpis(tiny)).encode("ascii")
+
+
+def test_build_dashboard_returns_figure(sample):
+    import plotly.graph_objects as go
+
+    assert isinstance(build_dashboard(sample), go.Figure)
+
+
+def test_figure_to_html_includes_plotly_bundle(sample):
+    html = figure_to_html(build_dashboard(sample))
+    assert "<html" in html.lower()
+    assert "plotly" in html.lower()
+    # the library itself is inlined, so no script tag fetches it
+    assert '<script src="https://cdn.plot.ly' not in html
+
+
+def test_save_dashboard_writes_readable_html(tmp_path, sample):
+    path = save_dashboard(sample, tmp_path / "dash.html")
+    text = path.read_text(encoding="utf-8")
+    assert text.lstrip().lower().startswith("<!doctype html") or "<html" in text.lower()
+
+
+def test_load_strips_surrounding_whitespace(tmp_path):
+    rows = [_row(month="2025-01", segment="  Alpha  "),
+            _row(month="2025-02", segment="Alpha")]
+    frame = load_data(_csv(tmp_path, rows))
+    assert list(frame["segment"].unique()) == ["Alpha"]

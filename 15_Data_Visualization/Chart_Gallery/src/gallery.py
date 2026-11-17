@@ -301,7 +301,7 @@ DEFAULT_OUTPUT = Path(__file__).resolve().parent.parent / "output"
 
 
 def run_demo(out_dir: Path | None = None, quiet: bool = False) -> int:
-    """Render every registered chart from the bundled sample — fully offline."""
+    """Render every registered chart from the bundled sample - fully offline."""
     if not quiet:
         print("=" * 62)
         print(" CHART GALLERY - offline demo")

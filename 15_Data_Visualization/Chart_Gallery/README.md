@@ -30,7 +30,7 @@ Everything runs **fully offline** with the `Agg` backend: no GUI display, no net
 - Data helpers: `pivot()` (region × month matrix) and `summary_table()` (revenue/cost/orders/margin/AOV)
 - `--list` catalog, single-chart rendering, custom `--out`, JSON `--manifest`
 - Bundled deterministic sample: 4 regions × 12 months (48 rows)
-- 42 passing pytest tests
+- 52 passing pytest tests
 
 ---
 
@@ -163,7 +163,7 @@ heatmap | region × month revenue matrix | dense pattern scanning
 python -m pytest tests/ -q
 ```
 
-**42 tests passed** covering loading/validation rules, `pivot`/`summary_table` math against the raw frame, the registry contract, **parametrized rendering of all 10 charts** (file written, >1 KB, no figure leak), directory creation, repeated-render leak checks, demo idempotency (files overwritten, not doubled), and every CLI path — all offline.
+**52 tests passed** covering loading/validation rules, `pivot`/`summary_table` math against the raw frame, the registry contract, **parametrized rendering of all 10 charts** (file written, >1 KB, no figure leak), directory creation, repeated-render leak checks, demo idempotency (files overwritten, not doubled), and every CLI path — all offline. Extra cases pin `pivot()`'s default column, the `KeyError` on an unknown column, the `summary_table` column set / revenue ordering / AOV identity, a non-empty title on all 10 charts, and one pie wedge per region.
 
 ---
 
