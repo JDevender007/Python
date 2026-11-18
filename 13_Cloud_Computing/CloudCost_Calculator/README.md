@@ -1,158 +1,107 @@
-<div align="center">
+# Cloud Cost Calculator
 
-# 💰 Cloud Cost Calculator
+A monthly bill is a whole number of cents; a unit price is not. The legacy calculator did what a
+spreadsheet does:
 
-### Estimate monthly cloud spend from a small JSON infrastructure config — bundled rate cards, plan comparisons, savings tips, and budget alerts. Fully offline.
-
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-
-</div>
-
----
-
-# 📖 About
-
-Cloud Cost Calculator turns a JSON description of your infrastructure — VMs, managed databases, block storage, and bandwidth egress — into a line-item bill with a monthly total, per-category breakdown, and budget status.
-
-Pricing tables are **bundled and static** (illustrative aws/gcp rate cards), so the tool makes no API calls and never scrapes pricing pages. The calculator answers the questions that matter before you deploy: *What will this cost? What if I commit to 1- or 3-year reservations? Am I over budget? Where is the fat?*
-
----
-
-# ✨ Features
-
-- JSON infrastructure configs (compute, database, storage, bandwidth)
-- Two bundled rate cards: `aws` and `gcp` with cross-provider shape aliases
-- Purchase plans: `ondemand`, `1yr`, `3yr` — effective hourly rates
-- Line-item bill with per-category subtotals
-- Plan comparison: ondemand vs 1-year vs 3-year with dollar deltas
-- Savings tips derived from the actual report (reservations, egress, storage tiering)
-- Budget alerts: exit code 1 when over budget (CI-friendly)
-- JSON output for scripting; `--provider` / `--budget` overrides
-- 44 passing pytest tests
-
----
-
-# 📂 Folder Structure
-
-```text
-CloudCost_Calculator/
-│
-├── src/
-│   ├── main.py             # CLI: demo, --config, --compare, --json, --budget
-│   └── cost_calculator.py  # rate cards, pricing, comparison, tips, rendering
-│
-├── tests/
-│   └── test_cost_calculator.py
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
+```python
+total = 0.0
+for line in bill:
+    total += line.quantity * float(line.price_usd)
+return round(total * 100)
 ```
 
----
+Three separate mistakes live in those three lines.
 
-# ⚙️ Installation
+**1. A unit price is not a bill.** `$0.145` is 14.5 cents and `$1.005` is 100.5 cents. A bill is
+charged in whole cents, so the half has to be rounded -- half-up, in public, once. `round()` does
+not do that: it rounds half to even, and worse, `0.145 * 100` is `14.499999999999998`, so the float
+path rounds *down* where half-up rounds *up*. Three at `$0.145` is **44 cents** here and **43**
+there; one at `$1.005` is **101** here and **100** there.
 
-```bash
-git clone https://github.com/JDevender007/Python.git
+**2. Adding floats adds their errors.** Each line is a double that is already slightly wrong, and
+the sum is wrong by a different amount again. The seven bundled lines cost **5716 cents** as
+integers and **5714** through floats, and no re-rounding of the total repairs the lines it was
+built from.
 
-cd 13_Cloud_Computing/CloudCost_Calculator
+**3. A price with more precision than a bill can express is refused.** A tenth of a cent is the
+finest granularity this module stores; `$0.0234` is not 2.34 tenths, it is a price the caller has
+to decide how to round. Silently truncating it is how a bill disagrees with its invoice.
 
-python -m venv .venv
+So prices are parsed to integer tenths of a cent, a line is `divide_half_up(quantity *
+price_tenths, 10)`, and every total is a sum of those integers. Tiered pricing is billed tier by
+tier, each tier rounded at its own boundary, so the 101st unit is priced at the second rate rather
+than the first.
 
-.venv\Scripts\activate
+## What this project teaches
 
-pip install -r requirements.txt
+- Why `$0.145` cannot be stored as a float cent, and where the lost half goes
+- `divide_half_up` on integers, versus `round()` half-to-even on a wrong double
+- Rounding once per line, then summing -- never summing floats and rounding at the end
+- Refusing a price finer than the storage granularity instead of truncating it
+- Tiered pricing billed tier by tier, with the boundary unit in the lower tier
+- Why the marginal rate on every unit is not the tiered price
+- Formatting cents and tenths without a float ever reaching the output
+- Comparing a total to a budget in cents and reporting the difference in dollars
+- Pinning every disagreement between the integer and float paths
+- Auditing a bill by rebuilding each line from its own fields
+
+## How to run
+
 ```
-
----
-
-# ▶️ Run
-
-```bash
-# Offline demo: sample web-app footprint, plan comparison, savings tips
 python src/main.py --demo
-
-# Price your own config
-python src/main.py --config infra.json
-
-# Compare purchase plans + JSON export
-python src/main.py --config infra.json --compare --json
-
-# Budget gate for CI (exit 1 when over budget)
-python src/main.py --config infra.json --budget 300
+python src/main.py --demo --quiet
+python src/main.py --file data/bill.txt --json out.json
+python src/main.py --file data/bill.txt --budget 4000 --tier-units 550 --audit
+python -m pytest tests -q
 ```
 
-Example `infra.json`:
+`--file` names a bill: one `service | sku | quantity | price` row per line, `#` starting a
+comment. `--budget` is in cents, `--tier-units` prices a unit count against the bundled tier table.
+Exit code `2` means the input was refused -- a missing file, a row without four fields, a quantity
+that is not a whole number, a negative price, or a price with more than three decimals. `--audit`
+exits `1` if any check fails.
 
-```json
-{
-  "provider": "aws",
-  "hours_per_month": 730,
-  "budget": 400,
-  "resources": [
-    {"type": "compute",   "instance": "t3.medium", "count": 3, "plan": "ondemand"},
-    {"type": "database",  "instance": "db.m5.large", "count": 1},
-    {"type": "storage",   "class": "gp3", "size_gb": 500},
-    {"type": "bandwidth", "gb_out": 2000}
-  ]
-}
+## Project structure
+
+```
+CloudCost_Calculator/
+├── README.md
+├── requirements.txt        # pytest==9.1.1
+├── .gitignore
+├── data/
+│   └── bill.txt            # 7 lines: half-cent, repeating, tiered and bulk rates
+├── src/
+│   ├── cost_calculator.py  # prices in tenths, bills in cents, tiers, checks, demo
+│   └── main.py             # argparse only
+└── tests/
+    └── test_cost_calculator.py   # 112 tests
 ```
 
-**Exit codes:** `0` = within budget · `1` = over budget · `2` = usage/config error.
+## What the demo shows
+
+| service | sku | qty | price | cents | float |
+| --- | --- | --: | --: | --: | --: |
+| compute | c7.large | 730 | $0.013 | 949 | 949 |
+| storage | gp3 | 250 | $0.023 | 575 | 575 |
+| requests | api-call | 3 | $0.145 | **44** | **43** |
+| egress | outbound | 120 | $0.09 | 1080 | 1080 |
+| database | db.r6 | 730 | $0.041 | 2993 | 2993 |
+| archive | glacier | 1 | $0.265 | **27** | **26** |
+| logs | ingest | 44 | $0.011 | 48 | 48 |
+
+- The bill is **5716 cents** as integers, **5714** as floats: **2 cents apart**, from two rows
+- `3 x $0.145` -> **44 cents** half-up, **43** from the float
+- `$1.005` -> **101 cents** for one unit, **100** from the float
+- `$0.0234` is refused: three decimals is the limit
+- Tiers: 100 units -> **250 cents**; 101 -> **252** (the boundary unit keeps the first rate);
+  550 -> **895 cents** tier by tier, against **495** at the marginal rate
+- **$57.16** against a **$50.00** budget: over by **$7.16**
+- 13/13 audit checks pass, including one that rebuilds every line from its own fields
+
+## Requirements
+
+Python 3.10+, standard library only (`json`, `dataclasses`, `argparse`). Tests need
+pytest==9.1.1. No provider API, no rate-card download; the bill and the tiers are bundled.
 
 ---
-
-# ⚠️ Note on Pricing Data
-
-Bundled rates are **illustrative** and change over time. Before making real decisions, update `PROVIDERS` in `cost_calculator.py` with your negotiated prices or current provider list prices — the calculator's math stays the same.
-
----
-
-# 🛠 Technologies
-
-- Python (standard library only)
-- json / dataclasses / argparse / logging
-- pytest
-
----
-
-# 📚 Concepts Covered
-
-- Unit economics of cloud resources (per-hour, per-GB-month, per-GB egress)
-- Reserved-instance effective-rate modelling
-- Immutable dataclass rate cards
-- JSON config validation with friendly errors
-- Aggregation by category, budget thresholding
-- Deep-copy config variants for what-if analysis
-- Exit-code conventions for CI budget gates
-- Cross-provider shape normalization
-- Test-driven development
-
----
-
-# ✅ Testing
-
-```bash
-python -m pytest tests/ -q
-```
-
-**44 tests passed** covering every pricing path, config validation, totals, plan ordering, savings tips, config translation, rendering, demo idempotency, and every CLI mode — all offline.
-
----
-
-# 👨‍💻 Author
-
-**Devender J**
-
-GitHub: **https://github.com/JDevender007**
-
----
-
-<div align="center">
-
-⭐ If you found this project useful, consider giving this repository a star.
-
-</div>
+**Devender J** -- https://github.com/JDevender007

@@ -1,0 +1,13 @@
+# service | sku | quantity | unit price in US dollars
+#
+# Prices are written as dollars with at most three decimals. One price is
+# deliberately finer than a cent (0.145 = 14.5 cents) and one is a value a
+# double cannot represent exactly (2.675). The bill is whole cents.
+
+compute  | c7.large | 730 | 0.013
+storage  | gp3      | 250 | 0.023
+requests | api-call |   3 | 0.145
+egress   | outbound | 120 | 0.09
+database | db.r6    | 730 | 0.041
+archive  | glacier  |   1 | 0.265
+logs     | ingest   |  44 | 0.011

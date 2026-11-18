@@ -1,0 +1,13 @@
+{
+  "region": "us-west-2",
+  "budget": 500,
+  "services": [
+    {
+      "name": "api",
+      "replicas": 5
+    }
+  ],
+  "tags": {
+    "env": "staging"
+  }
+}

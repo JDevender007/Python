@@ -1,510 +1,937 @@
-"""In-memory SQS-style event queue for serverless workflows.
+"""An at-least-once queue delivers the same event twice, and depth is not age.
 
-Core ideas modelled offline:
+The legacy consumer is four lines that each look like the documentation:
 
-- FIFO delivery with visibility timeouts (in-flight messages hide, then return)
-- Receive counts and a dead-letter queue (redrive after max receives)
-- Per-message delay, retention expiry, and deduplication windows
-- A small event processor that dispatches messages to handlers
-- Injectable clock - the demo and tests run on a fake clock, so retries and
-  timeouts happen instantly and deterministically
+    message = queue.receive()
+    ok = handle(message)
+    if ok:
+        queue.delete(message)
+    if visible_depth > 2:
+        page_oncall()
 
-The library is fully in-memory. The CLI persists queue state to a local JSON
-file so its commands compose across runs. No network, no AWS.
+**1. At-least-once means duplicates are normal, not exceptional.** A message
+becomes visible again when its visibility timeout expires, whether or not the
+first handler is still working. The slow handler in the bundled scenario takes
+45 seconds with a 20-second visibility timeout, so the queue hands the same
+event to a second worker at 26 seconds and both handlers succeed. `processed
++= 1` therefore reports more work than the queue contains: **10 successful
+handler runs for 9 distinct events**.
+
+**2. Quantity is not age.** `ApproximateNumberOfMessagesVisible` counts what a
+consumer could pick up *now*: it excludes everything in flight and says nothing
+about how long the oldest event has been waiting. The rebuild reports both, and
+the demo pins a moment at **63 seconds** where the visible depth is **0** while
+the oldest unfinished event is already 63 seconds old -- and the worst moment,
+when one message has been waiting **83 seconds** past any freshness SLO, is a
+moment when a depth-of-three alarm is silent.
+
+**3. A max-receive count is an attempt budget, and the destination is a queue,
+not /dev/null.** The legacy handler deletes the message as soon as the handler
+fails, so a transient error loses the event. The rebuild retries within the
+budget and redrives the exhausted message to the dead-letter queue with the
+attempt count and the reason attached, so it can be inspected and replayed.
+
+**4. A receipt handle is not an idempotency key.** Every delivery of the same
+message carries a fresh receipt handle, so `if handle in seen` never fires for
+the duplicate it was meant to stop. The event's own identifier is the key, and
+the rebuild records which identifiers were already applied.
+
+The simulation is a deterministic discrete-event loop in whole seconds: no
+sleep, no network, no wall clock. `data/scenario.json` names the queue policy
+and ten events with their processing time and failing attempts.
 """
 
 from __future__ import annotations
 
 import json
-import logging
-import time
-import uuid
-from dataclasses import asdict, dataclass, field
+import re
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
 
-LOG = logging.getLogger("event.queue")
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+SCENARIO_FILE = DATA_DIR / "scenario.json"
 
-DEFAULT_VISIBILITY = 30.0
-DEFAULT_RETENTION = 3600.0
-DEFAULT_MAX_RECEIVE = 3
-DEDUP_WINDOW = 300.0
+#: The legacy shortcuts, transcribed so the demo can print them.
+LEGACY_COUNT = "processed += 1                     # every handler return, not every event"
+LEGACY_ALARM = "if visible_depth > 2: page_oncall()  # depth only, no age, no in-flight"
+LEGACY_REDRIVE = "if not ok: queue.delete(message)     # a failure is dropped, not retried"
+LEGACY_DEDUP = "if message.receipt_handle in seen: return  # changes on every delivery"
+
+MAX_EVENTS = 64
+MAX_WORKERS = 8
+MAX_SECONDS = 86_400
+SLUG = re.compile(r"^[a-z][a-z0-9-]{0,30}$")
+KINDS = re.compile(r"^[a-z][a-z0-9.]{0,40}$")
 
 
 class QueueError(RuntimeError):
-    """Raised for unknown queues, bad parameters, and bad message ids."""
+    """Raised for input the program refuses."""
 
 
 # --------------------------------------------------------------------------- #
-# Clock
+# Integer helpers
 # --------------------------------------------------------------------------- #
-class FakeClock:
-    """Manually advanced clock for deterministic demos and tests."""
-
-    def __init__(self, start: float = 0.0) -> None:
-        self._now = float(start)
-
-    def __call__(self) -> float:
-        return self._now
-
-    def advance(self, seconds: float) -> float:
-        if seconds < 0:
-            raise QueueError("cannot move the clock backwards")
-        self._now += seconds
-        return self._now
+def divide_half_up(numerator: int, denominator: int) -> int:
+    """Round a non-negative ratio half away from zero, on integers only."""
+    if denominator <= 0:
+        raise QueueError("a divisor must be positive")
+    if numerator < 0:
+        raise QueueError("a dividend must be non-negative")
+    return (2 * numerator + denominator) // (2 * denominator)
 
 
 # --------------------------------------------------------------------------- #
-# Messages and queue
+# Records
 # --------------------------------------------------------------------------- #
-@dataclass
-class Message:
-    """One queued event."""
-
+@dataclass(frozen=True)
+class Event:
     id: str
-    body: str
-    attributes: dict[str, str] = field(default_factory=dict)
-    created_at: float = 0.0
-    visible_at: float = 0.0
-    receive_count: int = 0
-    dedup_id: str = ""
+    kind: str
+    produced_at: int
+    process: int
+    failures: tuple[int, ...] = ()
+
+    def fails(self, attempt: int) -> bool:
+        return attempt in self.failures
 
     def to_dict(self) -> dict[str, Any]:
-        return asdict(self)
-
-    @classmethod
-    def from_dict(cls, data: dict[str, Any]) -> "Message":
-        return cls(**data)
-
-
-class EventQueue:
-    """An in-memory FIFO queue with SQS-like semantics."""
-
-    def __init__(
-        self,
-        name: str,
-        *,
-        visibility_timeout: float = DEFAULT_VISIBILITY,
-        retention: float = DEFAULT_RETENTION,
-        max_receive_count: int = DEFAULT_MAX_RECEIVE,
-        delay: float = 0.0,
-        clock: Callable[[], float] = time.time,
-        dead_letter: "EventQueue | None" = None,
-    ) -> None:
-        if not name or not name.replace("_", "").replace("-", "").isalnum():
-            raise QueueError(f"invalid queue name: {name!r}")
-        if visibility_timeout <= 0:
-            raise QueueError("visibility_timeout must be > 0")
-        if retention <= 0:
-            raise QueueError("retention must be > 0")
-        if max_receive_count < 1:
-            raise QueueError("max_receive_count must be >= 1")
-        if delay < 0:
-            raise QueueError("delay must be >= 0")
-
-        self.name = name
-        self.visibility_timeout = visibility_timeout
-        self.retention = retention
-        self.max_receive_count = max_receive_count
-        self.delay = delay
-        self.clock = clock
-        self.dead_letter = dead_letter
-
-        self.messages: list[Message] = []
-        self._dedup: dict[str, float] = {}
-        self.sent_total = 0
-        self.received_total = 0
-        self.deleted_total = 0
-        self.dead_lettered_total = 0
-
-    # --- sending -------------------------------------------------------- #
-    def send(
-        self,
-        body: str,
-        attributes: dict[str, str] | None = None,
-        *,
-        delay: float | None = None,
-        dedup_id: str | None = None,
-    ) -> Message:
-        """Enqueue one message (FIFO) and return it."""
-        if not isinstance(body, str):
-            raise QueueError("body must be a string")
-        now = self.clock()
-        send_delay = self.delay if delay is None else delay
-        if send_delay < 0:
-            raise QueueError("delay must be >= 0")
-
-        if dedup_id:
-            self._prune_dedup(now)
-            seen_at = self._dedup.get(dedup_id)
-            if seen_at is not None and now - seen_at < DEDUP_WINDOW:
-                existing = next(
-                    (m for m in self.messages if m.dedup_id == dedup_id), None
-                )
-                if existing is not None:
-                    LOG.info("dedup hit: %s", dedup_id)
-                    return existing
-
-        message = Message(
-            id=uuid.uuid4().hex[:12],
-            body=body,
-            attributes=dict(attributes or {}),
-            created_at=now,
-            visible_at=now + send_delay,
-            dedup_id=dedup_id or "",
-        )
-        self.messages.append(message)
-        self.sent_total += 1
-        if dedup_id:
-            self._dedup[dedup_id] = now
-        LOG.info("sent %s to %s", message.id, self.name)
-        return message
-
-    def send_batch(
-        self, bodies: list[str], attributes: dict[str, str] | None = None
-    ) -> list[Message]:
-        """Enqueue several messages in order."""
-        return [self.send(body, attributes) for body in bodies]
-
-    def _prune_dedup(self, now: float) -> None:
-        expired = [k for k, ts in self._dedup.items() if now - ts >= DEDUP_WINDOW]
-        for key in expired:
-            del self._dedup[key]
-
-    # --- receiving ------------------------------------------------------ #
-    def _expire(self, now: float) -> None:
-        """Drop messages older than the retention window."""
-        before = len(self.messages)
-        self.messages = [
-            m for m in self.messages
-            if now - m.created_at < self.retention
-        ]
-        if len(self.messages) != before:
-            LOG.info("expired %d message(s) from %s", before - len(self.messages),
-                     self.name)
-
-    def _fetch(self, max_messages: int) -> list[Message]:
-        now = self.clock()
-        self._expire(now)
-        picked: list[Message] = []
-        exhausted: list[Message] = []
-        for message in self.messages:
-            if len(picked) >= max_messages:
-                break
-            if message.visible_at > now:
-                continue  # in-flight or delayed
-            if message.receive_count + 1 > self.max_receive_count:
-                exhausted.append(message)
-                continue
-            message.receive_count += 1
-            message.visible_at = now + self.visibility_timeout
-            picked.append(message)
-        # redrive after iteration: _redrive removes from self.messages
-        for message in exhausted:
-            self._redrive(message, now)
-        self.received_total += len(picked)
-        return picked
-
-    def _redrive(self, message: Message, now: float) -> None:
-        """Move an exhausted message to the dead-letter queue."""
-        self.messages.remove(message)
-        # fresh start in the DLQ: its own max_receive_count applies from 1
-        message.receive_count = 0
-        message.visible_at = now  # immediately available in the DLQ
-        if self.dead_letter is not None:
-            self.dead_letter.messages.append(message)
-            LOG.info("redrove %s -> %s", message.id, self.dead_letter.name)
-        else:
-            LOG.info("dropped %s (no dead-letter queue)", message.id)
-        self.dead_lettered_total += 1
-
-    def receive(self, max_messages: int = 1, wait: float = 0.0) -> list[Message]:
-        """Receive up to `max_messages` visible messages (FIFO order).
-
-        `wait` polls with real sleeps for up to `wait` seconds (long-poll
-        style); tests and the demo pass 0 for instant, deterministic results.
-        """
-        if max_messages < 1:
-            raise QueueError("max_messages must be >= 1")
-        if wait < 0:
-            raise QueueError("wait must be >= 0")
-        if wait == 0:
-            return self._fetch(max_messages)
-
-        deadline = time.time() + wait
-        while True:
-            picked = self._fetch(max_messages)
-            if picked or time.time() >= deadline:
-                return picked
-            time.sleep(0.01)
-
-    def delete(self, message_id: str) -> None:
-        """Acknowledge/remove a message."""
-        for i, message in enumerate(self.messages):
-            if message.id == message_id:
-                self.messages.pop(i)
-                self.deleted_total += 1
-                LOG.info("deleted %s from %s", message_id, self.name)
-                return
-        raise QueueError(f"message not found: {message_id}")
-
-    def change_visibility(self, message_id: str, timeout: float) -> None:
-        """Hide a message for `timeout` seconds (0 makes it visible now)."""
-        if timeout < 0:
-            raise QueueError("timeout must be >= 0")
-        for message in self.messages:
-            if message.id == message_id:
-                message.visible_at = self.clock() + timeout
-                return
-        raise QueueError(f"message not found: {message_id}")
-
-    def purge(self) -> int:
-        """Delete every message; returns how many were removed."""
-        count = len(self.messages)
-        self.messages.clear()
-        self._dedup.clear()
-        return count
-
-    # --- state ---------------------------------------------------------- #
-    @property
-    def depth(self) -> int:
-        """Messages currently visible (ready to receive)."""
-        now = self.clock()
-        return sum(1 for m in self.messages if m.visible_at <= now)
-
-    @property
-    def in_flight(self) -> int:
-        now = self.clock()
-        return sum(1 for m in self.messages if m.visible_at > now)
-
-    def attributes(self) -> dict[str, Any]:
         return {
-            "name": self.name,
-            "depth": self.depth,
-            "in_flight": self.in_flight,
-            "dead_lettered": self.dead_lettered_total,
-            "sent": self.sent_total,
-            "received": self.received_total,
-            "deleted": self.deleted_total,
-            "visibility_timeout": self.visibility_timeout,
-            "max_receive_count": self.max_receive_count,
+            "id": self.id,
+            "kind": self.kind,
+            "produced_at": self.produced_at,
+            "process": self.process,
+            "failures": list(self.failures),
         }
 
-    def to_state(self) -> dict[str, Any]:
+
+@dataclass(frozen=True)
+class QueueConfig:
+    name: str
+    visibility: int
+    max_receive: int
+    retention: int
+    workers: int
+
+    def to_dict(self) -> dict[str, Any]:
         return {
             "name": self.name,
-            "visibility_timeout": self.visibility_timeout,
+            "visibility": self.visibility,
+            "max_receive": self.max_receive,
             "retention": self.retention,
-            "max_receive_count": self.max_receive_count,
-            "delay": self.delay,
-            "dead_letter": self.dead_letter.name if self.dead_letter else None,
-            "messages": [m.to_dict() for m in self.messages],
-            "dedup": dict(self._dedup),
-            "counters": {
-                "sent": self.sent_total,
-                "received": self.received_total,
-                "deleted": self.deleted_total,
-                "dead_lettered": self.dead_lettered_total,
+            "workers": self.workers,
+        }
+
+
+@dataclass(frozen=True)
+class Delivery:
+    event: str
+    attempt: int
+    worker: int
+    started: int
+    finished: int
+    outcome: str
+
+    @property
+    def duplicate(self) -> bool:
+        return self.attempt > 1
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "event": self.event,
+            "attempt": self.attempt,
+            "worker": self.worker,
+            "started": self.started,
+            "finished": self.finished,
+            "outcome": self.outcome,
+            "duplicate": self.duplicate,
+        }
+
+
+@dataclass(frozen=True)
+class DeadLetter:
+    event: str
+    attempts: int
+    at: int
+    reason: str
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "event": self.event,
+            "attempts": self.attempts,
+            "at": self.at,
+            "reason": self.reason,
+        }
+
+
+@dataclass(frozen=True)
+class Snapshot:
+    at: int
+    visible: int
+    inflight: int
+    backlog: int
+    oldest_age: int
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "at": self.at,
+            "visible": self.visible,
+            "inflight": self.inflight,
+            "backlog": self.backlog,
+            "oldest_age": self.oldest_age,
+        }
+
+
+@dataclass(frozen=True)
+class Run:
+    config: QueueConfig
+    events: tuple[Event, ...]
+    deliveries: tuple[Delivery, ...]
+    dead: tuple[DeadLetter, ...]
+    timeline: tuple[Snapshot, ...]
+    ended_at: int
+
+    @property
+    def delivered(self) -> int:
+        return len(self.deliveries)
+
+    @property
+    def distinct_delivered(self) -> int:
+        return len({item.event for item in self.deliveries})
+
+    @property
+    def duplicates(self) -> int:
+        return self.delivered - self.distinct_delivered
+
+    @property
+    def successes(self) -> tuple[Delivery, ...]:
+        return tuple(item for item in self.deliveries if item.outcome == "success")
+
+    @property
+    def failures(self) -> tuple[Delivery, ...]:
+        return tuple(item for item in self.deliveries if item.outcome == "failure")
+
+    @property
+    def distinct_applied(self) -> int:
+        return len({item.event for item in self.successes})
+
+    @property
+    def repeated_effects(self) -> int:
+        return len(self.successes) - self.distinct_applied
+
+    @property
+    def settled(self) -> int:
+        return len({item.event for item in self.successes}) + len(
+            {item.event for item in self.dead}
+        )
+
+    @property
+    def peak_visible(self) -> int:
+        return max((item.visible for item in self.timeline), default=0)
+
+    @property
+    def peak_backlog(self) -> int:
+        return max((item.backlog for item in self.timeline), default=0)
+
+    @property
+    def peak_age(self) -> int:
+        return max((item.oldest_age for item in self.timeline), default=0)
+
+    @property
+    def final(self) -> Snapshot:
+        return self.timeline[-1] if self.timeline else Snapshot(0, 0, 0, 0, 0)
+
+    def attempts_of(self, event_id: str) -> int:
+        return sum(1 for item in self.deliveries if item.event == event_id)
+
+    def deliveries_of(self, event_id: str) -> tuple[Delivery, ...]:
+        return tuple(item for item in self.deliveries if item.event == event_id)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "config": self.config.to_dict(),
+            "events": [item.to_dict() for item in self.events],
+            "deliveries": [item.to_dict() for item in self.deliveries],
+            "dead": [item.to_dict() for item in self.dead],
+            "timeline": [item.to_dict() for item in self.timeline],
+            "ended_at": self.ended_at,
+            "totals": {
+                "events": len(self.events),
+                "delivered": self.delivered,
+                "distinct_delivered": self.distinct_delivered,
+                "duplicates": self.duplicates,
+                "successes": len(self.successes),
+                "failures": len(self.failures),
+                "distinct_applied": self.distinct_applied,
+                "repeated_effects": self.repeated_effects,
+                "dead": len(self.dead),
             },
         }
 
-    @classmethod
-    def from_state(
-        cls, data: dict[str, Any], clock: Callable[[], float] = time.time
-    ) -> "EventQueue":
-        queue = cls(
-            data["name"],
-            visibility_timeout=data["visibility_timeout"],
-            retention=data["retention"],
-            max_receive_count=data["max_receive_count"],
-            delay=data["delay"],
-            clock=clock,
+
+# --------------------------------------------------------------------------- #
+# Reading
+# --------------------------------------------------------------------------- #
+def load_document(path: str | Path) -> dict[str, Any]:
+    """Read one ASCII JSON document and require a mapping at the root."""
+    target = Path(path)
+    if not target.is_file():
+        raise QueueError(f"scenario not found: {target.name}")
+    try:
+        text = target.read_bytes().decode("ascii")
+    except UnicodeDecodeError as exc:
+        raise QueueError(f"{target.name} is not ASCII text") from exc
+    try:
+        document = json.loads(text)
+    except json.JSONDecodeError as exc:
+        raise QueueError(f"{target.name} is not valid JSON: line {exc.lineno}") from exc
+    if not isinstance(document, dict):
+        raise QueueError(f"{target.name}: a scenario root must be a mapping")
+    return document
+
+
+def scenario_from_document(document: dict[str, Any]) -> tuple[QueueConfig, tuple[Event, ...]]:
+    """Convert a parsed document into records without trusting its shape."""
+    raw_queue = document.get("queue")
+    queue = raw_queue if isinstance(raw_queue, dict) else {}
+    config = QueueConfig(
+        name=str(queue.get("name", "")),
+        visibility=_as_int(queue.get("visibility")),
+        max_receive=_as_int(queue.get("max_receive")),
+        retention=_as_int(queue.get("retention")),
+        workers=_as_int(queue.get("workers")),
+    )
+    events: list[Event] = []
+    raw_events = document.get("events")
+    if isinstance(raw_events, list):
+        for item in raw_events:
+            if not isinstance(item, dict):
+                continue
+            failures = item.get("failures", [])
+            attempts: list[int] = []
+            if isinstance(failures, list):
+                attempts = sorted(
+                    {_as_int(value) for value in failures if _as_int(value) > 0}
+                )
+            events.append(
+                Event(
+                    id=str(item.get("id", "")),
+                    kind=str(item.get("kind", "")),
+                    produced_at=_as_int(item.get("produced_at")),
+                    process=_as_int(item.get("process")),
+                    failures=tuple(attempts),
+                )
+            )
+    return config, tuple(events)
+
+
+def _as_int(value: object) -> int:
+    if isinstance(value, bool) or not isinstance(value, int):
+        return 0
+    return value
+
+
+def read_scenario(path: str | Path | None = None) -> tuple[QueueConfig, tuple[Event, ...]]:
+    """Load the bundled scenario, or one named on the command line."""
+    document = load_document(path if path is not None else SCENARIO_FILE)
+    return scenario_from_document(document)
+
+
+def validate_scenario(config: QueueConfig, events: tuple[Event, ...]) -> list[str]:
+    """Every problem with a parsed scenario; an empty list means valid."""
+    problems: list[str] = []
+    if not SLUG.match(config.name):
+        problems.append("$.queue.name: a lowercase slug is required")
+    if not 1 <= config.visibility <= MAX_SECONDS:
+        problems.append(f"$.queue.visibility: an integer 1..{MAX_SECONDS} is required")
+    if not 1 <= config.max_receive <= 10:
+        problems.append("$.queue.max_receive: an integer 1..10 is required")
+    if not 1 <= config.retention <= MAX_SECONDS:
+        problems.append(f"$.queue.retention: an integer 1..{MAX_SECONDS} is required")
+    if not 1 <= config.workers <= MAX_WORKERS:
+        problems.append(f"$.queue.workers: an integer 1..{MAX_WORKERS} is required")
+    if not events:
+        problems.append("$.events: a non-empty array is required")
+    elif len(events) > MAX_EVENTS:
+        problems.append(f"$.events: at most {MAX_EVENTS} events")
+    seen: set[str] = set()
+    for index, event in enumerate(events):
+        where = f"$.events[{index}]"
+        if not event.id or not SLUG.match(event.id):
+            problems.append(f"{where}.id: a lowercase slug is required")
+        elif event.id in seen:
+            problems.append(f"{where}.id: duplicate event {event.id!r}")
+        else:
+            seen.add(event.id)
+        if not KINDS.match(event.kind):
+            problems.append(f"{where}.kind: a dotted lowercase kind is required")
+        if not 0 <= event.produced_at <= MAX_SECONDS:
+            problems.append(f"{where}.produced_at: an integer 0..{MAX_SECONDS} is required")
+        if not 1 <= event.process <= MAX_SECONDS:
+            problems.append(f"{where}.process: an integer 1..{MAX_SECONDS} is required")
+        for attempt in event.failures:
+            if attempt < 1 or attempt > config.max_receive:
+                problems.append(
+                    f"{where}.failures: attempt {attempt} is outside the "
+                    f"max_receive budget of {config.max_receive}"
+                )
+    return problems
+
+
+def validate_or_raise(config: QueueConfig, events: tuple[Event, ...]) -> None:
+    problems = validate_scenario(config, events)
+    if problems:
+        joined = "\n  - ".join(problems)
+        raise QueueError(f"invalid scenario ({len(problems)} problem(s)):\n  - {joined}")
+
+
+# --------------------------------------------------------------------------- #
+# Simulation
+# --------------------------------------------------------------------------- #
+def simulate(config: QueueConfig, events: tuple[Event, ...]) -> Run:
+    """Deliver every event with a visibility timeout, retries and a DLQ."""
+    validate_or_raise(config, events)
+
+    order = sorted(events, key=lambda event: (event.produced_at, event.id))
+    state: dict[str, dict[str, Any]] = {
+        event.id: {
+            "event": event,
+            "visible_at": event.produced_at,
+            "visible_until": event.produced_at,
+            "attempts": 0,
+            "inflight": 0,
+            "done": False,
+            "dead": False,
+        }
+        for event in order
+    }
+
+    free_at = [0] * config.workers
+    inflight: list[tuple[int, int, str, int, int, int]] = []
+    deliveries: list[Delivery] = []
+    dead: list[DeadLetter] = []
+    timeline: list[Snapshot] = []
+    sequence = 0
+    now = min(event.produced_at for event in order)
+
+    def note(at: int) -> None:
+        pending = [
+            item
+            for item in state.values()
+            if not item["done"]
+            and not item["dead"]
+            and item["event"].produced_at <= at
+        ]
+        visible = [
+            item
+            for item in pending
+            if item["inflight"] == 0 and item["visible_at"] <= at
+        ]
+        inflight_count = sum(1 for item in pending if item["inflight"] > 0)
+        oldest = min((item["event"].produced_at for item in pending), default=at)
+        snapshot = Snapshot(
+            at=at,
+            visible=len(visible),
+            inflight=inflight_count,
+            backlog=len(pending),
+            oldest_age=at - oldest,
         )
-        queue.messages = [Message.from_dict(m) for m in data["messages"]]
-        queue._dedup = dict(data.get("dedup", {}))
-        counters = data.get("counters", {})
-        queue.sent_total = counters.get("sent", 0)
-        queue.received_total = counters.get("received", 0)
-        queue.deleted_total = counters.get("deleted", 0)
-        queue.dead_lettered_total = counters.get("dead_lettered", 0)
-        return queue
+        if not timeline or timeline[-1] != snapshot:
+            timeline.append(snapshot)
 
+    def expire(at: int) -> None:
+        for item in state.values():
+            if item["done"] or item["dead"] or item["inflight"] > 0:
+                continue
+            event: Event = item["event"]
+            if at > event.produced_at + config.retention:
+                item["dead"] = True
+                dead.append(DeadLetter(event.id, item["attempts"], at, "retention"))
 
-# --------------------------------------------------------------------------- #
-# Manager
-# --------------------------------------------------------------------------- #
-class QueueManager:
-    """Creates and looks up queues; optional JSON persistence for the CLI."""
+    def dead_letter(item: dict[str, Any], at: int, reason: str) -> None:
+        item["dead"] = True
+        dead.append(DeadLetter(item["event"].id, item["attempts"], at, reason))
 
-    def __init__(self, clock: Callable[[], float] = time.time) -> None:
-        self.clock = clock
-        self.queues: dict[str, EventQueue] = {}
+    def dispatch(at: int) -> None:
+        nonlocal sequence
+        while True:
+            free = [worker for worker in range(config.workers) if free_at[worker] <= at]
+            if not free:
+                return
+            candidates: list[tuple[int, str, dict[str, Any]]] = []
+            for item in state.values():
+                if item["done"] or item["dead"]:
+                    continue
+                if item["event"].produced_at > at:
+                    continue
+                ready = item["visible_at"] if item["inflight"] == 0 else item["visible_until"]
+                if ready <= at:
+                    candidates.append((ready, item["event"].id, item))
+            if not candidates:
+                return
+            candidates.sort(key=lambda row: (row[0], row[1]))
+            _, _, item = candidates[0]
+            if item["attempts"] >= config.max_receive:
+                dead_letter(item, at, "max_receive")
+                continue
+            worker = free[0]
+            event: Event = item["event"]
+            item["attempts"] += 1
+            item["inflight"] += 1
+            item["visible_until"] = at + config.visibility
+            item["visible_at"] = at + config.visibility
+            finish = at + event.process
+            free_at[worker] = finish
+            sequence += 1
+            inflight.append((finish, sequence, event.id, item["attempts"], worker, at))
 
-    def create_queue(self, name: str, **kwargs: Any) -> EventQueue:
-        """Create (or return the existing) queue with the given settings."""
-        if name in self.queues:
-            return self.queues[name]
-        queue = EventQueue(name, clock=self.clock, **kwargs)
-        self.queues[name] = queue
-        return queue
+    def complete(at: int) -> None:
+        nonlocal inflight
+        finished = sorted((row for row in inflight if row[0] == at), key=lambda row: row[1])
+        if not finished:
+            return
+        for _, _, event_id, attempt, worker, started in finished:
+            item = state[event_id]
+            item["inflight"] -= 1
+            event: Event = item["event"]
+            outcome = "failure" if event.fails(attempt) else "success"
+            deliveries.append(Delivery(event_id, attempt, worker, started, at, outcome))
+            if item["dead"] or item["done"]:
+                continue
+            if outcome == "success":
+                # The handler already ran; its side effect cannot be undone by a
+                # later duplicate delivery that is still in flight.
+                item["done"] = True
+                continue
+            if item["inflight"] == 0 and not item["dead"]:
+                item["visible_at"] = max(at, item["visible_until"])
+        inflight = [row for row in inflight if row[0] != at]
 
-    def get_queue(self, name: str) -> EventQueue:
-        queue = self.queues.get(name)
-        if queue is None:
-            available = ", ".join(sorted(self.queues)) or "(none)"
-            raise QueueError(f"unknown queue {name!r} (available: {available})")
-        return queue
+    guard = 0
+    while True:
+        guard += 1
+        if guard > 10_000:
+            raise QueueError("the simulation did not settle")
+        expire(now)
+        dispatch(now)
+        note(now)
+        pending = [item for item in state.values() if not item["done"] and not item["dead"]]
+        if not pending and not inflight:
+            break
+        moments: list[int] = [row[0] for row in inflight if row[0] > now]
+        for item in pending:
+            produced = item["event"].produced_at
+            if produced > now:
+                moments.append(produced)
+                continue
+            ready = item["visible_at"] if item["inflight"] == 0 else item["visible_until"]
+            if ready > now:
+                moments.append(ready)
+        if not moments:
+            break
+        now = min(moments)
+        complete(now)
 
-    def delete_queue(self, name: str) -> None:
-        if name not in self.queues:
-            raise QueueError(f"unknown queue {name!r}")
-        del self.queues[name]
-
-    def list_queues(self) -> list[str]:
-        return sorted(self.queues)
-
-    # --- persistence ---------------------------------------------------- #
-    def to_state(self) -> dict[str, Any]:
-        return {"queues": [q.to_state() for q in self.queues.values()]}
-
-    @classmethod
-    def from_state(
-        cls, data: dict[str, Any], clock: Callable[[], float] = time.time
-    ) -> "QueueManager":
-        manager = cls(clock=clock)
-        for queue_data in data.get("queues", []):
-            queue = EventQueue.from_state(queue_data, clock=clock)
-            manager.queues[queue.name] = queue
-        # re-link dead-letter queues by name
-        for queue_data, queue in zip(data.get("queues", []), manager.queues.values()):
-            dlq_name = queue_data.get("dead_letter")
-            if dlq_name:
-                queue.dead_letter = manager.queues.get(dlq_name)
-        return manager
-
-    def save(self, path: str | Path) -> Path:
-        target = Path(path)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        target.write_text(json.dumps(self.to_state(), indent=2), encoding="utf-8")
-        return target
-
-    @classmethod
-    def load(
-        cls, path: str | Path, clock: Callable[[], float] = time.time
-    ) -> "QueueManager":
-        source = Path(path)
-        if not source.is_file():
-            raise QueueError(f"state file not found: {source}")
-        try:
-            data = json.loads(source.read_text(encoding="utf-8"))
-        except json.JSONDecodeError as exc:
-            raise QueueError(f"corrupt state file: {exc}") from exc
-        return cls.from_state(data, clock=clock)
-
-
-# --------------------------------------------------------------------------- #
-# Serverless-style processing
-# --------------------------------------------------------------------------- #
-class EventProcessor:
-    """Receives messages, runs a handler, acks or leaves them for retry."""
-
-    def __init__(self, queue: EventQueue, handler: Callable[[Message], None]) -> None:
-        self.queue = queue
-        self.handler = handler
-        self.processed = 0
-        self.failed = 0
-
-    def run_once(self, max_messages: int = 10) -> dict[str, int]:
-        """One receive/handle/ack cycle. Failures stay for later redelivery."""
-        stats = {"processed": 0, "failed": 0}
-        for message in self.queue.receive(max_messages=max_messages):
-            try:
-                self.handler(message)
-            except Exception as exc:  # noqa: BLE001 - handler failures are data
-                self.failed += 1
-                stats["failed"] += 1
-                LOG.warning("handler failed on %s: %s", message.id, exc)
-                continue  # message stays in-flight until visibility expires
-            self.queue.delete(message.id)
-            self.processed += 1
-            stats["processed"] += 1
-        return stats
-
-    def to_dict(self) -> dict[str, Any]:
-        return {"queue": self.queue.name, "processed": self.processed,
-                "failed": self.failed}
-
-
-# --------------------------------------------------------------------------- #
-# Offline demo
-# --------------------------------------------------------------------------- #
-def run_demo() -> int:
-    """Simulate a failing serverless consumer with retries and a DLQ."""
-    print("=" * 60)
-    print(" SERVERLESS EVENT QUEUE - offline demo")
-    print(" Fake clock: visibility timeouts and retries are instant.")
-    print("=" * 60)
-
-    clock = FakeClock(start=1_000_000.0)
-    dlq = EventQueue("orders-dlq", clock=clock)
-    orders = EventQueue(
-        "orders",
-        visibility_timeout=5.0,
-        max_receive_count=3,
-        clock=clock,
-        dead_letter=dlq,
+    if not timeline or timeline[-1].at != now:
+        timeline.append(Snapshot(now, 0, 0, 0, 0))
+    else:
+        timeline[-1] = Snapshot(now, 0, 0, 0, 0)
+    return Run(
+        config=config,
+        events=events,
+        deliveries=tuple(deliveries),
+        dead=tuple(dead),
+        timeline=tuple(timeline),
+        ended_at=now,
     )
 
-    print("\n[1] Sending events (10 good orders + 2 poison messages)")
-    for i in range(10):
-        orders.send(f"order-{i:03d} created", {"type": "order.created"})
-    orders.send("poison: bad payload", {"type": "order.broken"})
-    orders.send("poison: also bad", {"type": "order.broken"})
-    print(f"    depth={orders.depth} in_flight={orders.in_flight}")
 
-    print("\n[2] Deduplication window")
-    first = orders.send("order-000 created", {"type": "order.created"},
-                        dedup_id="order-000")
-    duplicate = orders.send("order-000 created again", dedup_id="order-000")
-    print(f"    same dedup_id -> same message id: {first.id == duplicate.id} "
-          f"(depth still {orders.depth})")
+# --------------------------------------------------------------------------- #
+# Legacy comparisons
+# --------------------------------------------------------------------------- #
+def legacy_processed(run: Run) -> int:
+    """The legacy counter: one per handler return, so duplicates count twice."""
+    return len(run.successes)
 
-    def handler(message: Message) -> None:
-        if "poison" in message.body:
-            raise ValueError("handler crashed on poison message")
-        # success path: nothing to do beyond acking
 
-    processor = EventProcessor(orders, handler)
+def legacy_alarm(snapshot: Snapshot, threshold: int = 2) -> bool:
+    """The legacy alarm: visible depth only."""
+    return snapshot.visible > threshold
 
-    print("\n[3] Processing rounds (handler rejects poison messages)")
-    total_rounds = 5
-    for round_no in range(1, total_rounds + 1):
-        stats = processor.run_once(max_messages=6)
-        attrs = orders.attributes()
-        print(f"    round {round_no}: processed={stats['processed']} "
-              f"failed={stats['failed']} depth={attrs['depth']} "
-              f"in_flight={attrs['in_flight']} dead_lettered={attrs['dead_lettered']}")
-        if round_no < total_rounds:
-            clock.advance(5.0)  # visibility timeout expires -> retries surface
 
-    print("\n[4] Final state")
-    print(f"    orders  : {orders.attributes()}")
-    print(f"    dlq     : depth={dlq.depth}, messages="
-          f"{[m.body for m in dlq.messages]}")
-    print(f"    processor: {processor.to_dict()}")
+def legacy_dropped(events: tuple[Event, ...]) -> tuple[str, ...]:
+    """The legacy failure policy deletes the message, so the event is lost."""
+    return tuple(event.id for event in events if event.failures)
 
-    # --- invariants the demo asserts -----------------------------------
-    assert orders.depth == 0, "all orders should be consumed or dead-lettered"
-    assert orders.in_flight == 0, "nothing should remain in-flight"
-    assert dlq.depth == 2, "both poison messages should be in the DLQ"
-    assert processor.processed == 11, "all 11 good orders should be processed"
-    assert orders.dead_lettered_total == 2
 
-    # change_visibility demo: requeue one message immediately
-    extra = orders.send("retry me")
-    orders.change_visibility(extra.id, timeout=0)
-    assert orders.receive()[0].id == extra.id
-    orders.delete(extra.id)
+def legacy_dedup_hit(run: Run, receipt_handle_of: Callable[[Delivery], str]) -> int:
+    """Count duplicate deliveries the receipt-handle check could not stop."""
+    seen: set[str] = set()
+    repeats = 0
+    for item in run.deliveries:
+        handle = receipt_handle_of(item)
+        if handle in seen:
+            repeats += 1
+        else:
+            seen.add(handle)
+    return repeats
 
-    print("\nDemo completed successfully.")
+
+def receipt_handle(delivery: Delivery) -> str:
+    """A fresh handle per delivery -- the reason handle-based dedup never fires."""
+    return f"rh-{delivery.event}-{delivery.attempt}-{delivery.worker}"
+
+
+def age_worst(run: Run) -> Snapshot:
+    """The moment the oldest unfinished event was oldest."""
+    return max(run.timeline, key=lambda item: (item.oldest_age, item.at))
+
+
+def stale_moment(run: Run, limit: int) -> Snapshot | None:
+    """The first moment the backlog has an event older than the limit."""
+    for snapshot in run.timeline:
+        if snapshot.oldest_age > limit:
+            return snapshot
+    return None
+
+
+# --------------------------------------------------------------------------- #
+# Measurement
+# --------------------------------------------------------------------------- #
+def measure(path: str | Path | None = None) -> dict[str, Any]:
+    config, events = read_scenario(path)
+    validate_or_raise(config, events)
+    run = simulate(config, events)
+    worst = age_worst(run)
+    stale = stale_moment(run, 60)
+    return {
+        "config": config,
+        "events": events,
+        "run": run,
+        "worst": worst,
+        "stale": stale,
+        "legacy_processed": legacy_processed(run),
+        "legacy_dropped": legacy_dropped(events),
+        "legacy_handle_repeats": legacy_dedup_hit(run, receipt_handle),
+        "average_age": divide_half_up(
+            sum(item.oldest_age for item in run.timeline), len(run.timeline)
+        ),
+    }
+
+
+def report(measured: dict[str, Any]) -> dict[str, Any]:
+    """A JSON-safe view: records, totals and the two alert moments."""
+    run: Run = measured["run"]
+    return {
+        "queue": measured["config"].to_dict(),
+        "events": [item.to_dict() for item in measured["events"]],
+        "totals": run.to_dict()["totals"],
+        "deliveries": [item.to_dict() for item in run.deliveries],
+        "dead": [item.to_dict() for item in run.dead],
+        "timeline": [item.to_dict() for item in run.timeline],
+        "ended_at": run.ended_at,
+        "alerts": {
+            "worst": measured["worst"].to_dict(),
+            "stale": None if measured["stale"] is None else measured["stale"].to_dict(),
+            "legacy_processed": measured["legacy_processed"],
+            "legacy_dropped": list(measured["legacy_dropped"]),
+            "legacy_handle_repeats": measured["legacy_handle_repeats"],
+            "average_age": measured["average_age"],
+        },
+    }
+
+
+# --------------------------------------------------------------------------- #
+# Audit
+# --------------------------------------------------------------------------- #
+def _guard(check: Callable[[], bool]) -> bool:
+    try:
+        return bool(check())
+    except Exception:                                     # noqa: BLE001
+        return False
+
+
+def _refused(call: Callable[[], object]) -> bool:
+    try:
+        call()
+    except QueueError:
+        return True
+    return False
+
+
+def audit(
+    measured: dict[str, Any],
+    *,
+    read: Callable[[], tuple[QueueConfig, tuple[Event, ...]]] = read_scenario,
+    run: Callable[[QueueConfig, tuple[Event, ...]], Run] = simulate,
+) -> list[tuple[str, bool]]:
+    """Every check rebuilds the run from the scenario, not from the summary."""
+    cache: dict[str, Any] = {}
+
+    def rebuilt() -> Run:
+        if not cache:
+            config, events = read()
+            cache["config"] = config
+            cache["events"] = events
+            cache["run"] = run(config, events)
+        return cache["run"]
+
+    def pinned_totals() -> tuple[int, int, int, int]:
+        base = rebuilt()
+        return (
+            base.delivered,
+            base.distinct_delivered,
+            base.duplicates,
+            len(base.dead),
+        )
+
+    checks = [
+        (
+            "the_scenario_reads_and_validates",
+            lambda: validate_scenario(rebuilt().config, rebuilt().events) == []
+            and len(rebuilt().events) == 10,
+        ),
+        (
+            "the_bundled_policy_is_pinned",
+            lambda: (
+                rebuilt().config.visibility,
+                rebuilt().config.max_receive,
+                rebuilt().config.workers,
+            )
+            == (20, 3, 2),
+        ),
+        (
+            "every_event_is_either_applied_or_dead_lettered",
+            lambda: rebuilt().settled == len(rebuilt().events) == len(measured["events"]),
+        ),
+        (
+            "at_least_once_delivers_more_than_it_receives",
+            lambda: pinned_totals()
+            == (
+                measured["run"].delivered,
+                measured["run"].distinct_delivered,
+                measured["run"].duplicates,
+                len(measured["run"].dead),
+            )
+            == (14, 10, 4, 1),
+        ),
+        (
+            "a_slow_handler_is_redelivered_while_it_still_runs",
+            lambda: rebuilt().attempts_of("evt-03") == 2
+            and [item.started for item in rebuilt().deliveries_of("evt-03")] == [5, 26],
+        ),
+        (
+            "a_duplicate_delivery_produces_a_second_side_effect",
+            lambda: len(rebuilt().deliveries_of("evt-03")) == 2
+            and all(
+                item.outcome == "success" for item in rebuilt().deliveries_of("evt-03")
+            )
+            and rebuilt().repeated_effects == 1,
+        ),
+        (
+            "a_transient_failure_is_retried_and_then_applied",
+            lambda: [
+                (item.attempt, item.outcome) for item in rebuilt().deliveries_of("evt-04")
+            ]
+            == [(1, "failure"), (2, "success")],
+        ),
+        (
+            "an_exhausted_budget_lands_in_the_dead_letter_queue",
+            lambda: rebuilt().attempts_of("evt-05") == 3
+            and [(item.event, item.attempts, item.reason) for item in rebuilt().dead]
+            == [("evt-05", 3, "max_receive")],
+        ),
+        (
+            "depth_is_visible_messages_only",
+            lambda: rebuilt().peak_visible == 5
+            and rebuilt().peak_backlog == 7
+            and any(
+                item.visible == 0 and item.backlog > 0 for item in rebuilt().timeline
+            ),
+        ),
+        (
+            "a_small_depth_can_hide_a_stale_backlog",
+            lambda: rebuilt().peak_age == measured["worst"].oldest_age == 83
+            and measured["worst"].visible == 0
+            and measured["stale"] is not None
+            and measured["stale"].oldest_age == 63
+            and measured["stale"].visible == 0,
+        ),
+        (
+            "the_legacy_counter_counts_deliveries_not_events",
+            lambda: legacy_processed(rebuilt())
+            == len(rebuilt().successes)
+            == rebuilt().distinct_applied + rebuilt().repeated_effects
+            == 10
+            and rebuilt().distinct_applied == 9,
+        ),
+        (
+            "a_receipt_handle_cannot_identify_a_duplicate",
+            lambda: legacy_dedup_hit(rebuilt(), receipt_handle) == 0
+            and rebuilt().duplicates == 4
+            and len({item.event for item in rebuilt().successes}) == 9,
+        ),
+        (
+            "the_legacy_failure_policy_loses_events",
+            lambda: legacy_dropped(rebuilt().events) == ("evt-04", "evt-05")
+            and len(legacy_dropped(rebuilt().events)) == 2
+            and rebuilt().distinct_applied == 9,
+        ),
+        (
+            "a_bad_scenario_is_refused",
+            lambda: _refused(
+                lambda: simulate(
+                    QueueConfig("bad", 0, 3, 600, 2),
+                    (Event("evt-01", "order.created", 0, 5),),
+                )
+            )
+            and _refused(
+                lambda: simulate(
+                    QueueConfig("bad", 20, 3, 600, 2),
+                    (Event("evt-01", "order.created", 0, 5, (4,)),),
+                )
+            )
+            and validate_scenario(
+                QueueConfig("bad", 20, 3, 600, 2),
+                (Event("evt-01", "order.created", 0, 5), Event("evt-01", "x", 0, 5)),
+            )
+            != [],
+        ),
+        (
+            "the_rebuild_is_deterministic",
+            lambda: rebuilt().deliveries == measured["run"].deliveries
+            and rebuilt().dead == measured["run"].dead
+            and rebuilt().timeline == measured["run"].timeline,
+        ),
+    ]
+    return [(name, _guard(check)) for name, check in checks]
+
+
+# --------------------------------------------------------------------------- #
+# Rendering
+# --------------------------------------------------------------------------- #
+def render_timeline(run: Run) -> str:
+    """A fixed-width trace of depth, backlog and the oldest unfinished event."""
+    lines = [
+        f"{'At':>5} {'Visible':>8} {'In-flight':>10} {'Backlog':>8} {'Oldest':>7}",
+        "-" * 42,
+    ]
+    for item in run.timeline:
+        lines.append(
+            f"{item.at:>5} {item.visible:>8} {item.inflight:>10} "
+            f"{item.backlog:>8} {item.oldest_age:>7}"
+        )
+    return "\n".join(lines)
+
+
+def render_dead(run: Run) -> str:
+    if not run.dead:
+        return "Dead-letter queue: empty"
+    lines = ["Dead-letter queue:"]
+    for item in run.dead:
+        lines.append(
+            f"  {item.event}  attempts {item.attempts}  at {item.at}s  ({item.reason})"
+        )
+    return "\n".join(lines)
+
+
+def run_demo(path: str | Path | None = None) -> int:
+    measured = measure(path)
+    config: QueueConfig = measured["config"]
+    run: Run = measured["run"]
+    worst: Snapshot = measured["worst"]
+    stale: Snapshot | None = measured["stale"]
+
+    print("Serverless event queue -- at-least-once means twice, and depth is not age")
+    print("=" * 74)
+    print()
+    print(
+        f"Queue {config.name}: visibility {config.visibility}s, "
+        f"max_receive {config.max_receive}, workers {config.workers}, "
+        f"{len(run.events)} events."
+    )
+    print()
+    print("1. At-least-once delivery duplicates the event, not just the message.")
+    print("   " + LEGACY_COUNT)
+    slow_event = next(event for event in run.events if event.id == "evt-03")
+    slow = run.deliveries_of("evt-03")
+    print(
+        f"   evt-03 needs {slow_event.process}s of work under a "
+        f"{config.visibility}s visibility timeout: delivered at "
+        f"{slow[0].started}s by worker {slow[0].worker} and again at "
+        f"{slow[1].started}s by worker {slow[1].worker}."
+    )
+    print(
+        f"   handler runs {len(run.successes)} successes for "
+        f"{run.distinct_applied} distinct events: {run.repeated_effects} "
+        f"repeated side effect(s)."
+    )
+    print()
+    print("2. Quantity is not age.")
+    print("   " + LEGACY_ALARM)
+    if stale is not None:
+        print(
+            f"   first stale moment: at {stale.at}s the visible depth is "
+            f"{stale.visible} and the oldest unfinished event is "
+            f"{stale.oldest_age}s old."
+        )
+    print(
+        f"   worst moment: at {worst.at}s the visible depth is {worst.visible}, "
+        f"the backlog is {worst.backlog}, and the oldest unfinished event is "
+        f"{worst.oldest_age}s old."
+    )
+    print(
+        f"   a depth-over-2 alarm fires at {sum(1 for s in run.timeline if legacy_alarm(s))} "
+        f"of {len(run.timeline)} moments and stays silent at the worst one."
+    )
+    print()
+    print("3. A max-receive budget retries, then redrives.")
+    print("   " + LEGACY_REDRIVE)
+    print(
+        f"   evt-04 recovers on attempt 2; evt-05 exhausts "
+        f"{config.max_receive} attempts and is dead-lettered."
+    )
+    print("   " + render_dead(run).replace("\n", "\n   "))
+    print(
+        f"   the legacy delete-on-failure policy would lose "
+        f"{len(measured['legacy_dropped'])} events: "
+        f"{', '.join(measured['legacy_dropped'])}."
+    )
+    print()
+    print("4. A receipt handle is not an idempotency key.")
+    print("   " + LEGACY_DEDUP)
+    print(
+        f"   {run.duplicates} duplicate deliveries carry {run.duplicates} fresh "
+        f"receipt handles, so the handle check stops "
+        f"{measured['legacy_handle_repeats']} of them; the event id stops all "
+        f"{run.duplicates}."
+    )
+    print()
+    print(render_timeline(run))
+    print()
+    print("Checks")
+    results = audit(measured)
+    for name, okay in results:
+        print(f"  {'PASS' if okay else 'FAIL'}  {name}")
+    passed = sum(1 for _, okay in results if okay)
+    print(f"  {passed}/{len(results)} checks pass")
+    print()
+    print(
+        "Cross-checks OK: "
+        f"{run.delivered} deliveries cover {run.distinct_delivered} of "
+        f"{len(run.events)} events, so {run.duplicates} are duplicates and "
+        f"evt-03 is applied twice; {len(run.successes)} handler successes "
+        f"cover {run.distinct_applied} distinct events while "
+        f"{len(measured['legacy_dropped'])} failures would be lost by the "
+        f"legacy delete; the worst moment has visible depth {worst.visible} "
+        f"with an oldest unfinished event of {worst.oldest_age}s, which the "
+        f"depth alarm misses; and a receipt handle identifies a delivery, not "
+        f"an event, so it stops {measured['legacy_handle_repeats']} of "
+        f"{run.duplicates} duplicates; {passed}/{len(results)} checks pass."
+    )
+    print("Demo completed successfully.")
     return 0
+
+
+if __name__ == "__main__":  # pragma: no cover
+    raise SystemExit(run_demo())

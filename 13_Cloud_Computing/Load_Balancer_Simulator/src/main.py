@@ -1,109 +1,111 @@
-"""Command line entry point for the Load Balancer Simulator.
+"""Command line front end for the load balancer lab.
 
-Usage
------
-    python src/main.py --demo                              # outage + recovery story
-    python src/main.py --requests 5000 --strategy weighted
-    python src/main.py --requests 1000 --strategy ip_hash --clients 64 --json
-
-Everything is simulated in-process with a seeded RNG: no sockets, no network.
+Usage:
+    python src/main.py --demo
+    python src/main.py --demo --quiet
+    python src/main.py --file data/scenario.json --json out.json
+    python src/main.py --file data/scenario.json --policy least_load
+    python src/main.py --file data/scenario.json --audit
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import logging
-import random
 import sys
+from pathlib import Path
 
-from load_balancer import (
-    STRATEGIES,
-    Backend,
-    LBError,
-    LoadBalancer,
-    NoHealthyBackendError,
-    render_stats,
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from load_balancer import (                                 # noqa: E402
+    POLICIES,
+    ScenarioError,
+    audit,
+    measure,
+    render_run,
+    report,
     run_demo,
 )
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-LOG = logging.getLogger("lb")
 
-BANNER = """
-========================================
- LOAD BALANCER SIMULATOR
-   in-process backends, no sockets
-========================================
-"""
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
-def build_backends(count: int, seed: int) -> list[Backend]:
-    """Build `count` simulated backends with varied weights/failure rates."""
-    if count < 1:
-        raise LBError("--backends must be >= 1")
-    rng = random.Random(seed)
-    backends = []
-    for i in range(1, count + 1):
-        backends.append(
-            Backend(
-                name=f"web-{i}",
-                port=8080 + i,
-                weight=1 + (i % 3),          # 1..3
-                failure_rate=0.0 if i == 1 else round(rng.uniform(0.02, 0.12), 3),
-            )
-        )
-    return backends
+def build_parser() -> argparse.ArgumentParser:
+    parser = argparse.ArgumentParser(
+        prog="load-balancer-lab",
+        description="Compare load-balancing policies on a bundled offline scenario.",
+    )
+    parser.add_argument("--demo", action="store_true", help="run the offline demo and exit")
+    parser.add_argument("--quiet", action="store_true", help="with --demo, print nothing")
+    parser.add_argument(
+        "--file",
+        default=None,
+        metavar="SCENARIO_JSON",
+        help="scenario to simulate; defaults to data/scenario.json",
+    )
+    parser.add_argument(
+        "--policy",
+        default=None,
+        choices=POLICIES,
+        help="print one policy's table instead of the full report",
+    )
+    parser.add_argument("--json", default=None, metavar="PATH", help="write a JSON report")
+    parser.add_argument("--audit", action="store_true", help="re-run the checks; exit 1 on failure")
+    return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = argparse.ArgumentParser(description="Offline load balancer simulator")
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--demo", action="store_true", help="run the offline demo")
-    source.add_argument("--requests", type=int, default=None, metavar="N",
-                        help="simulate N requests")
-    parser.add_argument("--strategy", default="round_robin", choices=STRATEGIES,
-                        help="balancing strategy")
-    parser.add_argument("--backends", type=int, default=3, help="number of backends")
-    parser.add_argument("--clients", type=int, default=16,
-                        help="distinct client IPs for hashing (default 16)")
-    parser.add_argument("--seed", type=int, default=42, help="RNG seed")
-    parser.add_argument("--json", action="store_true", help="emit JSON stats")
-    parser.add_argument("--failover", type=int, default=2,
-                        help="max attempts per request (default 2)")
-    args = parser.parse_args(argv)
-
+    args = build_parser().parse_args(argv)
     if args.demo:
-        return run_demo()
+        try:
+            return _run_demo(args.quiet, run_demo, args.file)
+        except ScenarioError as exc:
+            if not args.quiet:
+                print(f"error: {exc}", file=sys.stderr)
+            return 0
 
-    if args.requests < 1:
-        print("Error: --requests must be >= 1", file=sys.stderr)
-        return 2
-    if args.clients < 1:
-        print("Error: --clients must be >= 1", file=sys.stderr)
-        return 2
-
-    print(BANNER)
     try:
-        backends = build_backends(args.backends, args.seed)
-        lb = LoadBalancer(backends, strategy=args.strategy,
-                          rng=random.Random(args.seed), max_attempts=args.failover)
-        ips = [f"10.0.0.{(i * 7) % 254 + 1}" for i in range(args.clients)]
-        lb.run(args.requests, client_ips=ips)
-    except (LBError, NoHealthyBackendError) as exc:
-        print(f"Error: {exc}", file=sys.stderr)
+        measured = measure(args.file)
+    except ScenarioError as exc:
+        print(f"error: {exc}", file=sys.stderr)
         return 2
+
+    if args.audit:
+        results = audit(measured)
+        for name, okay in results:
+            print(f"{'PASS' if okay else 'FAIL'}  {name}")
+        failed = [name for name, okay in results if not okay]
+        if failed:
+            print(f"error: {len(failed)} check(s) failed", file=sys.stderr)
+            return 1
+        return 0
 
     if args.json:
-        print(json.dumps(lb.to_dict(), indent=2))
-    else:
-        print(render_stats(lb))
-        print("\nDistribution:")
-        for name, share in lb.distribution().items():
-            bar = "#" * round(share * 40)
-            print(f"  {name:<8} {share * 100:>5.1f}%  {bar}")
-
-    print("\nDone.")
+        target = Path(args.json)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            json.dumps(report(measured), indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+    if not args.quiet:
+        policies = (args.policy,) if args.policy else POLICIES
+        for index, policy in enumerate(policies):
+            if index:
+                print()
+            print(render_run(measured["runs"][policy]))
     return 0
 
 

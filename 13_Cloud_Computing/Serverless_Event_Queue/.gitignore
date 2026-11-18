@@ -11,8 +11,8 @@ __pycache__/
 # Tests
 .pytest_cache/
 
-# Demo artifacts
-data/
+# Local queue exports may describe private traffic
+queue.local.json
 
 # Logs
 logs/*.log

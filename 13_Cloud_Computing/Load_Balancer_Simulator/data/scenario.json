@@ -1,0 +1,22 @@
+{
+  "name": "three-tier",
+  "backends": [
+    { "name": "alpha", "weight": 1 },
+    { "name": "beta", "weight": 2 },
+    { "name": "gamma", "weight": 1 }
+  ],
+  "requests": [
+    { "name": "r01", "work": 4 },
+    { "name": "r02", "work": 4 },
+    { "name": "r03", "work": 4 },
+    { "name": "r04", "work": 4 },
+    { "name": "r05", "work": 4 },
+    { "name": "r06", "work": 4 },
+    { "name": "r07", "work": 4 },
+    { "name": "r08", "work": 4 },
+    { "name": "r09", "work": 4 },
+    { "name": "r10", "work": 4 },
+    { "name": "r11", "work": 4 },
+    { "name": "r12", "work": 4 }
+  ]
+}

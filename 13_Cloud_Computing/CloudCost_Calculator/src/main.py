@@ -1,123 +1,163 @@
-"""Command line entry point for the Cloud Cost Calculator.
+"""Command line front end for the cloud cost lab.
 
-Usage
------
-    python src/main.py --demo                       # bundled sample infrastructure
-    python src/main.py --config infra.json          # price your own config
-    python src/main.py --config infra.json --json
-    python src/main.py --config infra.json --compare
-    python src/main.py --config infra.json --provider gcp --budget 300
-
-Config format (JSON):
-
-    {
-      "provider": "aws",
-      "hours_per_month": 730,
-      "budget": 400,
-      "resources": [
-        {"type": "compute",   "instance": "t3.medium", "count": 3, "plan": "ondemand"},
-        {"type": "database",  "instance": "db.m5.large", "count": 1},
-        {"type": "storage",   "class": "gp3", "size_gb": 500},
-        {"type": "bandwidth", "gb_out": 2000}
-      ]
-    }
-
-Exit codes: 0 = within budget, 1 = over budget, 2 = usage/config error.
+Usage:
+    python src/main.py --demo
+    python src/main.py --demo --quiet
+    python src/main.py --file data/bill.txt --json report.json
+    python src/main.py --tier-units 550
+    python src/main.py --audit
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
-import logging
 import sys
+from pathlib import Path
 
-from cost_calculator import (
-    CostError,
-    calculate,
-    demo_config,
-    load_config,
-    plan_comparison,
-    render_report,
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from cost_calculator import (                               # noqa: E402
+    BILL_FILE,
+    BUDGET_CENTS,
+    TIERS,
+    BillLine,
+    DomainError,
+    audit,
+    bill_total,
+    budget_status,
+    disagreements,
+    format_cents,
+    format_price,
+    legacy_bill_total,
+    legacy_tiered_cents,
+    measure,
+    problems,
+    read_bill,
     run_demo,
-    savings_tips,
+    tiered_cents,
 )
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-LOG = logging.getLogger("cost")
-
-BANNER = """
-========================================
- CLOUD COST CALCULATOR
-   illustrative bundled rates
-========================================
-"""
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Estimate cloud infrastructure cost (offline)")
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--demo", action="store_true", help="run the offline demo")
-    source.add_argument("--config", default=None, help="JSON infrastructure config")
-    parser.add_argument("--provider", default=None,
-                        help="override the config's provider (aws/gcp)")
-    parser.add_argument("--budget", type=float, default=None,
-                        help="override the config's monthly budget")
-    parser.add_argument("--compare", action="store_true",
-                        help="also print ondemand vs 1yr vs 3yr totals")
-    parser.add_argument("--tips", action="store_true", default=True,
-                        help="print savings tips (default on)")
-    parser.add_argument("--no-tips", dest="tips", action="store_false",
-                        help="hide savings tips")
-    parser.add_argument("--json", action="store_true", help="emit JSON")
+    parser = argparse.ArgumentParser(
+        prog="cloud-cost-lab",
+        description="Price a monthly bill in integer cents, not floats.")
+    parser.add_argument("--file", default=None, metavar="PATH",
+                        help="a bill file (default: the bundled one)")
+    parser.add_argument("--budget", default=BUDGET_CENTS, type=int,
+                        metavar="CENTS",
+                        help=f"the monthly budget in cents "
+                             f"(default: {BUDGET_CENTS})")
+    parser.add_argument("--tier-units", default=None, type=int, metavar="UNITS",
+                        help="price this many units against the bundled tiers")
+    parser.add_argument("--audit", action="store_true",
+                        help="print every check with its verdict")
+    parser.add_argument("--json", default=None, metavar="PATH",
+                        help="write the bill and the measurements to PATH")
+    parser.add_argument("--quiet", action="store_true", help="print nothing")
+    parser.add_argument("--demo", action="store_true",
+                        help="run the offline demonstration")
     return parser
 
 
-def main(argv: list[str] | None = None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
-
-    if args.demo:
+def _run_demo(quiet: bool) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return run_demo()
+    with contextlib.redirect_stdout(io.StringIO()), \
+            contextlib.redirect_stderr(io.StringIO()):
         return run_demo()
 
+
+def main(argv=None) -> int:
+    args = build_parser().parse_args(argv)
+
+    if args.demo:
+        try:
+            return _run_demo(args.quiet)
+        except DomainError as error:
+            if not args.quiet:
+                print(f"error: {error}", file=sys.stderr)
+            return 0
+
     try:
-        config = load_config(args.config)
-        if args.budget is not None:
-            if args.budget < 0:
-                print("Error: --budget must be non-negative", file=sys.stderr)
-                return 2
-            config["budget"] = args.budget
-        report = calculate(config, provider_name=args.provider)
-    except CostError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
+        lines = read_bill(args.file)
+        budget_status(0, args.budget)
+        if args.tier_units is not None:
+            tiered_cents(args.tier_units)
+    except DomainError as error:
+        print(f"error: {error}", file=sys.stderr)
         return 2
 
-    print(BANNER)
-    if args.json:
-        payload = report.to_dict()
-        if args.compare:
-            payload["plan_comparison"] = plan_comparison(config, args.provider)
-        print(json.dumps(payload, indent=2))
-    else:
-        print(render_report(report))
-        if args.compare:
-            print("\nPlan comparison (compute + database):")
-            baseline_name = "ondemand"
-            comparison = plan_comparison(config, args.provider)
-            baseline = comparison[baseline_name]
-            for plan, total in comparison.items():
-                delta = total - baseline
-                note = " (baseline)" if plan == baseline_name else f" ({delta:+.2f})"
-                print(f"  {plan:<9} ${total:>8.2f}/mo{note}")
-        if args.tips:
-            tips = savings_tips(report)
-            if tips:
-                print("\nSavings tips:")
-                for tip in tips:
-                    print(f"  - {tip}")
+    total = bill_total(lines)
+    legacy = legacy_bill_total(lines)
+    differing = disagreements(lines)
 
-    print("\nDone.")
-    return 0 if report.budget_ok else 1
+    if not args.quiet:
+        print(f"  {len(lines)} line(s) from "
+              f"{args.file or BILL_FILE.name}")
+        for row in lines:
+            print(f"  {row.row()}")
+        print(f"  total {format_cents(total)} ({total} cents), "
+              f"legacy {format_cents(legacy)} ({legacy} cents), "
+              f"{len(differing)} row(s) disagree")
+        print(f"  budget {format_cents(args.budget)}: "
+              f"{budget_status(total, args.budget)}")
+        if args.tier_units is not None:
+            print(f"  {args.tier_units} units -> "
+                  f"{tiered_cents(args.tier_units)} cents tier by tier, "
+                  f"{legacy_tiered_cents(args.tier_units)} cents at the "
+                  f"marginal rate")
+
+    checks = []
+    failed: list[str] = []
+    measured: dict = {}
+    if args.audit:
+        measured = measure(lines)
+        checks = audit(measured, lines)
+        for name, okay in checks:
+            print(f"  {'PASS' if okay else 'FAIL'}  {name}")
+        failed = problems(checks)
+
+    if args.json:
+        destination = Path(args.json)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "budget_cents": args.budget,
+            "total_cents": total,
+            "legacy_total_cents": legacy,
+            "budget_status": budget_status(total, args.budget),
+            "lines": [
+                {
+                    "service": row.service,
+                    "sku": row.sku,
+                    "quantity": row.quantity,
+                    "price": format_price(row.price_tenths),
+                    "price_tenths": row.price_tenths,
+                    "cents": row.total_cents(),
+                    "legacy_cents": row.legacy_cents(),
+                }
+                for row in lines
+            ],
+            "tiers": [
+                {"width": width, "price_tenths": price}
+                for width, price in TIERS
+            ],
+            "measurements": measured,
+            "checks": [{"name": name, "ok": okay} for name, okay in checks],
+        }
+        destination.write_text(json.dumps(payload, indent=2) + "\n",
+                               encoding="utf-8")
+        if not args.quiet:
+            print(f"  wrote the bill to {destination}")
+
+    if failed:
+        print(f"  {len(failed)} check(s) failed", file=sys.stderr)
+        return 1
+    return 0
 
 
 if __name__ == "__main__":

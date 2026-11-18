@@ -1,0 +1,62 @@
+{
+  "bucket": "demo-bucket",
+  "objects": [
+    {
+      "key": "data/archive.zip",
+      "body": "PK..archive-bytes-0123456789",
+      "upload": "single",
+      "etag": "eebb74fda868cf108b5717ff01d6546e"
+    },
+    {
+      "key": "data/notes.csv",
+      "body": "id,name\n1,alice\n2,bob\n3,carol\n",
+      "upload": "multipart",
+      "part_count": 2,
+      "etag": "e56cf7fcf775d0dfa1d7989a26aaad20-2"
+    },
+    {
+      "key": "logs/",
+      "body": "",
+      "upload": "single",
+      "etag": "d41d8cd98f00b204e9800998ecf8427e"
+    },
+    {
+      "key": "logs/api/2024-01.log",
+      "body": "2024-01-01 GET /health 200\n2024-01-02 GET /health 200\n",
+      "upload": "single",
+      "etag": "68aa10ea1a57cf4fb1b76113efe11f30"
+    },
+    {
+      "key": "logs/api/2024-02.log",
+      "body": "2024-02-01 GET /health 200\n2024-02-02 GET /health 503\n2024-02-03 GET /health 200\n",
+      "upload": "multipart",
+      "part_count": 3,
+      "etag": "bccf4c49dc12606f2d3bf06a1876fe66-3"
+    },
+    {
+      "key": "logs/web/2024-01.log",
+      "body": "2024-01-01 GET /index 200\n",
+      "upload": "single",
+      "etag": "560a33afb7b5fbe423b3933780f600ed"
+    },
+    {
+      "key": "reports/q3 final.txt",
+      "body": "quarterly report - confidential\n",
+      "upload": "single",
+      "etag": "cf65e1ce220c95aafaa02c82d52791aa"
+    },
+    {
+      "key": "reports/q4.txt",
+      "body": "quarterly report - final numbers\n",
+      "upload": "multipart",
+      "part_count": 2,
+      "etag": "4fef504003bf31cc74a67bfdcd1804c0-2"
+    },
+    {
+      "key": "secrets/keys.json",
+      "body": "{\"api_key\": \"demo-key\"}\n",
+      "upload": "kms",
+      "etag": "00000000000000000000000000000000"
+    }
+  ]
+}

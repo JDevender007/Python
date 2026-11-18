@@ -1,0 +1,21 @@
+{
+  "queue": {
+    "name": "orders-events",
+    "visibility": 20,
+    "max_receive": 3,
+    "retention": 600,
+    "workers": 2
+  },
+  "events": [
+    { "id": "evt-01", "kind": "order.created", "produced_at": 0, "process": 5 },
+    { "id": "evt-02", "kind": "order.created", "produced_at": 0, "process": 5 },
+    { "id": "evt-03", "kind": "payment.captured", "produced_at": 0, "process": 45 },
+    { "id": "evt-04", "kind": "invoice.issued", "produced_at": 0, "process": 8, "failures": [1] },
+    { "id": "evt-05", "kind": "email.sent", "produced_at": 0, "process": 5, "failures": [1, 2, 3] },
+    { "id": "evt-06", "kind": "stock.reserved", "produced_at": 0, "process": 4 },
+    { "id": "evt-07", "kind": "stock.released", "produced_at": 0, "process": 4 },
+    { "id": "evt-08", "kind": "report.built", "produced_at": 240, "process": 6 },
+    { "id": "evt-09", "kind": "report.built", "produced_at": 240, "process": 6 },
+    { "id": "evt-10", "kind": "report.built", "produced_at": 240, "process": 6 }
+  ]
+}

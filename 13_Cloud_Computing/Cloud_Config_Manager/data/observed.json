@@ -1,0 +1,39 @@
+{
+  "project": "shop-api",
+  "region": "us-east-1",
+  "services": [
+    {
+      "name": "web",
+      "image": "nginx:1.24",
+      "replicas": 2,
+      "env": {
+        "LOG_LEVEL": "info",
+        "CACHE_TTL": "60"
+      }
+    },
+    {
+      "name": "api",
+      "image": "ghcr.io/shop/api:1.4.2",
+      "replicas": 4,
+      "env": {
+        "LOG_LEVEL": "info",
+        "DB_PASSWORD": "rotated-old-value"
+      }
+    },
+    {
+      "name": "worker",
+      "image": "ghcr.io/shop/worker:0.9",
+      "replicas": 1,
+      "env": {}
+    }
+  ],
+  "storage": {
+    "bucket": "shop-api-assets",
+    "size_gb": 500,
+    "versioning": true
+  },
+  "budget": 400,
+  "tags": {
+    "team": "platform"
+  }
+}

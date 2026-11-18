@@ -11,11 +11,9 @@ __pycache__/
 # Tests
 .pytest_cache/
 
-# Demo artifacts
-data/
-
 # Local configs may contain org details or secrets
-*.merged.yaml
+*.merged.json
+infra.json
 
 # Secrets
 .env

@@ -1,128 +1,134 @@
-"""Command line entry point for the S3 File Manager.
+"""Command line front end for the S3 bucket lab.
 
-Usage
------
-    python src/main.py --demo                          # offline Stubber demo
-    python src/main.py --list --bucket my-bucket
-    python src/main.py --put ./file.txt --key file.txt --bucket my-bucket
-    python src/main.py --get --key file.txt --out copy.txt --bucket my-bucket
-    python src/main.py --delete --key file.txt --bucket my-bucket
-    python src/main.py --url --key file.txt --bucket my-bucket
-
-Real operations use the standard AWS credential chain (env vars, ~/.aws,
-instance role). The demo needs none of that - it runs against a stub client.
-Only manage buckets you own or are authorized to touch.
+Usage:
+    python src/main.py --demo
+    python src/main.py --demo --quiet
+    python src/main.py --file data/bucket.json --json out.json
+    python src/main.py --prefix logs/ --delimiter /
+    python src/main.py --file data/bucket.json --audit
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
+import json
 import logging
-import os
 import sys
 from pathlib import Path
 
-from s3_manager import S3Error, S3Manager, live_client, run_demo
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-LOG = logging.getLogger("s3")
+from s3_manager import (                                    # noqa: E402
+    DEFAULT_EXPIRES,
+    DEFAULT_PAGE_SIZE,
+    BucketError,
+    audit,
+    measure,
+    presign,
+    render_listing,
+    report,
+    run_demo,
+)
 
-BANNER = """
-========================================
- S3 FILE MANAGER
-   authorized buckets only
-========================================
-"""
+
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="S3 file management (authorized buckets only)")
-    action = parser.add_mutually_exclusive_group(required=True)
-    action.add_argument("--demo", action="store_true", help="run the offline demo")
-    action.add_argument("--list", action="store_true", help="list objects")
-    action.add_argument("--put", type=Path, metavar="FILE", help="upload a local file")
-    action.add_argument("--get", action="store_true", help="download an object")
-    action.add_argument("--delete", action="store_true", help="delete an object")
-    action.add_argument("--url", action="store_true", help="presigned GET URL")
-
-    parser.add_argument("--bucket", default=os.environ.get("S3_BUCKET"),
-                        help="bucket name (or env S3_BUCKET)")
-    parser.add_argument("--key", default=None, help="object key")
-    parser.add_argument("--out", type=Path, default=None, help="output path for --get")
-    parser.add_argument("--prefix", default="", help="key prefix for --list")
-    parser.add_argument("--region", default=os.environ.get("AWS_REGION", "us-east-1"),
-                        help="AWS region")
-    parser.add_argument("--endpoint-url", default=os.environ.get("AWS_ENDPOINT_URL"),
-                        help="custom endpoint (MinIO, LocalStack, R2)")
-    parser.add_argument("--expires", type=int, default=3600,
-                        help="presign lifetime seconds for --url")
-    parser.add_argument("--json", action="store_true", help="JSON output where applicable")
+    parser = argparse.ArgumentParser(
+        prog="s3-bucket-lab",
+        description="Page and verify a bundled S3 bucket manifest, fully offline.",
+    )
+    parser.add_argument("--demo", action="store_true", help="run the offline demo and exit")
+    parser.add_argument("--quiet", action="store_true", help="with --demo, print nothing")
+    parser.add_argument(
+        "--file",
+        default=None,
+        metavar="BUCKET_JSON",
+        help="bucket manifest to read; defaults to data/bucket.json",
+    )
+    parser.add_argument(
+        "--prefix", default="logs/", help="key prefix to query (default: logs/)"
+    )
+    parser.add_argument(
+        "--delimiter",
+        default="/",
+        help="delimiter that turns a prefix into folders; empty means none",
+    )
+    parser.add_argument(
+        "--page-size",
+        type=int,
+        default=DEFAULT_PAGE_SIZE,
+        help=f"objects per page (default: {DEFAULT_PAGE_SIZE})",
+    )
+    parser.add_argument(
+        "--expires",
+        type=int,
+        default=DEFAULT_EXPIRES,
+        help=f"presigned URL lifetime in seconds (default: {DEFAULT_EXPIRES})",
+    )
+    parser.add_argument("--json", default=None, metavar="PATH", help="write a JSON report")
+    parser.add_argument("--audit", action="store_true", help="re-run the checks; exit 1 on failure")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
-
+    args = build_parser().parse_args(argv)
     if args.demo:
-        return run_demo()
+        try:
+            return _run_demo(args.quiet, run_demo, args.file)
+        except BucketError as exc:
+            if not args.quiet:
+                print(f"error: {exc}", file=sys.stderr)
+            return 0
 
-    if not args.bucket:
-        print("Error: --bucket is required (or set S3_BUCKET)", file=sys.stderr)
-        return 2
-    if (args.get or args.delete or args.url) and not args.key:
-        print("Error: --key is required for this action", file=sys.stderr)
-        return 2
-    if args.put and not args.key:
-        print("Error: --key is required for --put", file=sys.stderr)
-        return 2
-
-    print(BANNER)
-    manager = S3Manager(
-        args.bucket,
-        client=live_client(args.region, args.endpoint_url),
-        region=args.region,
-        endpoint_url=args.endpoint_url,
-    )
-
+    delimiter = args.delimiter or None
     try:
-        if args.list:
-            objects = manager.list_objects(args.prefix)
-            if args.json:
-                import json
+        measured = measure(args.file, args.prefix, delimiter, args.page_size)
+        url = presign(measured["manifest"], "reports/q3 final.txt", args.expires)
+    except BucketError as exc:
+        print(f"error: {exc}", file=sys.stderr)
+        return 2
 
-                print(json.dumps([o.to_dict() for o in objects], indent=2))
-            elif not objects:
-                print("(no objects)")
-            else:
-                total = 0
-                for obj in objects:
-                    total += obj.size
-                    print(f"  {obj.size:>10}  {obj.key}")
-                print(f"  {len(objects)} object(s), {total} bytes")
-        elif args.put:
-            if not args.put.is_file():
-                print(f"Error: file not found: {args.put}", file=sys.stderr)
-                return 2
-            etag = manager.upload_file(args.put, args.key or args.put.name)
-            print(f"Uploaded {args.put} -> s3://{args.bucket}/{args.key or args.put.name}")
-            print(f"ETag: {etag}")
-        elif args.get:
-            target = args.out or Path(args.key or "download").name
-            manager.download_file(args.key or "", target)
-            print(f"Downloaded s3://{args.bucket}/{args.key} -> {target} "
-                  f"({target.stat().st_size} bytes)")
-        elif args.delete:
-            manager.delete(args.key or "")
-            print(f"Deleted s3://{args.bucket}/{args.key}")
-        elif args.url:
-            url = manager.presigned_url(args.key or "", expires=args.expires)
-            print(url)
-    except S3Error as exc:
-        print(f"Error: {exc}", file=sys.stderr)
-        return 1
+    if args.audit:
+        results = audit(measured)
+        for name, okay in results:
+            print(f"{'PASS' if okay else 'FAIL'}  {name}")
+        failed = [name for name, okay in results if not okay]
+        if failed:
+            print(f"error: {len(failed)} check(s) failed", file=sys.stderr)
+            return 1
+        return 0
 
-    print("Done.")
+    if args.json:
+        target = Path(args.json)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            json.dumps(report(measured), indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+    if not args.quiet:
+        print(render_listing(measured["listing"], args.prefix, measured["manifest"].bucket))
+        print()
+        print(f"{'key':<26} {'bytes':>6}  {'kind':<10} etag")
+        for record in measured["manifest"].objects:
+            print(
+                f"{record.key:<26} {record.size:>6}  {record.kind:<10} {record.etag}"
+            )
+        print()
+        print(f"legacy first page: {', '.join(measured['query']['legacy'])}")
+        print(f"presigned: {url}")
     return 0
 
 

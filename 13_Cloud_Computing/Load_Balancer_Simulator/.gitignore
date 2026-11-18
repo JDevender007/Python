@@ -11,6 +11,9 @@ __pycache__/
 # Tests
 .pytest_cache/
 
+# Local scenarios may describe private capacity
+scenario.local.json
+
 # Logs
 logs/*.log
 

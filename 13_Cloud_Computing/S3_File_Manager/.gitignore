@@ -11,13 +11,16 @@ __pycache__/
 # Tests
 .pytest_cache/
 
-# Demo artifacts
-data/
+# Local bucket exports may describe private keys
+bucket.local.json
 
-# Secrets - never commit AWS credentials
+# Downloads
+downloads/
+
+# Secrets
 .env
-aws.cfg
-credentials
+*.pem
+*.key
 
 # Logs
 logs/*.log

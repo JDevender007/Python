@@ -1,148 +1,118 @@
-<div align="center">
+# S3 File Manager
 
-# ☁️ S3 File Manager
+An S3 listing is a page, an ETag is not an MD5, and a presigned URL is local. The legacy manager is
+three calls that look exactly like the documentation:
 
-### A clean boto3 wrapper for S3 with uploads, downloads, listings, presigned URLs — and a fully offline demo powered by botocore's Stubber.
-
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![boto3](https://img.shields.io/badge/boto3-S3-orange?style=for-the-badge&logo=amazon-aws&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-
-</div>
-
----
-
-# 📖 About
-
-S3 File Manager wraps the everyday S3 operations — create bucket, put, get, head/exists, list with pagination, delete, upload/download files, presigned GET URLs — behind a small `S3Manager` API with friendly `S3Error` messages instead of raw `ClientError` tracebacks.
-
-The demo and test suite run **fully offline** using botocore's `Stubber`: every API call is scripted in-process with fake credentials, so no network, no AWS account, and no credentials are ever needed. For real usage, the manager accepts any boto3 client (AWS, MinIO, LocalStack, R2 via `--endpoint-url`).
-
----
-
-# ✨ Features
-
-- `put_bytes` / `get_bytes` / `exists` / `delete` / `list_objects` (paginated, sorted)
-- `upload_file` / `download_file` for local paths
-- `create_bucket` with correct region handling (`us-east-1` vs. others)
-- Presigned GET URLs with validated expiry (signed locally, no network)
-- Bucket-name and object-key validation with clear error messages
-- ClientError → `S3Error` translation (404, NoSuchBucket, AccessDenied, ...)
-- Fully offline demo driven by botocore `Stubber` (asserts every call was scripted)
-- Custom endpoint support (`--endpoint-url`) for MinIO/LocalStack
-- 32 passing pytest tests
-
----
-
-# 📂 Folder Structure
-
-```text
-S3_File_Manager/
-│
-├── src/
-│   ├── main.py         # CLI: demo, --list, --put, --get, --delete, --url
-│   └── s3_manager.py   # S3Manager, validation, error mapping, Stubber demo
-│
-├── tests/
-│   └── test_s3_manager.py
-│
-├── data/               # created by the demo (downloaded copy)
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
+```python
+listing = client.list_objects_v2(Bucket=bucket, Prefix="logs/")
+assert etag == hashlib.md5(body).hexdigest()
+url = f"s3://{bucket}/{key}?X-Amz-Expires=3600"
 ```
 
----
+**1. A prefix query without a delimiter is a string match, not a folder.** Every key that starts
+with `logs/` matches, including `logs/api/2024-01.log` and the zero-byte folder marker `logs/`
+itself. The console shows two folders because it passes `Delimiter="/"` and reads
+`CommonPrefixes`; the legacy call matches **4 keys**, returns no prefixes, and because it stops at
+the first page of 3 it shows only **3**. A prefix is a filter; the delimiter is what turns it into
+a directory.
 
-# ⚙️ Installation
+**2. An ETag is not an MD5.** A single PUT has a plain 32-hex MD5 ETag. A multipart upload has
+`md5(concat(part md5s))-<partcount>`, and an SSE-KMS object has an ETag that is not a digest of the
+body at all. The check `etag == md5(body)` therefore calls all **3** multipart objects and the
+**1** KMS object corrupt: **4 of 9 failed**, and not one of them is damaged. The rebuild
+reassembles the parts, recomputes the multipart digest, and separates **verified**, **corrupt** and
+**opaque**: **8 verified, 0 corrupt, 1 opaque**.
 
-```bash
-git clone https://github.com/JDevender007/Python.git
+**3. A listing is paginated, and `IsTruncated` is the only signal.** Nine objects at three per page
+take **3 pages**. A loop that never reads `IsTruncated`, or that continues while a token exists,
+either stops early or never stops; the token is opaque, and its absence on the last page is the only
+reliable end.
 
-cd 13_Cloud_Computing/S3_File_Manager
+**4. A presigned URL is signed locally and proves nothing about existence.** The key is
+percent-encoded into the canonical request, so `q3 final.txt` becomes `q3%20final.txt` and the
+signature covers the encoded path. Interpolating the raw key produces a URL with a space in it, and
+pinning `X-Amz-Expires=3600` ignores the caller's `expires=300`. Signing never checks the bucket: a
+URL for a key that does not exist is generated happily and fails only when it is used.
 
-python -m venv .venv
+The bucket is a bundled JSON manifest -- no boto3, no credentials, no network, no stubbing library.
+Each object carries the ETag the bucket reports, so the digest check has something real to disagree
+with.
 
-.venv\Scripts\activate
+## What this project teaches
 
-pip install -r requirements.txt
+- Why `Prefix` filters while `Delimiter` groups, and why the console shows folders
+- Why the zero-byte folder marker is an object with the prefix itself as its key
+- Why a first page is not a listing: `IsTruncated` and the continuation token
+- Why a multipart ETag is a digest of digests plus a part count
+- Why an SSE-KMS ETag cannot be verified from the body, and why "opaque" is not "corrupt"
+- Why comparing every ETag to the body MD5 produces four false alarms in nine objects
+- Why a presigned URL percent-encodes the key inside the signed canonical request
+- Why the expiry is part of the signature, not a decoration on the query string
+- Why signing is a local operation that never proves the object exists
+- Why a manifest with declared ETags is a better lab fixture than a stubbed client
+- How to page a combined stream of objects and common prefixes
+- How to audit a listing and a digest check by rebuilding both from the manifest
+
+## How to run
+
 ```
-
----
-
-# ▶️ Run
-
-```bash
-# Fully offline demo: full bucket lifecycle against a stubbed client
 python src/main.py --demo
-
-# Real operations (standard AWS credential chain)
-export S3_BUCKET=my-bucket
-python src/main.py --list
-python src/main.py --put ./report.pdf --key reports/report.pdf
-python src/main.py --get --key reports/report.pdf --out copy.pdf
-python src/main.py --url --key reports/report.pdf --expires 900
-python src/main.py --delete --key reports/report.pdf
-
-# JSON listing for scripts
-python src/main.py --list --prefix reports/ --json
-
-# Local S3-compatible server (MinIO / LocalStack)
-python src/main.py --list --bucket demo --endpoint-url http://127.0.0.1:9000
+python src/main.py --demo --quiet
+python src/main.py --file data/bucket.json --json out.json
+python src/main.py --prefix logs/ --delimiter / --page-size 3
+python src/main.py --expires 60 --audit
+python -m pytest tests -q
 ```
 
----
+`--file` names a bucket manifest: a bucket name and a list of `{key, body, upload, part_count,
+etag}` objects. `--prefix` and `--delimiter` select the folder view; an empty `--delimiter` means
+no grouping. `--audit` exits `1` if any check fails. Exit code `2` means the input was refused -- a
+missing file, non-ASCII bytes, invalid JSON, a root that is not a mapping, a bad bucket name, a
+duplicate or leading-slash key, an unknown upload mode, a part count outside its range, or an ETag
+that is not 32 hex characters with an optional `-partcount` suffix.
 
-# ⚠️ Ethical Use
+## Project structure
 
-Only manage buckets you own or are explicitly authorized to access. Keep credentials in environment variables or IAM roles — never hard-code them. The demo uses fake credentials and a stubbed client; it never touches AWS.
-
----
-
-# 🛠 Technologies
-
-- Python
-- boto3 / botocore (S3 client, Stubber, error types)
-- argparse / json / logging
-- pytest
-
----
-
-# 📚 Concepts Covered
-
-- S3 object model: buckets, keys, prefixes, ETags
-- Paginated listing with continuation tokens
-- botocore Stubber: scripted API testing without a network
-- ClientError inspection: error codes → friendly messages
-- Presigned URL generation (local SigV4 signing)
-- Credential chains vs. explicit fake credentials
-- Custom endpoints for S3-compatible storage
-- Validation at the API boundary (bucket/key rules)
-
----
-
-# ✅ Testing
-
-```bash
-python -m pytest tests/ -q
+```
+S3_File_Manager/
+├── README.md
+├── requirements.txt        # pytest==9.1.1
+├── .gitignore
+├── data/
+│   └── bucket.json         # 9 objects: 5 single, 3 multipart, 1 KMS
+├── src/
+│   ├── s3_manager.py       # listing, ETags, presigning, audit, demo
+│   └── main.py             # argparse only
+└── tests/
+    └── test_s3_manager.py  # 149 tests
 ```
 
-**32 tests passed** covering validation, all object operations, pagination, error mapping (404/403), file transfers, presigned URLs, demo idempotency, and CLI paths — entirely offline via `Stubber`.
+## What the demo shows
+
+| view | value |
+| --- | --- |
+| objects / bytes | 9 / 308 |
+| keys matching `logs/` | 4 (the marker plus three nested keys) |
+| legacy first page under `logs/` | 3, no delimiter |
+| delimiter view | 2 prefixes (`logs/api/`, `logs/web/`) |
+| folder marker | `logs/` is an object, not a child |
+| legacy ETag check | 5 verified, **4 called corrupt** |
+| rebuild ETag check | **8 verified, 0 corrupt, 1 opaque** |
+| full listing | 9 objects over **3 pages**, `IsTruncated=false` |
+
+- `data/notes.csv` → `e56cf7fc…-2`, `logs/api/2024-02.log` → `bccf4c49…-3`,
+  `reports/q4.txt` → `4fef5040…-2`: each multipart ETag differs from the body MD5
+- `secrets/keys.json` carries an opaque ETag: neither verified nor corrupt, on purpose
+- Presigned: `reports/q3%20final.txt` with `X-Amz-Expires=300`; legacy:
+  `reports/q3 final.txt` with `X-Amz-Expires=3600`
+- A presigned URL for `reports/absent.txt` is signed too -- signing does not check existence
+- **16/16 audit checks pass**, including one that rebuilds the listing from the manifest
+
+## Requirements
+
+Python 3.10+, standard library only (`json`, `hashlib`, `dataclasses`, `argparse`,
+`urllib.parse`). Tests need pytest==9.1.1. No boto3, no botocore, no credentials, no network; the
+bucket is a bundled JSON manifest.
 
 ---
-
-# 👨‍💻 Author
-
-**Devender J**
-
-GitHub: **https://github.com/JDevender007**
-
----
-
-<div align="center">
-
-⭐ If you found this project useful, consider giving this repository a star.
-
-</div>
+**Devender J** -- https://github.com/JDevender007

@@ -1,145 +1,119 @@
-<div align="center">
+# Load Balancer Simulator
 
-# ⚖️ Load Balancer Simulator
+A load balancer that never overlaps a request measures an empty queue. The legacy version is built
+from three honest-looking lines:
 
-### An offline load balancer with five strategies, a health-check state machine, failover, and distribution stats — all in-process with a seeded RNG.
+```python
+self.active += 1
+ok = rng.random() >= self.failure_rate
+self.active -= 1
 
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-
-</div>
-
----
-
-# 📖 About
-
-Load Balancer Simulator models the core behavior of a real L4/L7 balancer without opening a single socket. Backends are in-process objects with weights, failure rates, and connection counters; requests are served by a chosen strategy with automatic failover; a health-check state machine pulls failing backends out of rotation and lets them back in after consecutive good probes.
-
-The demo tells a complete story in three phases: healthy traffic, an outage (`web-3` fails three probes and is pulled), and recovery (two good probes return it to rotation) — followed by a side-by-side comparison of round-robin, least-connections, weighted, and ip-hash distribution over identical traffic. Everything is **seeded and deterministic**: the same command always produces byte-identical output.
-
----
-
-# ✨ Features
-
-- Five strategies: `round_robin`, `least_connections`, `weighted` (nginx smooth WRR), `random`, `ip_hash`
-- Health checker with configurable down/up consecutive-probe thresholds
-- Automatic failover: each retry targets a *different* healthy backend
-- Per-backend counters: served, failures, active connections, share
-- Event log of failures, health transitions, and exhausted requests
-- Seeded RNG — fully reproducible runs and tests
-- JSON stats export; `--clients` distinct IPs for hashing experiments
-- 41 passing pytest tests
-
----
-
-# 📂 Folder Structure
-
-```text
-Load_Balancer_Simulator/
-│
-├── src/
-│   ├── main.py           # CLI: demo, --requests, --strategy, --json
-│   └── load_balancer.py  # Backend, HealthChecker, LoadBalancer, rendering
-│
-├── tests/
-│   └── test_load_balancer.py
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
+return min(pool, key=lambda b: (b.active, b.name))
 ```
 
----
+Each line is correct on its own. Together they send every request to the alphabetically first
+backend.
 
-# ⚙️ Installation
+**1. A counter incremented and decremented inside one call is not a measurement.** `serve()` is
+synchronous: by the time the next request is dispatched, every backend's `active` is back to zero.
+`least_connections` therefore sees `(0, "alpha"), (0, "beta"), (0, "gamma")` for every request and
+sends all **12** of them to `alpha`, whose queue ends at **48** ticks while its two peers finish at
+**0**. Concurrency is not a detail of least-connections; it is the quantity the strategy is named
+after.
 
-```bash
-git clone https://github.com/JDevender007/Python.git
+**2. A weight is capacity, not a request count.** Round-robin gives `alpha`, `beta` and `gamma` four
+requests each. With weights 1, 2 and 1 that is 16, 16 and 16 units of work against fair shares of
+12, 24 and 12: `alpha` and `gamma` run at **1333 permille** of their capacity and `beta` at
+**667**. Splitting requests evenly is balancing *counts*, not load.
 
-cd 13_Cloud_Computing/Load_Balancer_Simulator
+**3. Fairness is not `max - min`.** The legacy score is `max(counts) - min(counts)`, which calls the
+4/4/4 split **perfect** -- spread 0 -- although `alpha` and `gamma` are each at 1333‰ and `beta` at
+667‰. Jain's index over capacity-normalised load scores the same split **926**: nearly fair, and
+blind to the fact that two backends are saturated. Jain is scale-free; it compares backends to each
+other, never to their own limit. The rebuild reports both -- the index for balance and the
+**maximum load ratio** for saturation -- and the 4/4/4 split is balanced by neither.
 
-python -m venv .venv
+**4. A percentage is an apportionment, not a division.** `100 * count / total` formatted to one
+decimal prints `33.3%` three times for a 4/4/4 split, and the three lines sum to **99.9**. The
+rebuild apportions 1000 permille with the largest-remainder method: **334 + 333 + 333 = 1000**,
+exactly, every time.
 
-.venv\Scripts\activate
+The simulation is discrete and integer. A backend completes `weight` work units per tick, a request
+finishes at `ceil(assigned_work / weight)`, and no clock, socket, float or random number is
+involved. Twelve requests of four units run against three backends weighted 1, 2 and 1, and every
+number below is reproducible from `data/scenario.json`.
 
-pip install -r requirements.txt
+## What this project teaches
+
+- Why an in-flight counter needs overlapping requests to mean anything
+- Why least-connections degenerates to "first name" without concurrency
+- Why a weight is a capacity in work units per tick, not a share of requests
+- Why equal request counts can saturate one backend and idle another
+- How smooth weighted round-robin reaches the weight ratio exactly
+- Why greedy least-load scheduling needs a projected finish, not a connection count
+- Why Jain's index is scale-free, and why that makes it blind to uniform overload
+- Why you need an absolute load ratio beside a fairness index
+- Why `max - min` calls an overloaded distribution perfect
+- Largest-remainder apportionment: percentages that sum to 1000 permille
+- Why a fixed simulation is more informative than a random one
+- How to audit four policies by rebuilding all of them from the scenario
+
+## How to run
+
 ```
-
----
-
-# ▶️ Run
-
-```bash
-# Offline demo: outage + recovery + strategy showcase
 python src/main.py --demo
-
-# Simulate traffic with a different strategy
-python src/main.py --requests 5000 --strategy weighted
-
-# Hash-based routing with 64 distinct clients, JSON stats
-python src/main.py --requests 1000 --strategy ip_hash --clients 64 --json
-
-# Tune failover (attempts per request)
-python src/main.py --requests 500 --failover 3
+python src/main.py --demo --quiet
+python src/main.py --file data/scenario.json --json out.json
+python src/main.py --file data/scenario.json --policy least_load
+python src/main.py --file data/scenario.json --audit
+python -m pytest tests -q
 ```
 
----
+`--file` names a scenario: a name, a list of `{name, weight}` backends and a list of
+`{name, work}` requests. `--policy` prints one table instead of four. `--audit` exits `1` if any
+check fails. Exit code `2` means the input was refused -- a missing file, non-ASCII bytes, invalid
+JSON, a root that is not a mapping, a bad or duplicate backend name, a weight outside 1..64, an
+empty request list, or work outside 1..1024.
 
-# 🧠 How the Strategies Behave
+## Project structure
 
-| Strategy | Picks | Best for |
-| --- | --- | --- |
-| `round_robin` | next healthy in rotation | equal-capacity peers |
-| `least_connections` | fewest in-flight requests | uneven request costs |
-| `weighted` | smooth WRR by weight (3:2:1 → exactly proportional) | heterogeneous capacity |
-| `random` | seeded random choice | simplicity, statistical balance |
-| `ip_hash` | stable slot per client IP with healthy fallback | session affinity |
-
----
-
-# 🛠 Technologies
-
-- Python (standard library: hashlib, random, logging)
-- argparse / json
-- pytest
-
----
-
-# 📚 Concepts Covered
-
-- Load balancing algorithms and their trade-offs
-- nginx smooth weighted round-robin
-- Consistent-ish source hashing with failover probing
-- Health-check thresholds (consecutive failure/success state machines)
-- Retry semantics: distinct-candidate failover and attempt caps
-- Connection accounting (active vs. cumulative)
-- Deterministic simulation with seeded RNGs
-- Distribution analysis and event logs
-- Test-driven development
-
----
-
-# ✅ Testing
-
-```bash
-python -m pytest tests/ -q
+```
+Load_Balancer_Simulator/
+├── README.md
+├── requirements.txt        # pytest==9.1.1
+├── .gitignore
+├── data/
+│   └── scenario.json       # 3 backends weighted 1/2/1, 12 requests of 4 units
+├── src/
+│   ├── load_balancer.py    # policies, integer metrics, audit, demo
+│   └── main.py             # argparse only
+└── tests/
+    └── test_load_balancer.py   # 134 tests
 ```
 
-**41 tests passed** covering backend validation, health-state transitions, all five strategies (including exact weighted proportions and hash stability), failover paths, stats/rendering, demo determinism, and every CLI mode — all offline.
+## What the demo shows
+
+| policy | counts | work | makespan | total | Jain(counts) | Jain(capacity) | max load |
+| --- | --- | --- | --: | --: | --: | --: | --: |
+| round_robin | 4/4/4 | 16/16/16 | 16 | 100 | 1000 | 926 | **1333** |
+| smooth_weighted | 3/6/3 | 12/24/12 | 12 | 90 | 889 | 1000 | 1000 |
+| legacy_least_connections | **12/0/0** | **48/0/0** | **48** | **312** | 333 | 333 | **4000** |
+| least_load | 3/6/3 | 12/24/12 | 12 | 90 | 889 | 1000 | 1000 |
+
+- The legacy in-flight counter samples `(0, 0, 0)` on all 12 requests, so every request lands on
+  `alpha`: **12/0/0**, makespan **48** ticks, total completion **312**
+- Least load and smooth weighted round-robin agree on counts and work, and disagree on placement:
+  `beta, alpha, beta` versus `beta, alpha, gamma` for the first three requests
+- Round-robin's capacity Jain is **926** -- "nearly fair" -- while the busiest backend is at
+  **1333** permille: the index alone would have called a saturated split acceptable
+- Float shares for 4/4/4 are `33.3 + 33.3 + 33.3 = 99.9%`; apportioned permille is
+  `334 + 333 + 333 = 1000`
+- **15/15 audit checks pass**, including one that rebuilds all four runs from the scenario
+
+## Requirements
+
+Python 3.10+, standard library only (`json`, `math`, `dataclasses`, `argparse`). Tests need
+pytest==9.1.1. No sockets, no real backends, no clock, no random seed; the scenario is bundled.
 
 ---
-
-# 👨‍💻 Author
-
-**Devender J**
-
-GitHub: **https://github.com/JDevender007**
-
----
-
-<div align="center">
-
-⭐ If you found this project useful, consider giving this repository a star.
-
-</div>
+**Devender J** -- https://github.com/JDevender007

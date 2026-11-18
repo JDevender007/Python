@@ -1,4 +1,4 @@
-# Standard library only (uuid, json, time, dataclasses, argparse, logging)
+# Standard library only (json, re, dataclasses, argparse)
 
 # Test dependency:
 pytest==9.1.1
