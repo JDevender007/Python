@@ -504,5 +504,5 @@ def run_demo(csv_path: Path | None = None) -> int:
           f"baseline {result.baseline_accuracy:.3f}, loss "
           f"{first['loss']:.3f} -> {last['loss']:.3f}, gradient check "
           f"{error:.1e}, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

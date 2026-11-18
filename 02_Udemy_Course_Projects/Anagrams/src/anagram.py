@@ -1,7 +1,7 @@
-﻿"""Anagram detection done properly: normalise, sign, group, search.
+"""Anagram detection done properly: normalise, sign, group, search.
 
 An anagram is not "the same letters in a different order" as a string
-comparison â€” it is an equality between *multisets of letters*. Removing the
+comparison -- it is an equality between *multisets of letters*. Removing the
 punctuation and folding the case turns
 
     "Snooze alarms"      and     "Alas, no more Z's"
@@ -39,7 +39,7 @@ def normalize(text: str) -> str:
 
 
 def signature(text: str) -> str:
-    """The sorted letters of the text â€” equal signatures mean anagram."""
+    """The sorted letters of the text -- equal signatures mean anagram."""
     return "".join(sorted(normalize(text)))
 
 
@@ -218,5 +218,5 @@ def run_demo() -> int:
           "candidates, 48 words into 6 verified groups with a 5-member "
           "largest, 34 unordered pairs, order-independent grouping, empty "
           "inputs safe")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

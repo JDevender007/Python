@@ -448,5 +448,5 @@ def run_demo(defaults: Path | None = None,
           f"port={values['port']} from env, log_level={values['log_level']} "
           f"from file, coercion+bounds+unknown-key all rejected, "
           f"deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

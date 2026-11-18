@@ -363,13 +363,12 @@ def run_demo(csv_path: Path | None = None) -> int:
     assert (corr.index == corr.columns).all(), "correlation labels mismatch"
     assert ((corr.values - corr.values.T) ** 2).max() < 1e-6, "corr not symmetric"
     assert abs(float(corr.values.diagonal().min()) - 1.0) < 1e-6, "diag != 1"
-    print(f"\nCross-checks OK: returns, drawdowns, RSI bounds, "
-          f"correlation symmetry (best={report.best_ticker})")
-
     # RSI sanity: an always-rising series should pin RSI near 100
     rising = pd.Series([100 * (1.01 ** i) for i in range(60)])
     assert rsi(rising) > 90, "RSI should be high on a monotonically rising series"
     print(f"RSI sanity: monotonically rising series -> {rsi(rising):.1f}")
 
-    print("\nDemo completed successfully.")
+    print(f"\nCross-checks OK: returns, drawdowns, RSI bounds, "
+          f"correlation symmetry (best={report.best_ticker})")
+    print("Demo completed successfully.")
     return 0

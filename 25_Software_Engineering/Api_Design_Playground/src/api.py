@@ -488,5 +488,5 @@ def run_demo() -> int:
     print(f"\nCross-checks OK: {len(hits)} fluent-query hits, CRUD errors "
           f"409/404, v2 strict superset of v1 ({len(v2)} keys), "
           f"{len(parsed_hits)} expression matches, deterministic seed")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

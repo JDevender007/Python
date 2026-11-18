@@ -715,5 +715,5 @@ def run_demo() -> int:
           "time, a 138-day loan capped at 10.00, a save/reload round trip "
           "byte-identical with a clean audit, and a 6-book bundled catalogue "
           "agreeing with its own loans")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

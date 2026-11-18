@@ -537,5 +537,5 @@ def run_demo() -> int:
           f"high {severities['high']}/medium {severities['medium']}, "
           f"specifier engine verified, deterministic re-check, "
           f"no index queries")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

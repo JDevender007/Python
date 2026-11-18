@@ -916,5 +916,5 @@ def run_demo() -> int:
           "character phone in a VARCHAR(10), the seeded hotel was consistent "
           "with a back-to-back pair on room 101 at 5/18 nights and 117500 "
           "cents of revenue, and it round-tripped byte for byte")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -524,5 +524,5 @@ def run_demo() -> int:
           "passphrase scored 65 and still failed, a relaxed policy accepted "
           "'abc1', 3 impossible policies and 3 non-text inputs were refused, "
           "and the bundled list of 40 common passwords is self-consistent")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

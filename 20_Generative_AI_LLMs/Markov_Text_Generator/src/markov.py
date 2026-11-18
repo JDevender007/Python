@@ -349,5 +349,5 @@ def run_demo(data_dir: Path | None = None) -> int:
     print(f"\nCross-checks OK: corpus verified, order 1-3 model counts match a "
           f"naive recount, deterministic sampling, fixed start honoured, "
           f"perplexity {scores[2]:.2f} bits/word")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

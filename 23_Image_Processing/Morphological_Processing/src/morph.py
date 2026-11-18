@@ -819,5 +819,5 @@ def run_demo(image_path: Path | None = None) -> int:
           f"{area(eroded)}, the skeleton only deletes pixels, keeps under a "
           f"tenth of the area and preserves all 3 parts, deterministic "
           f"re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

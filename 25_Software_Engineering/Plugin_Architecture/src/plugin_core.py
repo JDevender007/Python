@@ -477,5 +477,5 @@ def run_demo() -> int:
           f"{len(report.skipped)} sandboxed skip, "
           f"{len(report.failures)} sandboxed failure survived, "
           f"{len(report.data)} records transformed, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

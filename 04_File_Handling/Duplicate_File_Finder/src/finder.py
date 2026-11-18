@@ -566,5 +566,5 @@ def run_demo() -> int:
           "re-reading every group, a second scan returned the same value "
           "rather than more groups, and a missing folder, a file and a "
           "directory were all refused")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

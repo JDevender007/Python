@@ -669,5 +669,5 @@ def run_demo() -> int:
           f"read, and {sum(1 for _, okay in checks if okay)}/{len(checks)} "
           f"checks hold")
 
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

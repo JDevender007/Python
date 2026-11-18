@@ -14,12 +14,12 @@ The course exercise was this loop:
 It prints the input unchanged. Two bugs, and the interesting part is their
 relationship.
 
-**Bug 1 — ``i.isalpha`` without parentheses.** A bound method is a truthy
+**Bug 1 -- ``i.isalpha`` without parentheses.** A bound method is a truthy
 object, so ``if i.isalpha or i.isspace()`` is true for *every* character.
 The filter keeps punctuation, digits, everything; ``clean`` ends up identical
 to ``scan``. Nothing raises, so the program looks like it worked.
 
-**Bug 2 — ``clean + 1``.** ``str + int`` is a ``TypeError``. But the ``else``
+**Bug 2 -- ``clean + 1``.** ``str + int`` is a ``TypeError``. But the ``else``
 branch is unreachable while bug 1 exists: since the condition is always true,
 the ``else`` never executes. Bug 1 *hides* bug 2.
 
@@ -202,7 +202,7 @@ def sniff(value) -> object:
 
 
 def clean_value(value) -> object:
-    """Sniff one cell, refusing nothing — text is the fallback."""
+    """Sniff one cell, refusing nothing -- text is the fallback."""
     return sniff(value)
 
 
@@ -533,5 +533,5 @@ def run_demo() -> int:
           "order, header collisions refused, 5 bundled scans cleaned to 5 "
           "distinct lines, and a 6-row CSV reduced to 5 rows with 2 blanks "
           "and 1 duplicate accounted for")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

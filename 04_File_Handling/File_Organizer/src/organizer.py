@@ -701,5 +701,5 @@ def run_demo() -> int:
           "12 files and removed the 4 folders it had created, a target "
           "created after planning stopped the run with all 12 sources still "
           "in place, and six bad inputs were refused")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

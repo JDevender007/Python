@@ -29,7 +29,7 @@ This module separates the three concerns:
     mask()         reveal at most the last four digits, never all of them
     check()        all of the above as one verdict
 
-Luhn validity on its own proves very little — ``79927398713`` is Luhn-valid
+Luhn validity on its own proves very little -- ``79927398713`` is Luhn-valid
 and is not a card number of any brand at any allowed length. That case is in
 the bundled data on purpose, and ``check()`` reports it as invalid.
 
@@ -179,7 +179,7 @@ def brand(number) -> str:
     """Classify by issuer identification number; ``"Unknown"`` when no rule fits.
 
     The rules are prefix ranges published by the schemes. A brand match says
-    nothing about length or checksum — those are separate questions, answered
+    nothing about length or checksum -- those are separate questions, answered
     separately, because conflating them is how a 14-digit Amex gets accepted.
     """
     text = try_digits(number)
@@ -576,5 +576,5 @@ def run_demo() -> int:
           "reported invalid, masks revealing at most 4 digits at the true "
           "length, reveal bounds enforced, 4 published groupings, and 17 "
           "bundled rows whose brand and checksum claims all agree")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

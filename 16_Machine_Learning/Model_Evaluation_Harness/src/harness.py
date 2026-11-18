@@ -404,5 +404,5 @@ def run_demo(csv_path: Path | None = None, folds: int = 5) -> int:
     print(f"\nCross-checks OK: {len(result.scores)} models x {folds} folds, "
           f"best={result.best.name} (CV F1 {result.best.rank_score:.3f}), "
           f"metrics bounded, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

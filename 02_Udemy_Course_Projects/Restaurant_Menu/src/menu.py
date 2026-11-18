@@ -518,5 +518,5 @@ def run_demo() -> int:
           "cart totalling 45.00 with 3.94 tax and 48.94 total, half-up tax "
           "pinned on 87.5 and 49.9625 cents, 6 impossible operations "
           "refused, and a byte-identical menu round trip")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

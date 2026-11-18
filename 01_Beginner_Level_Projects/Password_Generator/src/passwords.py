@@ -1,4 +1,4 @@
-﻿"""A password generator with a policy, an entropy estimate and a history.
+"""A password generator with a policy, an entropy estimate and a history.
 
 Generating a password is one line of ``random.choice``. Deciding whether the
 result is *good* is the actual work, so this project makes the policy explicit
@@ -10,7 +10,7 @@ and the entropy countable:
 A 16-character password drawn from 26 lower + 26 upper + 10 digits + 27 symbols
 has a pool of 89, so ``16 * log2(89) = 103.2`` bits. The label follows the
 conventional bands (under 40 weak, under 60 fair, under 80 strong, else
-excellent) â€” and the code computes it from the pool rather than guessing from
+excellent) -- and the code computes it from the pool rather than guessing from
 the length alone, which is the mistake behind "16 characters must be strong"
 when the 16 characters are all lowercase.
 
@@ -276,7 +276,7 @@ def strength(password: str) -> dict:
     """Estimate the strength of a password from the characters it actually uses.
 
     The bit count assumes every character was drawn uniformly at random. A
-    pattern — a repeated run, a dictionary fragment — disproves that
+    pattern -- a repeated run, a dictionary fragment -- disproves that
     assumption, so any password with a warning is labelled ``weak`` no matter
     how many bits the arithmetic claims.
     """
@@ -538,5 +538,5 @@ def run_demo() -> int:
           "at once, strength from the observed pool not the length, 3 pattern "
           "warnings, bounded history refusing reuse, 6 invalid policies "
           "rejected, policy JSON round-trip, entropy doubling with length")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

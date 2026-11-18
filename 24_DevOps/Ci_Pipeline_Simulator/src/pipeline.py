@@ -788,5 +788,5 @@ def run_demo(json_path: Path | None = None,
           f"both policies, the two policies differ on exactly 4 jobs, status "
           f"counts always total {EXPECTED_JOBS}, deterministic "
           f"re-simulation, and flaky without retries fails outright")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

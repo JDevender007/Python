@@ -561,5 +561,5 @@ def run_demo() -> int:
     print(f"\nCross-checks OK: {len(PATTERN_NAMES)} patterns, "
           f"{len(orders)} orders, {len(first_quotes)} deterministic quotes, "
           f"ordered + sandboxed observer delivery")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

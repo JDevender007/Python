@@ -439,5 +439,5 @@ def run_demo(data_dir: Path | None = None) -> int:
     print("\nCross-checks OK: loss decreased, neighbour ranking, city "
           "similarity, analogy found queen, negative table matches "
           "count^0.75, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -335,9 +335,6 @@ def run_demo(csv_path: Path | None = None) -> int:
     top_path = report.top_paths.index[0]
     manual = int((frame["path"] == top_path).sum())
     assert int(report.top_paths.iloc[0]["hits"]) == manual, "top path count mismatch"
-    print(f"\nCross-checks OK: statuses partition {report.requests:,} requests, "
-          f"profiles sum to n (error rate {report.error_rate_pct:.1f}%)")
-
     # date-window filtering proves the --since/--until path
     day_one = load_traffic(source, since="2025-06-01", until="2025-06-01")
     assert len(day_one) < len(frame), "single-day window should be smaller"
@@ -345,5 +342,7 @@ def run_demo(csv_path: Path | None = None) -> int:
     print(f"Filtered to 2025-06-01: {len(day_one)} requests, "
           f"{day_one['session_id'].nunique()} sessions")
 
-    print("\nDemo completed successfully.")
+    print(f"\nCross-checks OK: statuses partition {report.requests:,} requests, "
+          f"profiles sum to n (error rate {report.error_rate_pct:.1f}%)")
+    print("Demo completed successfully.")
     return 0

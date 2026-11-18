@@ -410,5 +410,5 @@ def run_demo() -> int:
           f"valid data, typed rejects bad row 0 that legacy silently "
           f"accepts, {violations} contract violations, "
           f"Protocol conformance, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

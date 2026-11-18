@@ -639,5 +639,5 @@ def run_demo(out_dir: Path | None = None, quiet: bool = False) -> int:
         print(f"\nCross-checks OK: group counts partition {report.overall['n']} rows, "
               f"quartiles ordered, p={p:.4f} in [0,1], "
               f"{len(written)} charts rendered, figures closed")
-        print("\nDemo completed successfully.")
+        print("Demo completed successfully.")
     return 0

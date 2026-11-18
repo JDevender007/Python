@@ -681,5 +681,5 @@ def run_demo(map_path: Path | None = None) -> int:
           "fewer nodes, every path is legal and contiguous, smoothing "
           "never lengthens a path, RRT is deterministic, blocked maps "
           "and bad symbols are rejected")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

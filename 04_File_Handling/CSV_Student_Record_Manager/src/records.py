@@ -783,5 +783,5 @@ def run_demo() -> int:
           "temporary file behind, the per-department report is 4 aggregated "
           "rows where the legacy report was the data file again, and the 5 "
           "invariants passed until one mark was forced out of range")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

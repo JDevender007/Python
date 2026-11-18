@@ -369,5 +369,5 @@ def run_demo(logs: tuple[Path, ...] | None = None) -> int:
     print(f"Cross-checks OK: {len(records)} records, {errors} errors, "
           f"{len(alerts)} alert(s) [{alert_names}], top offender "
           f"{top[0].service} ({top[0].errors} errors), deterministic re-parse")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

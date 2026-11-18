@@ -630,5 +630,5 @@ def run_demo() -> int:
           "reported without deleting either patient, pinned counts and ages "
           "(mean 41.33, median 41, 8 over 40), honest nulls for an empty "
           "registry, and a byte-identical clean round trip")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -360,5 +360,5 @@ def run_demo(csv_path: Path | None = None) -> int:
     print(f"\nCross-checks OK: both models beat the mean baseline, "
           f"forest R^2 {result.metrics['random_forest']['r2']:.3f}, "
           f"importances sum to 1, sanity ordering holds")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -381,5 +381,5 @@ def run_demo(csv_path: Path | None = None) -> int:
           f"{result.baseline_rmse:.4f} "
           f"({(1 - result.test_rmse / result.baseline_rmse) * 100:+.1f}%), "
           f"correlation {result.correlation:.3f}, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

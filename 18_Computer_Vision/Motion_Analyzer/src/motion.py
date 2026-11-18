@@ -448,5 +448,5 @@ def run_demo(data_dir: Path | None = None) -> int:
     print("\nCross-checks OK: 20/20 frames verified, diff catches all moving "
           "frames, background catches all frames, static object ignored, "
           "new object gated, illumination robustness, morphology")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

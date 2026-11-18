@@ -435,5 +435,5 @@ def run_demo(image_path: Path | None = None) -> int:
     print("\nCross-checks OK: PSNR(img,img)=inf, box size 1 identity, "
           "kernels sum to 1, separable == full gaussian (<1e-6), "
           "edge modes differ only at borders, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

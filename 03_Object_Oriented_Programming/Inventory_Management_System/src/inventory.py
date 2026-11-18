@@ -688,5 +688,5 @@ def run_demo() -> int:
           "'a-1' was refused, the seeded 8 lines totalled 617112 cents with "
           "3 low-stock lines and 5/5 checks passing, a -1 quantity failed "
           "exactly one check, and the file round-tripped byte for byte")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

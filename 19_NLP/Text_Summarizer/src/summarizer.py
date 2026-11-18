@@ -327,5 +327,5 @@ def run_demo(articles_path: str | Path | None = None) -> int:
           f"{len(results)} articles summarized, subsets sorted and verbatim, "
           "compression < 1, coverage >= 0.6, best sentences selected, "
           "deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

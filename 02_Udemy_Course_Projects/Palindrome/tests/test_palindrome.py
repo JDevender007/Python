@@ -63,8 +63,8 @@ def test_normalise_of_punctuation_only_is_empty():
 
 def test_normalise_uses_casefold_not_lower():
     # casefold turns the German sharp s into 'ss'; lower does not
-    assert normalise("Straße") == "strasse"
-    assert "Straße".lower() == "straße"
+    assert normalise("Stra\u00dfe") == "strasse"
+    assert "Stra\u00dfe".lower() == "stra\u00dfe"
 
 
 @pytest.mark.parametrize("bad", [None, 12321, ["a"], 3.5])

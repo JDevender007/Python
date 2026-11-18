@@ -694,5 +694,5 @@ def run_demo() -> int:
           "and nothing to do, 6/6 plan checks passed, and a missing folder, a "
           "file given as a folder, a destination inside the source, a source "
           "inside the destination and a climbing path were all refused")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

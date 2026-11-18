@@ -1,4 +1,4 @@
-# Base configuration — the lowest layer. Everything here can be overridden
+# Base configuration -- the lowest layer. Everything here can be overridden
 # by the file layer (settings.yaml) and then by the environment layer.
 app_name: devops-demo
 port: 8080

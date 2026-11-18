@@ -552,5 +552,5 @@ def run_demo() -> int:
           f"{measured['size_1280']} not {measured['legacy_size_1280']}, and "
           f"{sum(1 for _, okay in checks if okay)}/{len(checks)} checks hold")
 
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

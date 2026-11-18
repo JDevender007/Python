@@ -436,5 +436,5 @@ def run_demo(data_dir: Path | None = None) -> int:
     print(f"\nCross-checks OK: Otsu == cv2, components == cv2 "
           f"({count} regions), k-means deterministic + monotone SSE, "
           f"all 4 modes run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

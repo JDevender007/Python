@@ -356,5 +356,5 @@ def run_demo(out_dir: Path | None = None, quiet: bool = False) -> int:
         leader, leader_score = final[0]
         print(f"\nCross-checks OK: 3 GIFs with {len(timeline)} frames each, "
               f"rankings sorted (leader {leader} at {leader_score:.1f})")
-        print("\nDemo completed successfully.")
+        print("Demo completed successfully.")
     return 0

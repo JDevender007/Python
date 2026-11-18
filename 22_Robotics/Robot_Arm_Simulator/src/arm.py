@@ -868,5 +868,5 @@ def run_demo() -> int:
           "straight Cartesian lines, bundled mission collision-free, "
           "blocked move detected, impossible poses rejected, "
           "deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -311,5 +311,5 @@ def run_demo(csv_path: Path | None = None) -> int:
     print(f"\nCross-checks OK: {result.k} clusters partition {len(frame)} "
           f"customers, silhouette {result.silhouette:.3f}, deterministic "
           f"re-run, assign() reproduces labels")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -390,5 +390,5 @@ def run_demo(data_dir: Path | None = None) -> int:
     print(f"\nCross-checks OK: 9 documents validated, accuracy@1 100% on gold "
           f"queries, citation-first answering, monotone scores, "
           f"deterministic index")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

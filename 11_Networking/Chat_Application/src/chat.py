@@ -658,5 +658,5 @@ def run_demo() -> int:
           f"reader, with {sum(1 for _, okay in checks if okay)}/{len(checks)} "
           f"checks holding")
 
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

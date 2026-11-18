@@ -531,5 +531,5 @@ def run_demo(json_path: Path | None = None) -> int:
     print("\nCross-checks OK: 4 rules, 14 actuator events, delay rules fire "
           "at +120s/+180s, hysteresis holds the cool rule armed, 4 motion "
           "pulses, deterministic replay, CSV round-trip")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -559,5 +559,5 @@ def run_demo() -> int:
           "lowercased and dropped default ports and was idempotent, 6 host "
           "kinds classified, 3 unusual shapes parsed, 7 bad inputs refused, "
           "and every URL rebuilt byte for byte")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

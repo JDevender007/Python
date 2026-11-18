@@ -386,5 +386,5 @@ def run_demo(image_path: Path | None = None) -> int:
     print("\nCross-checks OK: PSNR(img,img)=inf, full 0..255 stretch, "
           "spread increased, monotone mapping, uniform unchanged, "
           "CLAHE limits noise vs global, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -408,7 +408,7 @@ def run_demo(corpus_path: Path | None = None) -> int:
     print(f"\nCross-checks OK: loss {result.initial_loss:.3f} -> "
           f"{result.final_loss:.3f}, {len(generated)} chars in-vocab, "
           f"deterministic re-run, seed-sensitive sampling")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0
 
 

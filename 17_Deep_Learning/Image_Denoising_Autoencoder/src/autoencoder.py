@@ -486,5 +486,5 @@ def run_demo(csv_path: Path | None = None) -> int:
           f"({(1 - result.test_mse / result.noisy_mse) * 100:+.1f}%), "
           f"PSNR {result.noisy_psnr:.1f} -> {result.test_psnr:.1f} dB, "
           f"deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

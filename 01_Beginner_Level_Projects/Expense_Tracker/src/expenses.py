@@ -469,5 +469,5 @@ def run_demo() -> int:
           "shopping 129.99), small samples never judged, a stricter threshold "
           "flags only one, 7 malformed rows rejected, cent rounding, CSV "
           "round-trip, deterministic re-runs")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

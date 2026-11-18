@@ -23,7 +23,7 @@ A transfer is two ledger rows in one ``BEGIN IMMEDIATE`` transaction:
     both rows share one ``ref`` so the pair can be audited
 
 If the destination does not exist, the foreign key rejects the second row and
-the whole transaction rolls back — the source is not debited. That is the
+the whole transaction rolls back -- the source is not debited. That is the
 property the legacy three-script version could not offer: it opened a
 connection per operation and committed whatever happened to succeed.
 
@@ -182,8 +182,8 @@ def load_seed(connection: sqlite3.Connection) -> None:
     """Insert the four customers, four accounts and four history rows.
 
     Customers and accounts are keyed, so ``INSERT OR IGNORE`` makes them
-    idempotent. Ledger rows are not keyed — a second call would double every
-    balance — so the history is only written into an empty ledger.
+    idempotent. Ledger rows are not keyed -- a second call would double every
+    balance -- so the history is only written into an empty ledger.
     """
     connection.executemany(
         "INSERT OR IGNORE INTO customers (cust_id, name, address, email) "
@@ -579,5 +579,5 @@ def run_demo() -> int:
           "running ledger matching the balance, UNIQUE email and CHECK sign "
           "constraints, a clean audit that catches a planted orphan leg, and "
           "a file database surviving reopen")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

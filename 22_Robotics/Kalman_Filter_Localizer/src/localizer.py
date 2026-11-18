@@ -1045,5 +1045,5 @@ def run_demo() -> int:
           "Jacobians match finite differences, gross outliers are gated, "
           "the scalar filter matches the closed-form gain, deterministic "
           "re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -347,5 +347,5 @@ def run_demo(out_dir: Path | None = None, quiet: bool = False) -> int:
         print(f"\nCross-checks OK: {len(written)} charts rendered, "
               f"figures closed, pivot/summary totals match "
               f"(revenue {int(frame['revenue'].sum()):,})")
-        print("\nDemo completed successfully.")
+        print("Demo completed successfully.")
     return 0

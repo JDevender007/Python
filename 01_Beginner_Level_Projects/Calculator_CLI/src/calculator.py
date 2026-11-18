@@ -478,5 +478,5 @@ def run_demo() -> int:
           f"token kinds split, 7 malformed expressions rejected, division "
           f"by zero refused, history undo/clear, batch survives a bad line, "
           f"float noise removed, deterministic re-evaluation")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

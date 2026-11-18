@@ -13,7 +13,7 @@ The legacy program was:
 
 Four problems, in increasing order of interest.
 
-**The input is hard-coded.** ``S1 = 'python'`` — there is no input at all, so
+**The input is hard-coded.** ``S1 = 'python'`` -- there is no input at all, so
 the program is a demonstration of a constant.
 
 **Punctuation defeats it.** Only spaces are removed, so
@@ -22,12 +22,12 @@ and is reported as not a palindrome. The comma and the colon break the mirror,
 not the sentence.
 
 **The failure branch prints a meaningless string.** On any non-palindrome the
-program prints ``S2.casefold() + rev.casefold()`` — for ``'python'`` that is
+program prints ``S2.casefold() + rev.casefold()`` -- for ``'python'`` that is
 ``'pythonnohtyp'``. It *is* a palindrome, which makes the output look like a
 result rather than a bug. It answers no question anyone asked.
 
-**Nothing can make a palindrome.** The one genuinely useful operation — pad a
-string until it reads the same both ways — is not there.
+**Nothing can make a palindrome.** The one genuinely useful operation -- pad a
+string until it reads the same both ways -- is not there.
 
 This module separates the operations:
 
@@ -39,8 +39,8 @@ This module separates the operations:
     complete(text)      append the fewest characters that make it a palindrome
     mirror(text)        the trivial s + reverse(s), kept for comparison
 
-``complete('race')`` is ``'racecar'`` — seven characters, a palindrome, and it
-starts with the input. ``mirror('race')`` is ``'raceecar'`` — eight characters
+``complete('race')`` is ``'racecar'`` -- seven characters, a palindrome, and it
+starts with the input. ``mirror('race')`` is ``'raceecar'`` -- eight characters
 and also a palindrome, but it threw away the fact that ``'race'`` was already
 half way there. The demo asserts both properties, so the shorter result is a
 measured claim rather than an assertion in prose.
@@ -62,7 +62,7 @@ def normalise(text) -> str:
 
     Punctuation and whitespace are what break the mirror in ordinary sentences,
     so they are removed rather than tolerated. ``casefold`` beats ``lower``
-    because it folds ligatures and ``ß`` too.
+    because it folds ligatures and ``\u00df`` too.
     """
     if not isinstance(text, str):
         raise PalindromeError(
@@ -396,5 +396,5 @@ def run_demo() -> int:
           "and hit the measured lower bound, the trivial mirror shown to be "
           "longer, idempotent completion, and 20 bundled phrases split 10/10 "
           "with the longest being its own longest run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

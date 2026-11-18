@@ -359,5 +359,5 @@ def run_demo() -> int:
           "below the worst case, seeded rounds reproducible and seed-distinct, "
           "200 seeded rounds all solved, attempt limit honoured, 5 misuse "
           "cases rejected, empty statistics safe")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

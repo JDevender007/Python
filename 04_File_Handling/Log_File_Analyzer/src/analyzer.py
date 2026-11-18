@@ -672,5 +672,5 @@ def run_demo() -> int:
           "'errors' only 1 because a word boundary follows the s, a second "
           "analysis returned the same value, and seven bad inputs were "
           "refused")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

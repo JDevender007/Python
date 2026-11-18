@@ -363,15 +363,15 @@ def run_demo(csv_path: Path | None = None) -> int:
     assert abs(float(corr.values.diagonal().min()) - 1.0) < 1e-6
     assert ((corr.values - corr.values.T) ** 2).max() < 1e-6, "corr not symmetric"
     assert report.income_iqr_ratio >= 1.0, "Q3/Q1 must be >= 1"
-    print(f"\nCross-checks OK: state populations partition "
-          f"{report.population_total:,} people "
-          f"(poverty ~{report.poverty_population:,}, "
-          f"weighted income ${report.indicators['median_income_weighted']:,.0f})")
-
     # weighted vs unweighted tells the story of aggregation
     delta = report.indicators["median_income_weighted"] - \
         report.indicators["median_income_unweighted"]
     print(f"Weighted vs unweighted income: {delta:+,.0f} "
           f"(households weigh rich/poor regions correctly)")
-    print("\nDemo completed successfully.")
+
+    print(f"\nCross-checks OK: state populations partition "
+          f"{report.population_total:,} people "
+          f"(poverty ~{report.poverty_population:,}, "
+          f"weighted income ${report.indicators['median_income_weighted']:,.0f})")
+    print("Demo completed successfully.")
     return 0

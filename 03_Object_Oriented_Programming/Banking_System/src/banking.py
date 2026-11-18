@@ -1049,5 +1049,5 @@ def run_demo() -> int:
           "passed and a fabricated row failed exactly one of them, a funded "
           "account refused to close, and 4 seeded accounts round-tripped "
           "byte for byte")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

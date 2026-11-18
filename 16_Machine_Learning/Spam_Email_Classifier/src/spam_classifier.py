@@ -295,5 +295,5 @@ def run_demo(csv_path: Path | None = None) -> int:
     print(f"\nCross-checks OK: accuracy {result.accuracy:.3f} matches the "
           f"test split, confusion matrix counts {len(result.test_labels)} "
           f"rows, sample messages labelled correctly, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

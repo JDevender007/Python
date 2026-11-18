@@ -561,5 +561,5 @@ def run_demo(arms_path: Path | None = None,
     print(f"\nCross-checks OK: {len(computed)} scenarios, analytic 2R "
           "match, orthonormal rotations, planar yaw/zero-z, prismatic "
           "lift, limit + reach checks, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

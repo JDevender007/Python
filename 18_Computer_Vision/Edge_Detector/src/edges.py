@@ -446,5 +446,5 @@ def run_demo(data_dir: Path | None = None) -> int:
     print(f"\nCross-checks OK: analytic ramp slopes, cv2 agreement "
           f"(atol 1e-6), Sobel/Canny IoU {overlap:.3f}, "
           f"deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

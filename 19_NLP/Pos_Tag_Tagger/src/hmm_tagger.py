@@ -385,5 +385,5 @@ def run_demo(corpus_path: str | Path | None = None,
           f"baseline {baseline:.3f} and >= 0.88, "
           f"{result['tokens']} test tokens accounted for, "
           "sample tagging exact, unknown words decode, deterministic")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

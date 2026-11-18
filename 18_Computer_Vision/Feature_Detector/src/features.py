@@ -457,5 +457,5 @@ def run_demo(data_dir: Path | None = None) -> int:
     print(f"\nCross-checks OK: 9/9 checkerboard corners, brightness "
           f"invariance, ORB shift ({stats['median_dx']}, "
           f"{stats['median_dy']}) ~= {SHIFT}, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -397,7 +397,7 @@ def run_demo(data_dir: Path | None = None) -> int:
     print(f"\nCross-checks OK: {seeded} seeded devices, schema-valid rows, "
           f"filters match recounts, invalid input rejected, "
           f"status history logged, delete cascades, no network")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     connection.close()
     return 0
 

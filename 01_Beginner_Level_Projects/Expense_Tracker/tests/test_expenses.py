@@ -1,4 +1,4 @@
-﻿"""Tests for Expense_Tracker: records, CSV, aggregates, budgets, outliers."""
+"""Tests for Expense_Tracker: records, CSV, aggregates, budgets, outliers."""
 
 from __future__ import annotations
 

@@ -710,5 +710,5 @@ def run_demo(arms_path: Path | None = None,
           "round-trips, elbow branches, dls-vs-analytic agreement, "
           "Jacobian vs finite differences, yaw honoured, unreachable "
           "rejected, joint limits held, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

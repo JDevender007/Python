@@ -584,5 +584,5 @@ def run_demo() -> int:
           f"/jobs/42#apply is not a second page, and "
           f"{sum(1 for _, okay in checks if okay)}/{len(checks)} checks hold")
 
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

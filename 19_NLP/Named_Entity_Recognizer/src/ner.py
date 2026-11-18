@@ -406,5 +406,5 @@ def run_demo(gold_path: str | Path | None = None,
           f"R {micro['recall']:.3f} / F1 {micro['f1']:.3f} "
           f"(threshold 0.85), spans slice back, no overlaps, "
           "deterministic re-run, metrics sanity-checked")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -16,7 +16,7 @@ interpreter rejecting it.
 
 **Its search always said "No entries found".** The message sat in a ``for``
 ``else`` branch, and a ``for`` ``else`` runs when the loop finishes *without* a
-``break`` — not when the loop found nothing. There was no ``break`` anywhere,
+``break`` -- not when the loop found nothing. There was no ``break`` anywhere,
 so the message printed after every search, including successful ones:
 
     for line in file:
@@ -97,7 +97,7 @@ LEGACY_ALIGNED = LEGACY_SOURCE.replace(
     "                print(line)\n        else:\n            print('No entries found')")
 
 #: Second fix: the ``break`` becomes a ``return``. It compiles, and the search
-#: still prints "No entries found" after every query — the logic bug.
+#: still prints "No entries found" after every query -- the logic bug.
 LEGACY_RUNNABLE = LEGACY_ALIGNED.replace(
     "        print('Exiting...')\n        break",
     "        print('Exiting...')\n        return")
@@ -107,7 +107,7 @@ def legacy_search(needle: str, lines: list[str]) -> list[str]:
     """The legacy search, printing replaced by a list so it can be asserted.
 
     Returns the matching lines *and* ``"No entries found"`` whenever the loop
-    finishes, which is always — there is no ``break`` for the ``else`` to skip.
+    finishes, which is always -- there is no ``break`` for the ``else`` to skip.
     """
     found: list[str] = []
     for line in lines:
@@ -597,5 +597,5 @@ def run_demo() -> int:
           "ids refused on load and save, case-insensitive search and tag/date "
           "queries, stats with honest nulls when empty, ids never reused, and "
           "a 6-entry bundled journal in date order")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

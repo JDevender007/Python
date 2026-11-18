@@ -589,5 +589,5 @@ def run_demo() -> int:
           f"on duplicate keys, and "
           f"{sum(1 for _, okay in checks if okay)}/{len(checks)} checks hold")
 
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

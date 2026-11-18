@@ -337,5 +337,5 @@ def run_demo(out_dir: Path | None = None, quiet: bool = False,
             print(note)
         print(f"Cross-checks OK: KPIs match the frame, {len(figure.data)} traces, "
               f"3-button metric switcher, self-contained HTML (no remote resources)")
-        print("\nDemo completed successfully.")
+        print("Demo completed successfully.")
     return 0

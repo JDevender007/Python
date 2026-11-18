@@ -1130,5 +1130,5 @@ def run_demo() -> int:
           "ranked CE/EC/CS with 5/5 checks while one forced 'Z' grade failed "
           "exactly 1, and the file round-tripped byte for byte with no cgpa "
           "in it")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

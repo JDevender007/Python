@@ -284,12 +284,11 @@ def run_demo(csv_path: Path | None = None) -> int:
     assert report.total_orders == len(frame)
     segment_sum = float(report.by_segment["region"]["revenue"].sum())
     assert abs(segment_sum - report.total_revenue) < 0.01, "region split mismatch"
-    print(f"\nCross-checks OK: regions sum to ${segment_sum:,.2f}")
-
     # quarterly view for a coarser cut
     quarterly = analyze(frame, period="Q")
     print(f"Quarterly buckets: {len(quarterly.by_period)} "
           f"(peak ${quarterly.by_period['revenue'].max():,.2f})")
 
-    print("\nDemo completed successfully.")
+    print(f"\nCross-checks OK: regions sum to ${segment_sum:,.2f}")
+    print("Demo completed successfully.")
     return 0

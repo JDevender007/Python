@@ -372,5 +372,5 @@ def run_demo(data_dir: Path | None = None) -> int:
     print("\nCross-checks OK: 24/24 frames verified, <=1.5 px tracking error "
           "vs truth, correct directions, blob area, empty-frame None, "
           "deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

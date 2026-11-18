@@ -700,5 +700,5 @@ def run_demo(image_path: Path | None = None) -> int:
           "exactly, PSNR and bit rate are monotone in quality, quality 50 "
           "compresses below 3 bpp, DC holds most of the energy, "
           "deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

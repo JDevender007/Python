@@ -1,4 +1,4 @@
-# Bundled sample requirements — parsed and checked fully OFFLINE.
+# Bundled sample requirements -- parsed and checked fully OFFLINE.
 # Nothing is installed from this file; installed versions are read from
 # local package metadata only (importlib.metadata), never from an index.
 

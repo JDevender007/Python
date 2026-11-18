@@ -855,7 +855,7 @@ def run_demo() -> int:
           f"{legacy_percentage_change(0.0, 1299.0):.1f}%, and "
           f"{sum(1 for _, okay in checks if okay)}/{len(checks)} checks hold")
 
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0
 
 

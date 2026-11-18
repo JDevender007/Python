@@ -382,5 +382,5 @@ def run_demo(data_dir: Path | None = None) -> int:
     print("\nCross-checks OK: dataset validated, standardisation exact, "
           "losses finite, coverage and mode balance asserted, sampling "
           "deterministic, training reproducible")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

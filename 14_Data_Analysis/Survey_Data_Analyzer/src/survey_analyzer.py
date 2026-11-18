@@ -330,9 +330,6 @@ def run_demo(csv_path: Path | None = None) -> int:
     # each crosstab row sums to 100%
     row_sums = report.crosstab.sum(axis=1)
     assert ((row_sums - 100).abs() < 0.1).all(), "crosstab rows must sum to 100%"
-    print(f"\nCross-checks OK: distribution sums to {total_pct:.0f}%, "
-          f"weighted means match (NPS {report.recommend['nps']:+.0f})")
-
     # a different grouping proves the cross-tab follows the --group option
     by_gender = analyze(frame, group="gender")
     assert set(by_gender.crosstab.columns) == set(frame["gender"].unique()), \
@@ -340,5 +337,7 @@ def run_demo(csv_path: Path | None = None) -> int:
     print(f"Grouped by gender instead: {len(by_gender.by_group['gender'])} groups, "
           f"mean sat {by_gender.satisfaction['mean']:.2f}")
 
-    print("\nDemo completed successfully.")
+    print(f"\nCross-checks OK: distribution sums to {total_pct:.0f}%, "
+          f"weighted means match (NPS {report.recommend['nps']:+.0f})")
+    print("Demo completed successfully.")
     return 0

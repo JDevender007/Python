@@ -721,5 +721,5 @@ def run_demo(data_dir: Path | None = None) -> int:
           "collapses nine noisy readings to one edge, PWM samples match "
           "the configured duty exactly, the bundled scenario replays "
           "identically, and every guard rail fires")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -420,5 +420,5 @@ def run_demo(csv_path: Path | None = None) -> int:
     print(f"\nCross-checks OK: hold-out {result.test_accuracy:.3f}, "
           f"F1 {result.f1:.3f}, confusion counts {result.test_rows} rows, "
           f"vocab {result.vocab_size}, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

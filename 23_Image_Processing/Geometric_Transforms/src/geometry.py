@@ -483,5 +483,5 @@ def run_demo(image_path: Path | None = None) -> int:
           f"rotate round-trip {round_trip:.1f} dB, compose == steps "
           f"{compose_diff:.1f} dB (reversed {wrong_order:.1f} dB), "
           f"deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

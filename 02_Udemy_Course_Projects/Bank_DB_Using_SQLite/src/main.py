@@ -1,4 +1,4 @@
-﻿"""Command line entry point for the bank database.
+"""Command line entry point for the bank database.
 
 Usage
 -----

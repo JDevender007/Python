@@ -478,5 +478,5 @@ def run_demo(json_path: Path | None = None) -> int:
     print("\nCross-checks OK: bundled sample matched exactly, deterministic "
           "re-run, spike +15 C, dropout drops 3 rows, humidity in 0..100, "
           "CSV round-trip, summary totals match")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

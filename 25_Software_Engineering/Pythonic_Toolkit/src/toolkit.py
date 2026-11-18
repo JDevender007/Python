@@ -587,5 +587,5 @@ def run_demo() -> int:
     print(f"\nCross-checks OK: {len(RECIPE_NAMES)} recipes, "
           f"{len(records)} records re-validated, chunk/window arithmetic, "
           f"cache hits={info.hits}")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

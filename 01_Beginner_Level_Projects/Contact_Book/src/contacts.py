@@ -1,7 +1,7 @@
 """An address book: validated contacts, an in-memory repository, search, merge
 and CSV/JSON persistence.
 
-The interesting part is not storing names — it is deciding what a *valid*
+The interesting part is not storing names -- it is deciding what a *valid*
 contact is, and refusing to store anything else:
 
     email   one '', a non-empty local part, a domain with a dot, no spaces
@@ -587,6 +587,6 @@ def run_demo() -> int:
           "re-validated, 2 merge policies with exact counts, unknown policy "
           "refused, JSON and CSV round-trips lossless, remove and missing-id "
           "lookup, deterministic seed")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0
 

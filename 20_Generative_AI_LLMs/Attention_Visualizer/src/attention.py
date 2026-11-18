@@ -494,5 +494,5 @@ def run_demo(data_dir: Path | None = None) -> int:
     print(f"\nCross-checks OK: {len(sentences)} sentences analysed, softmax "
           f"matches the naive formula, attention rows sum to 1, causal mask "
           f"exact, entropy within [0, {ceiling:.2f}], deterministic maps")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -779,7 +779,7 @@ def run_demo(path: Path | None = None) -> int:
           f"first release has no rollback target and ends in "
           f"rollback_failed, illegal transitions are refused, budget "
           f"arithmetic matches the formula, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0
 
 

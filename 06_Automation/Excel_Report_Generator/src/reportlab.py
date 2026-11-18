@@ -666,5 +666,5 @@ def run_demo() -> int:
           f"3.19 where round() gives 318 cents, and "
           f"{sum(1 for _, okay in checks if okay)}/{len(checks)} checks hold")
 
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

@@ -927,5 +927,5 @@ def run_demo() -> int:
           "had 4 open loans with 4 days late and a 100 cent fine on "
           "2026-03-10, one forced loan failed exactly one of 5 checks, and "
           "the file round-tripped byte for byte")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

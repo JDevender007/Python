@@ -397,5 +397,5 @@ def run_demo(data_dir: Path | None = None) -> int:
           "injected spike and drop are flagged, the 5-sample gap and "
           "7-sample flatline are found, resampling conserves rows, "
           "correlation is symmetric")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0

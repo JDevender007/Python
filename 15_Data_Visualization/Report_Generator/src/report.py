@@ -532,5 +532,5 @@ def run_demo(out_dir: Path | None = None, quiet: bool = False) -> int:
         print(f"Wrote {md_path} ({md_path.stat().st_size:,} bytes)")
         print(f"Cross-checks OK: totals partition {len(frame)} rows, "
               f"{len(CHARTS)} base64 charts embedded, no external references")
-        print("\nDemo completed successfully.")
+        print("Demo completed successfully.")
     return 0

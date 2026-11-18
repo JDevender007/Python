@@ -335,5 +335,5 @@ def run_demo(corpus_path: str | Path | None = None,
     print(f"\nCross-checks OK: {len(result.tokens)} tokens, "
           f"{result.removed} stopwords removed, {len(result.grams)} bigrams, "
           f"{len(set(result.stems))} unique stems, deterministic re-run")
-    print("\nDemo completed successfully.")
+    print("Demo completed successfully.")
     return 0
