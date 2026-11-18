@@ -1,0 +1,6 @@
+label,algorithm,salt,digest,mode
+alice,sha256,,a941a4c4fd0c01cddef61b8be963bf4c1e2b0811c037ce3f1835fddf6ef6c223,wordlist
+bob,md5,,0acf4539a14b3aa27deeb4cbdf6e989f,wordlist
+carol,sha256,s3cr3t,29f207a3ec26bd2edfc10c0b531157d5388ffc606415f57825df303105beb140,wordlist
+dave,sha256,,c4bbcb1fbec99d65bf59d85c8cb62ee2db963f0fe106f483d9afa73bd4e39a8a,wordlist
+erin,sha256,,73b3062d0cb20fb0f594bb458215e30cc516e65cf8e1d686fed19393544435b1,pin4

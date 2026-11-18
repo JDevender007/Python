@@ -1,417 +1,795 @@
-"""Packet capture analysis: protocol stats, talkers, ports, and timelines.
+"""An IPv4 header is a bit field, and every field has a unit.
 
-Packets are analysed offline — either from a bundled synthetic capture built
-with scapy (the demo) or from a `.pcap` file you provide. Live sniffing is
-supported behind an explicit `--live` flag and requires Npcap/WinPcap plus
-authorization on the network you capture.
+The legacy analyser is the one every "parse a pcap in 30 lines" post contains:
 
-Everything the demo does happens on the local machine with generated packets:
-no network, no privileged capture.
+    offset = 20                       # the IP header is 20 bytes
+    src_port = int.from_bytes(raw[offset:offset + 2], "big")
+    field = int.from_bytes(raw[6:8], "big")
+    flags = field & 0x7
+    fragment_offset = field
+    valid = (sum(raw[:offset]) & 0xFFFF) == 0
+    payload = len(raw) - offset - 8
+
+Each line is a unit error, and each one produces a plausible number.
+
+**1. The header length is counted in 32-bit words.** The low nibble of the
+first byte is the IHL, so a header with four bytes of TCP options is 24 bytes,
+not 20. Packet 2 in the bundled capture is exactly that: reading ports at byte
+20 lands inside the option bytes and reports `257` and `256` instead of `8443`
+and `51001`.
+
+**2. Flags and the fragment offset share one 16-bit field.** The three flags are
+the *top* bits and the offset is the low thirteen, counted in 8-byte units.
+`field & 0x7` reads the bottom of the offset and calls it flags, and taking the
+whole field as the offset turns a plain DF packet into a fragment at byte
+131072. Packet 4 (first fragment) then reads as "no flags, offset 8192 units"
+and packet 5 (last fragment) as "more fragments follow".
+
+**3. A checksum is verified over the header with its own field zeroed.** The
+one's-complement sum of a *correct* header is `0xFFFF`, not zero; a sum that
+includes the checksum field can only be zero when the header is wrong. The
+legacy test therefore rejects all six packets while the rebuild accepts five and
+rejects exactly the one whose TTL was changed after the checksum was computed.
+
+**4. The total length is the authority, and a short capture is disclosed.**
+Packet 3 declares 40 bytes and the capture holds 36. Subtracting the captured
+size reports 8 payload bytes and never mentions the other 4; the rebuild
+reports `declared 12, captured 8, truncated by 4`.
+
+The rebuild reads a bundled text capture (one packet per line, `index | hex`),
+validates every length before slicing, decodes the bit fields from the field
+they actually live in, verifies the checksum the way the standard says to, and
+prints the legacy numbers beside the correct ones. No socket, no binary file,
+no clock.
 """
 
 from __future__ import annotations
 
-import logging
-import warnings
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Any, Iterable
+from typing import Any, Callable, Sequence
 
-# Silence scapy's chatty import-time loggers before loading its layers.
-for _name in ("scapy.runtime", "scapy.loading", "scapy.utils"):
-    logging.getLogger(_name).setLevel(logging.ERROR)
-# scapy's ipsec module triggers a third-party TripleDES deprecation warning.
-warnings.filterwarnings(
-    "ignore", message=".*TripleDES.*", category=DeprecationWarning
-)
+DATA_DIR = Path(__file__).resolve().parent.parent / "data"
+CAPTURE_FILE = DATA_DIR / "capture.txt"
 
-from scapy.layers.dns import DNS, DNSQR  # noqa: E402
-from scapy.layers.inet import ICMP, IP, TCP, UDP  # noqa: E402
-from scapy.packet import Packet, Raw  # noqa: E402
-from scapy.utils import rdpcap, wrpcap  # noqa: E402
+HEADER_MIN = 20
+TCP_MIN = 20
+UDP_FIXED = 8
+MAX_TOTAL = 65_535
+MAX_OFFSET_UNITS = 0x1FFF
 
-LOG = logging.getLogger("packet.analyzer")
+PROTOCOLS = {1: "icmp", 6: "tcp", 17: "udp"}
 
-PROTOCOLS = ("TCP", "UDP", "ICMP", "DNS", "OTHER")
+FLAG_NAMES = ("reserved", "df", "mf")
+
+#: The legacy parser, transcribed so the demo can print it.
+LEGACY_HEADER = "offset = 20                       # the IP header is 20 bytes"
+LEGACY_FLAGS = "flags = field & 0x7; fragment_offset = field"
+LEGACY_CHECKSUM = "valid = (sum(raw[:offset]) & 0xFFFF) == 0"
+LEGACY_PAYLOAD = "payload = len(raw) - offset - 8"
+
+HEX_DIGITS = set("0123456789abcdef")
+
+
+class PacketError(RuntimeError):
+    """Raised for input the program refuses."""
 
 
 # --------------------------------------------------------------------------- #
-# Packet records
+# Validation
 # --------------------------------------------------------------------------- #
-@dataclass
-class PacketRecord:
-    """Flat, analysis-friendly view of one packet."""
+def _text(value: object, name: str) -> str:
+    if not isinstance(value, str):
+        raise PacketError(f"{name} must be text, got {type(value).__name__}")
+    if not value.strip():
+        raise PacketError(f"{name} must not be empty")
+    return value
+
+
+def _whole(value: object, name: str) -> int:
+    if isinstance(value, bool) or not isinstance(value, int):
+        raise PacketError(f"{name} must be an integer, got {type(value).__name__}")
+    return value
+
+
+def _positive(value: object, name: str) -> int:
+    number = _whole(value, name)
+    if number <= 0:
+        raise PacketError(f"{name} must be positive, got {number}")
+    return number
+
+
+def divide_half_up(numerator: int, denominator: int) -> int:
+    """Integer division rounding halves away from zero, with no float."""
+    top = _whole(numerator, "numerator")
+    bottom = _positive(denominator, "denominator")
+    sign = -1 if top < 0 else 1
+    magnitude = abs(top)
+    return sign * ((magnitude * 2 + bottom) // (2 * bottom))
+
+
+def format_bp(basis_points: int) -> str:
+    """Render hundredths of a percent as a two-place percentage."""
+    value = _whole(basis_points, "basis_points")
+    sign = "-" if value < 0 else ""
+    magnitude = abs(value)
+    return f"{sign}{magnitude // 100}.{magnitude % 100:02d}"
+
+
+def parse_hex(text: str, name: str = "hex") -> bytes:
+    """Strict two-digit byte tokens, so a stray nibble is refused by name."""
+    raw = _text(text, name).strip()
+    tokens = raw.split()
+    if not tokens:
+        raise PacketError(f"{name} holds no bytes")
+    out = bytearray()
+    for token in tokens:
+        if len(token) != 2 or not set(token.lower()) <= HEX_DIGITS:
+            raise PacketError(f"{name} has a token that is not two hex digits: {token!r}")
+        out.append(int(token, 16))
+    return bytes(out)
+
+
+# --------------------------------------------------------------------------- #
+# Records
+# --------------------------------------------------------------------------- #
+@dataclass(frozen=True)
+class Packet:
+    """One captured frame, exactly as many bytes as the capture holds."""
 
     index: int
-    timestamp: float
-    src: str
-    dst: str
-    proto: str
-    src_port: int | None
-    dst_port: int | None
-    length: int
-    info: str = ""
+    raw: bytes
 
     @property
-    def ports(self) -> tuple[int, ...]:
-        return tuple(p for p in (self.src_port, self.dst_port) if p is not None)
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "index": self.index,
-            "timestamp": self.timestamp,
-            "src": self.src,
-            "dst": self.dst,
-            "proto": self.proto,
-            "src_port": self.src_port,
-            "dst_port": self.dst_port,
-            "length": self.length,
-            "info": self.info,
-        }
+    def captured(self) -> int:
+        return len(self.raw)
 
 
-def record_from_scapy(packet: Packet, index: int) -> PacketRecord:
-    """Convert a scapy packet into a PacketRecord."""
-    timestamp = float(getattr(packet, "time", 0.0))
-    src = dst = ""
-    proto = "OTHER"
-    src_port = dst_port = None
-    info = ""
+@dataclass(frozen=True)
+class Decoded:
+    """What the header says, read from the fields the header actually has."""
 
-    if IP in packet:
-        ip = packet[IP]
-        src, dst = ip.src, ip.dst
+    index: int
+    version: int
+    ihl_words: int
+    ihl_bytes: int
+    total_length: int
+    protocol: int
+    protocol_name: str
+    flags: int
+    flag_names: tuple[str, ...]
+    fragment_offset_units: int
+    fragment_offset_bytes: int
+    ttl: int
+    src: str
+    dst: str
+    checksum_stored: int
+    checksum_computed: int
+    transport_header_bytes: int
+    src_port: int | None
+    dst_port: int | None
+    declared_payload: int
+    captured_payload: int
+    truncated_by: int
 
-    if DNS in packet:
-        dns = packet[DNS]
-        proto = "DNS"
-        if UDP in packet:
-            src_port = packet[UDP].sport
-            dst_port = packet[UDP].dport
-        elif TCP in packet:
-            src_port = packet[TCP].sport
-            dst_port = packet[TCP].dport
-        if dns.qr == 0 and dns.qd is not None:
-            info = f"query {dns.qd[DNSQR].qname!r}"
-        elif dns.qr == 1:
-            info = f"response rcode={dns.rcode}"
-    elif TCP in packet:
-        proto = "TCP"
-        tcp = packet[TCP]
-        src_port, dst_port = tcp.sport, tcp.dport
-        info = f"flags={tcp.flags}"
-        if Raw in packet:
-            payload = bytes(packet[Raw].load)[:40]
-            info += f" payload={payload!r}"
-    elif UDP in packet:
-        proto = "UDP"
-        udp = packet[UDP]
-        src_port, dst_port = udp.sport, udp.dport
-        # udp.len is only computed once the packet is built; fall back to wire size
-        info = f"len={udp.len if udp.len is not None else len(packet)}"
-    elif ICMP in packet:
-        proto = "ICMP"
-        icmp = packet[ICMP]
-        info = f"type={icmp.type} code={icmp.code}"
-    elif IP in packet:
-        proto = f"IP-{packet[IP].proto}"
+    @property
+    def checksum_ok(self) -> bool:
+        return self.checksum_stored == self.checksum_computed
 
-    return PacketRecord(
-        index=index,
-        timestamp=timestamp,
-        src=src or "-",
-        dst=dst or "-",
-        proto=proto,
-        src_port=src_port,
-        dst_port=dst_port,
-        length=len(packet),
-        info=info,
-    )
+    @property
+    def has_options(self) -> bool:
+        return self.ihl_bytes > HEADER_MIN
+
+    @property
+    def is_fragment(self) -> bool:
+        return self.fragment_offset_units > 0 or bool(self.flags & 0b001)
 
 
-def records_from_packets(packets: Iterable[Packet]) -> list[PacketRecord]:
-    """Convert an iterable of scapy packets into indexed records."""
-    return [record_from_scapy(pkt, i) for i, pkt in enumerate(packets)]
+@dataclass(frozen=True)
+class LegacyView:
+    """The numbers the fixed-offset parser produces for the same bytes."""
+
+    index: int
+    src_port: int
+    dst_port: int
+    flags: int
+    fragment_offset_units: int
+    checksum_valid: bool
+    payload: int
 
 
 # --------------------------------------------------------------------------- #
-# Synthetic demo capture (fully offline)
+# Checksums
 # --------------------------------------------------------------------------- #
-def synthesize_demo_capture(start: float = 1_700_000_000.0) -> list[Packet]:
-    """Build a small, realistic-looking capture entirely in memory.
+def ones_sum(data: bytes) -> int:
+    """The one's-complement sum of 16-bit big-endian words, folded once."""
+    raw = bytes(data)
+    if len(raw) % 2:
+        raw += b"\x00"
+    total = 0
+    for index in range(0, len(raw), 2):
+        total += (raw[index] << 8) | raw[index + 1]
+    while total >> 16:
+        total = (total & 0xFFFF) + (total >> 16)
+    return total
 
-    Contains a DNS exchange, an HTTP request/response pair on a TCP
-    handshake, an ICMP echo, and NTP-style UDP traffic — enough to exercise
-    every analysis path.
-    """
+
+def header_checksum(header: bytes) -> int:
+    """The checksum the standard defines: the field zeroed, then complemented."""
+    raw = bytes(header)
+    if len(raw) < HEADER_MIN:
+        raise PacketError(f"a header is at least {HEADER_MIN} bytes, got {len(raw)}")
+    zeroed = raw[:10] + b"\x00\x00" + raw[12:]
+    return (~ones_sum(zeroed)) & 0xFFFF
+
+
+def checksum_is_valid(header: bytes) -> bool:
+    """A correct header sums to 0xFFFF once its own checksum is included."""
+    return ones_sum(header) == 0xFFFF
+
+
+# --------------------------------------------------------------------------- #
+# Capture parsing
+# --------------------------------------------------------------------------- #
+def parse_capture(text: str) -> list[Packet]:
+    """Read `index | hex bytes` records, refusing a gap or a stray token."""
+    body = _text(text, "capture")
     packets: list[Packet] = []
-    t = start
-
-    def add(packet: Packet, step: float) -> None:
-        nonlocal t
-        packet.time = t
-        packets.append(packet)
-        t += step
-
-    # DNS query + response
-    dns_q = IP(src="192.168.1.10", dst="8.8.8.8") / UDP(sport=51000, dport=53) / \
-        DNS(rd=1, qd=DNSQR(qname="example.com"))
-    add(dns_q, 0.02)
-    dns_r = IP(src="8.8.8.8", dst="192.168.1.10") / UDP(sport=53, dport=51000) / \
-        DNS(qr=1, aa=1, qd=DNSQR(qname="example.com"))
-    add(dns_r, 0.30)
-
-    # TCP handshake
-    add(IP(src="192.168.1.10", dst="93.184.216.34") /
-        TCP(sport=40001, dport=80, flags="S", seq=1000), 0.01)
-    add(IP(src="93.184.216.34", dst="192.168.1.10") /
-        TCP(sport=80, dport=40001, flags="SA", seq=5000, ack=1001), 0.01)
-    add(IP(src="192.168.1.10", dst="93.184.216.34") /
-        TCP(sport=40001, dport=80, flags="A", seq=1001, ack=5001), 0.05)
-
-    # HTTP request with payload
-    add(IP(src="192.168.1.10", dst="93.184.216.34") /
-        TCP(sport=40001, dport=80, flags="PA", seq=1001, ack=5001) /
-        Raw(load=b"GET /index.html HTTP/1.1\r\nHost: example.com\r\n\r\n"), 0.20)
-    # HTTP response
-    add(IP(src="93.184.216.34", dst="192.168.1.10") /
-        TCP(sport=80, dport=40001, flags="PA", seq=5001, ack=1400) /
-        Raw(load=b"HTTP/1.1 200 OK\r\nContent-Length: 13\r\n\r\nhello world\n"), 0.01)
-    # FIN
-    add(IP(src="192.168.1.10", dst="93.184.216.34") /
-        TCP(sport=40001, dport=80, flags="FA", seq=1400, ack=5100), 0.02)
-
-    # ICMP echo request + reply
-    add(IP(src="192.168.1.10", dst="1.1.1.1") / ICMP(type=8, code=0, id=1, seq=1) /
-        Raw(load=b"ping-payload"), 0.05)
-    add(IP(src="1.1.1.1", dst="192.168.1.10") / ICMP(type=0, code=0, id=1, seq=1) /
-        Raw(load=b"ping-payload"), 0.40)
-
-    # NTP-style UDP chatter
-    add(IP(src="192.168.1.10", dst="123.123.123.123") /
-        UDP(sport=52000, dport=123) / Raw(load=b"\x1b" + b"\x00" * 47), 0.05)
-    add(IP(src="123.123.123.123", dst="192.168.1.10") /
-        UDP(sport=123, dport=52000) / Raw(load=b"\x24" + b"\x00" * 47), 0.05)
-
-    # Extra DNS query for variety
-    add(IP(src="192.168.1.11", dst="8.8.8.8") / UDP(sport=51111, dport=53) /
-        DNS(rd=1, qd=DNSQR(qname="python.org")), 0.05)
-
+    for number, line in enumerate(body.splitlines(), start=1):
+        stripped = line.strip()
+        if not stripped or stripped.startswith("#"):
+            continue
+        if "|" not in stripped:
+            raise PacketError(f"line {number} is not an 'index | hex' record")
+        left, right = stripped.split("|", 1)
+        try:
+            index = int(left.strip(), 10)
+        except ValueError as exc:
+            raise PacketError(f"line {number} has no integer index: {left.strip()!r}") from exc
+        if index != len(packets) + 1:
+            raise PacketError(
+                f"line {number} is packet {index}, but packet {len(packets) + 1} was due"
+            )
+        raw = parse_hex(right, f"packet {index}")
+        if len(raw) < HEADER_MIN:
+            raise PacketError(
+                f"packet {index} holds {len(raw)} bytes, under the {HEADER_MIN}-byte header"
+            )
+        packets.append(Packet(index=index, raw=raw))
+    if not packets:
+        raise PacketError("the capture holds no packets")
     return packets
 
 
-# --------------------------------------------------------------------------- #
-# PCAP I/O
-# --------------------------------------------------------------------------- #
-def load_pcap(path: str | Path) -> list[PacketRecord]:
-    """Read a pcap/pcapng file and return its records."""
-    source = Path(path)
-    if not source.exists():
-        raise FileNotFoundError(f"pcap not found: {source}")
+def load_capture(path: str | Path | None = None) -> list[Packet]:
+    target = Path(path) if path is not None else CAPTURE_FILE
+    if not target.is_file():
+        raise PacketError(f"file not found: {target.name}")
     try:
-        packets = rdpcap(str(source))
-    except Exception as exc:  # scapy raises assorted errors on bad files
-        raise ValueError(f"could not read pcap {source}: {exc}") from exc
-    if len(packets) == 0:
-        raise ValueError(f"pcap contains no packets: {source}")
-    return records_from_packets(packets)
-
-
-def save_pcap(packets: list[Packet], path: str | Path) -> Path:
-    """Write packets to a pcap file (used by tests and export)."""
-    target = Path(path)
-    target.parent.mkdir(parents=True, exist_ok=True)
-    wrpcap(str(target), packets)
-    return target
+        body = target.read_bytes().decode("ascii")
+    except UnicodeDecodeError as exc:
+        raise PacketError(f"{target.name} is not ASCII text") from exc
+    return parse_capture(body)
 
 
 # --------------------------------------------------------------------------- #
-# Filtering and analysis
+# Decoding one packet
 # --------------------------------------------------------------------------- #
-def apply_filters(
-    records: list[PacketRecord],
+def dotted(raw: bytes) -> str:
+    if len(raw) != 4:
+        raise PacketError(f"an IPv4 address is 4 bytes, got {len(raw)}")
+    return ".".join(str(byte) for byte in raw)
+
+
+def flag_names_of(flags: int) -> tuple[str, ...]:
+    named = tuple(
+        name for bit, name in ((4, "reserved"), (2, "df"), (1, "mf")) if flags & bit
+    )
+    return named
+
+
+def decode(packet: Packet) -> Decoded:
+    """Decode one packet, refusing anything whose lengths disagree."""
+    raw = bytes(packet.raw)
+    index = packet.index
+    if len(raw) < HEADER_MIN:
+        raise PacketError(f"packet {index} holds {len(raw)} bytes, under {HEADER_MIN}")
+    version = raw[0] >> 4
+    if version != 4:
+        raise PacketError(f"packet {index} is version {version}, not IPv4")
+    ihl_words = raw[0] & 0x0F
+    if ihl_words < 5:
+        raise PacketError(f"packet {index} declares IHL {ihl_words}, under the 5-word minimum")
+    ihl_bytes = ihl_words * 4
+    if ihl_bytes > len(raw):
+        raise PacketError(
+            f"packet {index} declares a {ihl_bytes}-byte header but holds {len(raw)} bytes"
+        )
+    total_length = int.from_bytes(raw[2:4], "big")
+    if total_length < ihl_bytes:
+        raise PacketError(
+            f"packet {index} declares {total_length} bytes, less than its {ihl_bytes}-byte header"
+        )
+    if total_length > MAX_TOTAL:
+        raise PacketError(f"packet {index} declares {total_length} bytes, over {MAX_TOTAL}")
+    field = int.from_bytes(raw[6:8], "big")
+    flags = field >> 13
+    offset_units = field & MAX_OFFSET_UNITS
+    protocol = raw[9]
+    checksum_stored = int.from_bytes(raw[10:12], "big")
+    checksum_computed = header_checksum(raw[:ihl_bytes])
+
+    transport_bytes = 0
+    src_port: int | None = None
+    dst_port: int | None = None
+    if offset_units == 0 and protocol in (6, 17):
+        if protocol == 6:
+            if len(raw) < ihl_bytes + TCP_MIN:
+                raise PacketError(
+                    f"packet {index} holds {len(raw)} bytes, short of its TCP header"
+                )
+            data_offset = (raw[ihl_bytes + 12] >> 4) * 4
+            if data_offset < TCP_MIN:
+                raise PacketError(
+                    f"packet {index} declares a {data_offset}-byte TCP header, under {TCP_MIN}"
+                )
+            transport_bytes = data_offset
+        else:
+            if len(raw) < ihl_bytes + UDP_FIXED:
+                raise PacketError(
+                    f"packet {index} holds {len(raw)} bytes, short of its UDP header"
+                )
+            transport_bytes = UDP_FIXED
+        src_port = int.from_bytes(raw[ihl_bytes:ihl_bytes + 2], "big")
+        dst_port = int.from_bytes(raw[ihl_bytes + 2:ihl_bytes + 4], "big")
+
+    declared_payload = total_length - ihl_bytes - transport_bytes
+    if declared_payload < 0:
+        raise PacketError(
+            f"packet {index} declares {total_length} bytes for "
+            f"{ihl_bytes + transport_bytes} bytes of headers"
+        )
+    truncated_by = max(0, total_length - len(raw))
+    captured_payload = declared_payload - truncated_by
+    if captured_payload < 0:
+        raise PacketError(
+            f"packet {index} is short by {truncated_by} bytes, more than its "
+            f"{declared_payload}-byte payload"
+        )
+    return Decoded(
+        index=index,
+        version=version,
+        ihl_words=ihl_words,
+        ihl_bytes=ihl_bytes,
+        total_length=total_length,
+        protocol=protocol,
+        protocol_name=PROTOCOLS.get(protocol, f"ip-{protocol}"),
+        flags=flags,
+        flag_names=flag_names_of(flags),
+        fragment_offset_units=offset_units,
+        fragment_offset_bytes=offset_units * 8,
+        ttl=raw[8],
+        src=dotted(raw[12:16]),
+        dst=dotted(raw[16:20]),
+        checksum_stored=checksum_stored,
+        checksum_computed=checksum_computed,
+        transport_header_bytes=transport_bytes,
+        src_port=src_port,
+        dst_port=dst_port,
+        declared_payload=declared_payload,
+        captured_payload=captured_payload,
+        truncated_by=truncated_by,
+    )
+
+
+# --------------------------------------------------------------------------- #
+# The legacy view
+# --------------------------------------------------------------------------- #
+def legacy_view(packet: Packet) -> LegacyView:
+    """What the fixed-offset parser reports for the same bytes."""
+    raw = bytes(packet.raw)
+    if len(raw) < HEADER_MIN:
+        raise PacketError(f"packet {packet.index} is under {HEADER_MIN} bytes")
+    field = int.from_bytes(raw[6:8], "big")
+    return LegacyView(
+        index=packet.index,
+        src_port=int.from_bytes(raw[20:22], "big"),
+        dst_port=int.from_bytes(raw[22:24], "big"),
+        flags=field & 0x7,
+        fragment_offset_units=field,
+        checksum_valid=(ones_sum(raw[:HEADER_MIN]) & 0xFFFF) == 0,
+        payload=len(raw) - HEADER_MIN - UDP_FIXED,
+    )
+
+
+# --------------------------------------------------------------------------- #
+# Measurement
+# --------------------------------------------------------------------------- #
+def measure(path: str | Path | None = None) -> dict[str, Any]:
+    packets = load_capture(path)
+    decoded = [decode(packet) for packet in packets]
+    views = [legacy_view(packet) for packet in packets]
+    by_index = {row.index: row for row in decoded}
+    views_by_index = {row.index: row for row in views}
+    return {
+        "packets": packets,
+        "decoded": decoded,
+        "views": views,
+        "by_index": by_index,
+        "views_by_index": views_by_index,
+        "valid_checksums": [row.index for row in decoded if row.checksum_ok],
+        "bad_checksums": [row.index for row in decoded if not row.checksum_ok],
+        "legacy_valid": [row.index for row in views if row.checksum_valid],
+        "options_packets": [row.index for row in decoded if row.has_options],
+        "fragments": [row.index for row in decoded if row.is_fragment],
+        "truncated": [row.index for row in decoded if row.truncated_by],
+        "declared_payload": sum(row.declared_payload for row in decoded),
+        "captured_payload": sum(row.captured_payload for row in decoded),
+        "legacy_payload": sum(row.payload for row in views),
+        "truncated_bytes": sum(row.truncated_by for row in decoded),
+        "header_bytes": sum(row.ihl_bytes for row in decoded),
+        "total_bytes": sum(row.total_length for row in decoded),
+        "captured_bytes": sum(packet.captured for packet in packets),
+    }
+
+
+def report(measured: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "packets": len(measured["packets"]),
+        "captured_bytes": measured["captured_bytes"],
+        "header_bytes": measured["header_bytes"],
+        "total_bytes": measured["total_bytes"],
+        "valid_checksums": measured["valid_checksums"],
+        "bad_checksums": measured["bad_checksums"],
+        "legacy_valid": measured["legacy_valid"],
+        "options_packets": measured["options_packets"],
+        "fragments": measured["fragments"],
+        "truncated": measured["truncated"],
+        "truncated_bytes": measured["truncated_bytes"],
+        "declared_payload": measured["declared_payload"],
+        "captured_payload": measured["captured_payload"],
+        "legacy_payload": measured["legacy_payload"],
+        "decoded": [
+            {
+                "index": row.index,
+                "version": row.version,
+                "ihl_words": row.ihl_words,
+                "ihl_bytes": row.ihl_bytes,
+                "total_length": row.total_length,
+                "protocol": row.protocol_name,
+                "flags": list(row.flag_names),
+                "fragment_offset_units": row.fragment_offset_units,
+                "fragment_offset_bytes": row.fragment_offset_bytes,
+                "ttl": row.ttl,
+                "src": row.src,
+                "dst": row.dst,
+                "checksum_ok": row.checksum_ok,
+                "src_port": row.src_port,
+                "dst_port": row.dst_port,
+                "declared_payload": row.declared_payload,
+                "captured_payload": row.captured_payload,
+                "truncated_by": row.truncated_by,
+            }
+            for row in measured["decoded"]
+        ],
+        "legacy": [
+            {
+                "index": row.index,
+                "src_port": row.src_port,
+                "dst_port": row.dst_port,
+                "flags": row.flags,
+                "fragment_offset_units": row.fragment_offset_units,
+                "checksum_valid": row.checksum_valid,
+                "payload": row.payload,
+            }
+            for row in measured["views"]
+        ],
+    }
+
+
+# --------------------------------------------------------------------------- #
+# Audit
+# --------------------------------------------------------------------------- #
+def _guard(check) -> bool:
+    try:
+        return bool(check())
+    except Exception:
+        return False
+
+
+def _refuses(call) -> bool:
+    try:
+        call()
+    except PacketError:
+        return True
+    return False
+
+
+def audit(
+    measured: dict[str, Any],
     *,
-    host: str | None = None,
-    proto: str | None = None,
-    port: int | None = None,
-) -> list[PacketRecord]:
-    """Filter records by host (src/dst), protocol name, or port (src/dst)."""
-    result = records
-    if host:
-        result = [r for r in result if r.src == host or r.dst == host]
-    if proto:
-        wanted = proto.upper()
-        result = [r for r in result if r.proto == wanted]
-    if port is not None:
-        result = [r for r in result if port in r.ports]
-    return result
+    read_decoded: Callable[[Sequence[Packet]], list[Decoded]] | None = None,
+) -> list[tuple[str, bool]]:
+    """Every check compares the measured numbers with an independent read."""
+    reader = read_decoded or (lambda packets: [decode(packet) for packet in packets])
+    packet_rows = measured["packets"]
+    decoded = measured["decoded"]
+    by_index = measured["by_index"]
+    views = measured["views_by_index"]
 
+    def independent() -> list[Decoded]:
+        return reader(packet_rows)
 
-@dataclass
-class CaptureReport:
-    """Aggregated statistics over a set of packet records."""
+    def independent_payload() -> int:
+        total = 0
+        for row in independent():
+            if row.fragment_offset_units:
+                total += row.total_length - row.ihl_bytes
+            elif row.protocol in (6, 17):
+                total += row.total_length - row.ihl_bytes - row.transport_header_bytes
+            else:
+                total += row.total_length - row.ihl_bytes
+        return total
 
-    records: list[PacketRecord]
-    protocol_counts: dict[str, int] = field(default_factory=dict)
-    top_talkers: list[tuple[str, int, int]] = field(default_factory=list)
-    top_ports: list[tuple[int, int, int]] = field(default_factory=list)
-    timeline: list[tuple[int, int, int]] = field(default_factory=list)
-    total_packets: int = 0
-    total_bytes: int = 0
-    duration_s: float = 0.0
-
-    @property
-    def avg_packets_per_s(self) -> float:
-        return self.total_packets / self.duration_s if self.duration_s > 0 else 0.0
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "total_packets": self.total_packets,
-            "total_bytes": self.total_bytes,
-            "duration_s": round(self.duration_s, 3),
-            "avg_packets_per_s": round(self.avg_packets_per_s, 2),
-            "protocol_counts": self.protocol_counts,
-            "top_talkers": [
-                {"ip": ip, "packets": pkts, "bytes": size}
-                for ip, pkts, size in self.top_talkers
-            ],
-            "top_ports": [
-                {"port": port, "packets": pkts, "bytes": size}
-                for port, pkts, size in self.top_ports
-            ],
-            "timeline": [
-                {"second": sec, "packets": pkts, "bytes": size}
-                for sec, pkts, size in self.timeline
-            ],
-            "packets": [r.to_dict() for r in self.records],
-        }
-
-
-def analyze(records: list[PacketRecord], top: int = 5) -> CaptureReport:
-    """Compute protocol counts, talkers, ports, and a 1s timeline."""
-    report = CaptureReport(records=list(records))
-    if not records:
-        return report
-
-    report.total_packets = len(records)
-    report.total_bytes = sum(r.length for r in records)
-
-    times = [r.timestamp for r in records]
-    report.duration_s = max(times) - min(times)
-
-    for record in records:
-        report.protocol_counts[record.proto] = report.protocol_counts.get(record.proto, 0) + 1
-
-    # talkers: aggregate both directions per IP
-    talkers: dict[str, list[int]] = {}
-    for record in records:
-        for ip in (record.src, record.dst):
-            if ip in ("-", ""):
-                continue
-            entry = talkers.setdefault(ip, [0, 0])
-            entry[0] += 1
-            entry[1] += record.length
-    report.top_talkers = sorted(
-        ((ip, pkts, size) for ip, (pkts, size) in talkers.items()),
-        key=lambda item: (-item[2], item[0]),
-    )[:top]
-
-    ports: dict[int, list[int]] = {}
-    for record in records:
-        for port in record.ports:
-            entry = ports.setdefault(port, [0, 0])
-            entry[0] += 1
-            entry[1] += record.length
-    report.top_ports = sorted(
-        ((port, pkts, size) for port, (pkts, size) in ports.items()),
-        key=lambda item: (-item[1], item[0]),
-    )[:top]
-
-    base = min(times)
-    buckets: dict[int, list[int]] = {}
-    for record in records:
-        second = int(record.timestamp - base)
-        entry = buckets.setdefault(second, [0, 0])
-        entry[0] += 1
-        entry[1] += record.length
-    report.timeline = sorted(
-        (sec, pkts, size) for sec, (pkts, size) in buckets.items()
-    )
-    return report
+    checks = [
+        (
+            "every_packet_decodes",
+            lambda: len(independent()) == len(decoded) == 6,
+        ),
+        (
+            "the_header_length_is_counted_in_thirty_two_bit_words",
+            lambda: independent()[1].ihl_words == 6
+            and independent()[1].ihl_bytes == 24 == independent()[1].ihl_words * 4
+            and independent()[0].ihl_words == 5,
+        ),
+        (
+            "only_one_packet_carries_options",
+            lambda: measured["options_packets"] == [2],
+        ),
+        (
+            "ports_are_read_after_the_options",
+            lambda: (independent()[1].src_port, independent()[1].dst_port) == (8443, 51001),
+        ),
+        (
+            "the_legacy_parser_reads_ports_at_a_fixed_offset",
+            lambda: (views[2].src_port, views[2].dst_port) == (257, 256)
+            and (views[2].src_port, views[2].dst_port) != (8443, 51001),
+        ),
+        (
+            "flags_are_the_top_three_bits",
+            lambda: by_index[1].flags == 0b010
+            and by_index[1].flag_names == ("df",)
+            and by_index[4].flags == 0b001
+            and by_index[4].flag_names == ("mf",),
+        ),
+        (
+            "the_fragment_offset_is_the_low_thirteen_bits",
+            lambda: by_index[5].fragment_offset_units == 185
+            and by_index[5].fragment_offset_bytes == 1480,
+        ),
+        (
+            "the_legacy_flags_read_the_bottom_of_the_field",
+            lambda: views[4].flags == 0 and views[5].flags == 1,
+        ),
+        (
+            "the_legacy_offset_is_the_whole_field",
+            lambda: views[1].fragment_offset_units == 16_384
+            and views[4].fragment_offset_units == 8_192
+            and by_index[1].fragment_offset_units == 0,
+        ),
+        (
+            "only_the_two_fragments_are_marked",
+            lambda: measured["fragments"] == [4, 5],
+        ),
+        (
+            "a_continuation_fragment_has_no_transport_header",
+            lambda: by_index[5].src_port is None
+            and by_index[5].dst_port is None
+            and by_index[5].transport_header_bytes == 0,
+        ),
+        (
+            "a_first_fragment_still_has_one",
+            lambda: (by_index[4].src_port, by_index[4].dst_port) == (123, 40001),
+        ),
+        (
+            "the_checksum_is_verified_with_its_own_field_zeroed",
+            lambda: measured["valid_checksums"] == [1, 2, 3, 4, 5]
+            and by_index[1].checksum_stored == by_index[1].checksum_computed,
+        ),
+        (
+            "exactly_one_packet_fails_its_checksum",
+            lambda: measured["bad_checksums"] == [6]
+            and by_index[6].checksum_stored != by_index[6].checksum_computed,
+        ),
+        (
+            "a_correct_header_sums_to_ffff",
+            lambda: checksum_is_valid(measured["packets"][0].raw[:20]) is True
+            and checksum_is_valid(measured["packets"][5].raw[:20]) is False,
+        ),
+        (
+            "the_legacy_checksum_includes_the_field_so_nothing_verifies",
+            lambda: measured["legacy_valid"] == [] and len(measured["decoded"]) == 6,
+        ),
+        (
+            "the_total_length_is_the_authority",
+            lambda: by_index[3].total_length == 40
+            and measured["packets"][2].captured == 36,
+        ),
+        (
+            "a_short_capture_is_disclosed",
+            lambda: by_index[3].truncated_by == 4
+            and by_index[3].declared_payload == 12
+            and by_index[3].captured_payload == 8,
+        ),
+        (
+            "the_legacy_payload_uses_the_captured_size_only",
+            lambda: views[3].payload == 8
+            and measured["legacy_payload"] == 104
+            and measured["legacy_payload"] != measured["declared_payload"] == 76,
+        ),
+        (
+            "payload_accounting_matches_an_independent_sum",
+            lambda: measured["declared_payload"] == independent_payload() == 76,
+        ),
+        (
+            "a_non_ipv4_version_is_refused",
+            lambda: _refuses(lambda: decode(Packet(1, b"\x65" + b"\x00" * 19))),
+        ),
+        (
+            "an_ihl_below_five_is_refused",
+            lambda: _refuses(lambda: decode(Packet(1, b"\x44" + b"\x00" * 19))),
+        ),
+        (
+            "a_header_longer_than_the_packet_is_refused",
+            lambda: _refuses(lambda: decode(Packet(1, b"\x46" + b"\x00" * 19))),
+        ),
+        (
+            "a_capture_shorter_than_its_headers_is_refused",
+            lambda: _refuses(
+                lambda: decode(
+                    Packet(1, b"\x45\x00\x00\x08\x00\x01\x00\x00\x40\x11" + b"\x00" * 10)
+                )
+            ),
+        ),
+        (
+            "a_malformed_hex_record_is_refused",
+            lambda: _refuses(lambda: parse_capture("1 | 45 0 00\n")),
+        ),
+        (
+            "an_out_of_order_index_is_refused",
+            lambda: _refuses(lambda: parse_capture("2 | 45 00\n")),
+        ),
+        (
+            "rebuild_is_deterministic",
+            lambda: independent() == decoded,
+        ),
+    ]
+    return [(name, _guard(check)) for name, check in checks]
 
 
 # --------------------------------------------------------------------------- #
-# Rendering
+# Rendering and the demo
 # --------------------------------------------------------------------------- #
-def render_report(report: CaptureReport, show_packets: int = 0) -> str:
-    """Human-readable report used by the CLI and demo."""
-    lines: list[str] = []
-    if report.total_packets == 0:
-        return "No packets to analyse."
-
-    lines.append(
-        f"Packets  : {report.total_packets}  "
-        f"({report.total_bytes:,} bytes, {report.duration_s:.2f}s, "
-        f"{report.avg_packets_per_s:.1f} pkt/s)"
-    )
-    lines.append("Protocols: " + ", ".join(
-        f"{name}={count}" for name, count in
-        sorted(report.protocol_counts.items(), key=lambda kv: -kv[1])
-    ))
-
-    lines.append("Top talkers:")
-    for ip, pkts, size in report.top_talkers:
-        lines.append(f"  {ip:<16} {pkts:>4} pkts  {size:>8,} bytes")
-
-    lines.append("Top ports:")
-    for port, pkts, size in report.top_ports:
-        lines.append(f"  {port:<16} {pkts:>4} pkts  {size:>8,} bytes")
-
-    if report.timeline:
-        lines.append("Timeline (packets per second):")
-        peak = max(pkts for _, pkts, _ in report.timeline)
-        for sec, pkts, _size in report.timeline:
-            bar = "#" * max(1, round(pkts / peak * 20))
-            lines.append(f"  +{sec:>3}s | {bar} {pkts}")
-
-    if show_packets > 0:
-        lines.append("Packets:")
-        lines.append(f"  {'#':>3} {'PROTO':<5} {'SRC':<15} {'DST':<15} {'LEN':>5}  INFO")
-        for record in report.records[:show_packets]:
-            lines.append(
-                f"  {record.index:>3} {record.proto:<5} {record.src:<15} "
-                f"{record.dst:<15} {record.length:>5}  {record.info}"
-            )
+def render_packets(measured: dict[str, Any]) -> str:
+    lines = [
+        "  #  proto  ihl  len  cap  flags     offset  ports          payload  checksum"
+    ]
+    for row in measured["decoded"]:
+        flags = ",".join(row.flag_names) if row.flag_names else "-"
+        ports = (
+            f"{row.src_port}->{row.dst_port}"
+            if row.src_port is not None
+            else "fragment"
+        )
+        checksum = "ok" if row.checksum_ok else "BAD"
+        payload = f"{row.declared_payload}"
+        if row.truncated_by:
+            payload += f"/{row.captured_payload}"
+        lines.append(
+            f"  {row.index:<3}{row.protocol_name:<7}{row.ihl_bytes:<5}"
+            f"{row.total_length:<5}{measured['packets'][row.index - 1].captured:<5}"
+            f"{flags:<10}{row.fragment_offset_units:<8}{ports:<15}"
+            f"{payload:<9}{checksum}"
+        )
     return "\n".join(lines)
 
 
 def run_demo() -> int:
-    """Synthesise a capture in memory and analyse it — fully offline."""
-    print("=" * 60)
-    print(" NETWORK PACKET ANALYZER - offline demo")
-    print(" Packets are generated locally; nothing touches the network.")
-    print("=" * 60)
-
-    packets = synthesize_demo_capture()
-    records = records_from_packets(packets)
-    report = analyze(records)
-
-    print(f"\nSynthesised {len(packets)} packets (DNS, TCP/HTTP, ICMP, NTP).\n")
-    print(render_report(report, show_packets=len(records)))
-
-    # round-trip through a real pcap file to exercise file I/O
-    demo_dir = Path(__file__).resolve().parent.parent / "data"
-    demo_dir.mkdir(parents=True, exist_ok=True)
-    pcap_path = demo_dir / "demo_capture.pcap"
-    save_pcap(packets, pcap_path)
-    reread = load_pcap(pcap_path)
-    print(f"\nSaved and re-read {pcap_path.name}: {len(reread)} packets parsed back.")
-    assert len(reread) == len(packets)
-
-    # show a filter
-    dns_only = apply_filters(records, proto="DNS")
-    print(f"Filter proto=DNS -> {len(dns_only)} packets "
-          f"({', '.join(str(r.dst_port) for r in dns_only)})")
-
-    print("\nDemo completed successfully.")
+    measured = measure()
+    by_index = measured["by_index"]
+    views = measured["views_by_index"]
+    options = by_index[2]
+    legacy_options = views[2]
+    first_fragment = by_index[4]
+    last_fragment = by_index[5]
+    short = by_index[3]
+    print("Packet analyser -- a header is a bit field, and a field has a unit")
+    print("=" * 68)
+    print()
+    print(
+        f"Capture: {len(measured['packets'])} packets, {measured['captured_bytes']} bytes "
+        f"held, {measured['total_bytes']} declared."
+    )
+    print()
+    print(render_packets(measured))
+    print()
+    print("1. The header length is counted in 32-bit words.")
+    print("   " + LEGACY_HEADER)
+    print(
+        f"   packet 2 declares IHL {options.ihl_words}, so its header is "
+        f"{options.ihl_bytes} bytes; reading ports at byte 20 gives "
+        f"{legacy_options.src_port}->{legacy_options.dst_port},"
+    )
+    print(
+        f"   and reading them after the options gives "
+        f"{options.src_port}->{options.dst_port}."
+    )
+    print()
+    print("2. Flags and the fragment offset share one 16-bit field.")
+    print("   " + LEGACY_FLAGS)
+    print(
+        f"   packet 1 is a plain DF packet, but the legacy offset reads "
+        f"{views[1].fragment_offset_units} units ({views[1].fragment_offset_units * 8} bytes)."
+    )
+    print(
+        f"   packet 4 (first fragment) reads as flags {views[4].flags} at offset "
+        f"{views[4].fragment_offset_units}; the truth is mf at offset "
+        f"{first_fragment.fragment_offset_units}."
+    )
+    print(
+        f"   packet 5 (last fragment) reads as flags {views[5].flags}, which is MF; "
+        f"its offset {last_fragment.fragment_offset_units} units "
+        f"({last_fragment.fragment_offset_bytes} bytes) is right by accident."
+    )
+    print()
+    print("3. A checksum is verified with its own field zeroed.")
+    print("   " + LEGACY_CHECKSUM)
+    print(
+        f"   the rebuild accepts {len(measured['valid_checksums'])} of "
+        f"{len(measured['decoded'])} packets and rejects {measured['bad_checksums']}, "
+        "the one whose TTL changed."
+    )
+    print(
+        f"   the legacy test accepts {len(measured['legacy_valid'])} of "
+        f"{len(measured['decoded'])}: a correct header sums to 0xFFFF, never 0."
+    )
+    print()
+    print("4. The total length is the authority.")
+    print("   " + LEGACY_PAYLOAD)
+    print(
+        f"   packet 3 declares {short.total_length} bytes and holds "
+        f"{measured['packets'][2].captured}: payload {short.declared_payload} declared, "
+        f"{short.captured_payload} captured, truncated by {short.truncated_by}."
+    )
+    print(
+        f"   the legacy subtraction reports {views[3].payload} bytes and never mentions the "
+        f"missing {short.truncated_by}."
+    )
+    print()
+    print("Checks")
+    results = audit(measured)
+    for name, ok in results:
+        print(f"  {'PASS' if ok else 'FAIL'}  {name}")
+    passed = sum(1 for _, ok in results if ok)
+    print(f"  {passed}/{len(results)} checks pass")
+    print()
+    print(
+        "Cross-checks OK: "
+        f"{len(measured['packets'])} packets hold {measured['captured_bytes']} of "
+        f"{measured['total_bytes']} declared bytes and decode to "
+        f"{len(measured['valid_checksums'])} valid checksums against "
+        f"{len(measured['legacy_valid'])} under the legacy test; packet 2's "
+        f"{options.ihl_bytes}-byte header moves its ports from the legacy's "
+        f"{legacy_options.src_port}->{legacy_options.dst_port} to "
+        f"{options.src_port}->{options.dst_port}; the legacy offset calls a DF packet "
+        f"a fragment at {views[1].fragment_offset_units} units and reverses which "
+        f"fragment is which; payloads declare {measured['declared_payload']} bytes, "
+        f"capture {measured['captured_payload']} and the legacy reports "
+        f"{measured['legacy_payload']}; {passed}/{len(results)} checks pass."
+    )
+    print("Demo completed successfully.")
     return 0
+
+
+if __name__ == "__main__":  # pragma: no cover
+    raise SystemExit(run_demo())

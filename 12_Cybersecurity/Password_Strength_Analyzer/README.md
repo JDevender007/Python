@@ -1,145 +1,104 @@
-<div align="center">
+# Password Strength Analyzer
 
-# 🔑 Password Strength Analyzer
+Entropy is a property of a random string, not of the string someone chose. The legacy scorer is
+three lines and a magic constant:
 
-### A local password strength tool with entropy calculation, pattern detection, and realistic crack-time estimates — nothing ever leaves your machine.
-
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-
-</div>
-
----
-
-# 📖 About
-
-Password Strength Analyzer evaluates how strong a password is by combining several signals: guessing entropy (length × log2 of the charset), character-class variety, and pattern weaknesses such as common passwords, keyboard walks, numeric/letter sequences, repeated characters, and embedded years.
-
-Results include a 0–100 score, a human label, a list of concrete issues, and estimated time-to-crack at five attack rates — from throttled online login to a big GPU rig. Everything runs **in memory, locally, with no network access**.
-
----
-
-# ✨ Features
-
-- Entropy-based scoring (0–100) with five strength labels
-- Character-class detection: lowercase, uppercase, digits, symbols, unicode
-- Pattern detection: common passwords, sequences, repeats, keyboard walks, years, low variety
-- Crack-time estimates at five realistic attack rates
-- Safe display: passwords are always masked in output
-- JSON output for scripting, exit code 3 for weak passwords (CI-friendly)
-- Fully offline demo with bundled sample passwords
-- 38 passing pytest tests
-
----
-
-# 📂 Folder Structure
-
-```text
-Password_Strength_Analyzer/
-│
-├── src/
-│   ├── main.py         # CLI: demo, --password, --stdin, --json, --rate
-│   └── analyzer.py     # entropy, patterns, scoring, crack-time estimates
-│
-├── tests/
-│   └── test_analyzer.py
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
+```python
+size = 1
+for name in classes: size *= CHARSET_SIZES[name]
+entropy = len(password) * math.log2(size)
+score = int(entropy / 1.28)
 ```
 
----
+Each line is a defect, and each one produces a number that looks like a grade.
 
-# ⚙️ Installation
+**1. A character set is the sum of its classes, not the product.** A password mixing lowercase and
+uppercase draws from 26 + 26 = **52** possible characters. Multiplying gives **676**, so `log2`
+charges 9.4 bits per character instead of 5.7. `Password2024` uses three classes, so the legacy
+charset is `26 * 26 * 10 = 6760` -- a claim that 6760 different characters exist, when ASCII offers
+**95**. The legacy figure for the same 12 characters is **153 bits** against **71** for the real
+alphabet.
 
-```bash
-git clone https://github.com/JDevender007/Python.git
+**2. Entropy assumes every character was drawn at random.** `Password2024` is a dictionary word, a
+capital and a year. The formula cannot see any of that, so it awards a score of **100/100** and the
+label "very strong" to a password that a rule-based guesser reaches in a few thousand attempts. The
+rebuild keeps the random-string figure as a *ceiling*, subtracts **12 bits** of recognised
+structure, and calls the result **59 guess bits** -- `fair`. It never pretends the deduction is a
+measurement.
 
-cd 12_Cybersecurity/Password_Strength_Analyzer
+**3. Crack time is integer work, not float arithmetic.** `2 ** entropy / 2` overflows into
+imprecision long before it overflows into an exception, and `int(value)` in the formatter silently
+drops the digits that matter. The rebuild computes `1 << (bits - 1)` guesses and divides by an
+integer rate, so a run is reproducible to the second and two runs print identical bytes.
 
-python -m venv .venv
+## What this project teaches
 
-.venv\Scripts\activate
+- An alphabet is the union of its classes: 52 characters, never 676
+- Why a product of class sizes can claim more characters than exist
+- Entropy as an upper bound for *random* strings, and why chosen strings beat it
+- Structure as a documented deduction from a ceiling, not a second invented scale
+- A score that *is* the bit count, capped -- no hidden `1.28` divisor
+- Half-open score bands and the off-by-one at each boundary
+- Integer keyspaces (`1 << (bits - 1)`) and integer division for durations
+- Printing very large durations as an order of magnitude instead of a float
+- Keeping the password out of every line of output while reporting its length
+- Auditing a report against a recomputation through an injected analyser
 
-pip install -r requirements.txt
+## How to run
+
 ```
-
----
-
-# ▶️ Run
-
-```bash
-# Offline demo: analyse the bundled sample passwords
 python src/main.py --demo
-
-# Analyse one password (prefer --stdin so it stays out of shell history)
-python src/main.py --password "Tr0ub4dor&3"
-
-echo "my passphrase" | python src/main.py --stdin
-
-# Machine-readable output
-python src/main.py --stdin --json
-
-# Custom attack rate (guesses per second)
-python src/main.py --stdin --rate 1000000
+python src/main.py --demo --quiet
+python src/main.py --file data/passwords.csv --json out.json
+python src/main.py --file data/passwords.csv --audit
+python -m pytest tests -q
 ```
 
-**Exit codes:** `0` = fair or better · `3` = weak · `2` = usage error — so you can gate scripts on it.
+`--file` names a CSV with `label,password` columns. Exit code `2` means the input was refused -- a
+missing file, non-ASCII bytes, a missing column, a blank password, a duplicated label, or a
+password longer than 256 characters.
 
----
+## Project structure
 
-# 🔒 Privacy
-
-- The password is processed in memory and immediately discarded.
-- Nothing is stored, logged, or transmitted — there is no network code in this project at all.
-- Output always shows a masked form (`•••••••`), never the raw value.
-
----
-
-# 🛠 Technologies
-
-- Python
-- math / re / string (standard library only)
-- argparse
-- json
-- pytest
-
----
-
-# 📚 Concepts Covered
-
-- Password entropy and guessing-space calculations
-- Character-set analysis
-- Heuristic pattern detection
-- Time-to-crack modelling across attack scenarios
-- Exit-code conventions for scripting
-- Sensitive-data handling (masking, no logging)
-- Test-driven development
-
----
-
-# ✅ Testing
-
-```bash
-python -m pytest tests/ -q
+```
+Password_Strength_Analyzer/
+├── README.md
+├── requirements.txt        # pytest==9.1.1
+├── .gitignore
+├── data/
+│   └── passwords.csv       # 6 demo secrets, all invented for this lab
+├── src/
+│   ├── analyzer.py         # classes, penalties, crack time, checks, demo
+│   └── main.py             # argparse only
+└── tests/
+    └── test_analyzer.py    # 177 tests
 ```
 
-**38 tests passed** covering class detection, entropy, pattern heuristics, scoring bands, crack-time formatting, masking, and every CLI path.
+## What the demo shows
+
+| label | len | classes | charset | legacy charset | random | penalty | guess | band |
+| --- | --: | --: | --: | --: | --: | --: | --: | --- |
+| password | 8 | 1 | 26 | 26 | 38 | 24 | 14 | very weak |
+| decorated | 12 | 3 | 62 | 6760 | 71 | 12 | 59 | fair |
+| leet | 11 | 4 | 95 | 223080 | 72 | 4 | 68 | strong |
+| passphrase | 28 | 2 | 59 | 858 | 165 | 0 | 165 | very strong |
+| repeats | 12 | 1 | 26 | 26 | 56 | 15 | 41 | weak |
+| qwerty2024 | 10 | 2 | 36 | 260 | 52 | 16 | 36 | weak |
+
+- `decorated` is **`Password2024`**: the legacy model says **100/100 very strong**, the rebuild says
+  **59/100 fair** after deducting a dictionary word and a year
+- `leet` gets the worst legacy inflation of all: the product claims **223080 characters**, so 72
+  real bits become **195**
+- `passphrase` is the counter-example: 28 characters, no recognised structure, **165 bits**
+- `password` matches the common list, so 38 random bits become **14**: a throttled attacker reaches
+  it in about **a minute**
+- 26/26 audit checks pass, with negative controls that hand the audit the legacy product and watch
+  the pinned bits and the recomputation disagree
+
+## Requirements
+
+Python 3.10+, standard library only (`math`, `string`, `csv`, `argparse`, `dataclasses`). Tests need
+pytest==9.1.1. Nothing is uploaded, logged or stored; the CSV holds invented demo strings only.
 
 ---
-
-# 👨‍💻 Author
-
-**Devender J**
-
-GitHub: **https://github.com/JDevender007**
-
----
-
-<div align="center">
-
-⭐ If you found this project useful, consider giving this repository a star.
-
-</div>
+**Devender J** -- https://github.com/JDevender007

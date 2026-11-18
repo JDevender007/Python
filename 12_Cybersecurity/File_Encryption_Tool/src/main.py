@@ -1,142 +1,157 @@
-"""Command line entry point for the File Encryption Tool.
+"""Command line front end for the file lab.
 
 Usage
 -----
-    python src/main.py --demo                                   # offline round-trip demo
-    python src/main.py --encrypt notes.txt                      # -> notes.txt.enc
-    python src/main.py --encrypt notes.txt --out out.enc
-    python src/main.py --decrypt out.enc --out notes.txt
-    python src/main.py --info out.enc                           # header metadata only
-    echo -n "pw" > pw.txt  (password file, no trailing newline recommended)
-
-Passwords: --pass-file is preferred; --password is visible in shell history;
-otherwise the tool prompts with getpass.
+    python src/main.py --demo
+    python src/main.py --demo --quiet
+    python src/main.py --file data/secret_note.txt --flip 0
+    python src/main.py --audit
+    python src/main.py --file data/secret_note.txt --json report.json
 """
 
 from __future__ import annotations
 
 import argparse
-import getpass
+import contextlib
+import io
 import json
-import logging
 import sys
 from pathlib import Path
 
-from crypto_tool import (
-    CryptoToolError,
-    decrypt_file,
-    encrypt_file,
-    file_info,
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from crypto_tool import (                                   # noqa: E402
+    DEMO_PASSWORD,
+    HEADER_SIZE,
+    NONCE,
+    TAG_SIZE,
+    DomainError,
+    audit,
+    derive_key,
+    flip_byte,
+    inspect,
+    legacy_decrypt,
+    legacy_encrypt,
+    measure,
+    problems,
+    read_note,
     run_demo,
+    seal,
+    unseal,
 )
-
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-LOG = logging.getLogger("crypto_tool")
-
-BANNER = """
-========================================
- FILE ENCRYPTION TOOL
-   AES-256-GCM + scrypt, local only
-========================================
-"""
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Authenticated file encryption (AES-256-GCM + scrypt)"
-    )
-    action = parser.add_mutually_exclusive_group(required=True)
-    action.add_argument("--demo", action="store_true", help="run the offline demo")
-    action.add_argument("--encrypt", type=Path, metavar="FILE",
-                        help="encrypt FILE (default output: FILE.enc)")
-    action.add_argument("--decrypt", type=Path, metavar="FILE",
-                        help="decrypt FILE (default output: strip .enc)")
-    action.add_argument("--info", type=Path, metavar="FILE",
-                        help="show container metadata (no password needed)")
-    parser.add_argument("--out", type=Path, default=None, help="output path")
-    password = parser.add_mutually_exclusive_group()
-    password.add_argument("--password", default=None,
-                          help="password (prefer --pass-file or the prompt)")
-    password.add_argument("--pass-file", type=Path, default=None,
-                          help="file whose contents are the password")
-    parser.add_argument("--json", action="store_true",
-                        help="JSON output for --info")
+        prog="file-lab",
+        description="Seal a note so a flipped byte is refused, not decrypted.")
+    parser.add_argument("--file", default=None, metavar="PATH",
+                        help="an ASCII note (default: the bundled one)")
+    parser.add_argument("--password", default=DEMO_PASSWORD, metavar="TEXT",
+                        help="the key password (default: the demo password)")
+    parser.add_argument("--flip", default=0, type=int, metavar="N",
+                        help="flip byte N of both forms (default: 0)")
+    parser.add_argument("--audit", action="store_true",
+                        help="print every check with its verdict")
+    parser.add_argument("--json", default=None, metavar="PATH",
+                        help="write the measurements to PATH")
+    parser.add_argument("--quiet", action="store_true", help="print nothing")
+    parser.add_argument("--demo", action="store_true",
+                        help="run the offline demonstration")
     return parser
 
 
-def resolve_password(args: argparse.Namespace, prompt: str) -> str | None:
-    """Get the password from --pass-file, --password, or an interactive prompt."""
-    if args.pass_file is not None:
-        if not args.pass_file.is_file():
-            print(f"Error: password file not found: {args.pass_file}", file=sys.stderr)
-            return None
-        # strip a single trailing newline so echo-generated files work
-        text = args.pass_file.read_text(encoding="utf-8")
-        return text.rstrip("\r\n")
-    if args.password is not None:
-        return args.password
-    return getpass.getpass(prompt)
-
-
-def main(argv: list[str] | None = None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
-
-    if args.demo:
+def _run_demo(quiet: bool) -> int:
+    if not quiet:
+        return run_demo()
+    with contextlib.redirect_stdout(io.StringIO()):
         return run_demo()
 
-    if args.info is not None:
-        try:
-            info = file_info(args.info)
-        except CryptoToolError as exc:
-            print(f"Error: {exc}", file=sys.stderr)
-            return 2
-        if args.json:
-            print(json.dumps(info.to_dict(), indent=2))
-        else:
-            print(f"File     : {args.info}")
-            print(f"Version  : {info.version}")
-            print(f"Salt     : {info.salt_hex}")
-            print(f"Nonce    : {info.nonce_hex}")
-            print(f"Size     : {info.total_size} bytes "
-                  f"({info.payload_size} ciphertext + 37-byte header)")
-        return 0
 
-    print(BANNER)
-    assert args.encrypt is not None or args.decrypt is not None
-    is_encrypt = args.encrypt is not None
-    source = args.encrypt if is_encrypt else args.decrypt
+def _plain(value):
+    """Make a measurement JSON-safe without losing a byte."""
+    if isinstance(value, bytes):
+        return value.decode("ascii", "backslashreplace")
+    return value
 
-    password = resolve_password(args, f"Password for {source.name}: ")
-    if password is None:
-        return 2
-    if not password:
-        print("Error: password must not be empty", file=sys.stderr)
-        return 2
 
-    if args.out is not None:
-        target = args.out
-    elif is_encrypt:
-        target = source.with_name(source.name + ".enc")
-    else:
-        name = source.name[:-4] if source.name.endswith(".enc") else source.name + ".dec"
-        target = source.with_name(name)
+def main(argv=None) -> int:
+    args = build_parser().parse_args(argv)
+
+    if args.demo:
+        return _run_demo(args.quiet)
 
     try:
-        if is_encrypt:
-            encrypt_file(source, target, password)
-        else:
-            decrypt_file(source, target, password)
-    except CryptoToolError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
-        return 1 if "wrong password or tampered" in str(exc) else 2
-    except OSError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
+        note = read_note(args.file)
+        if not args.password:
+            raise DomainError("a password is text, and not empty")
+        if not 0 <= args.flip < len(note):
+            raise DomainError(f"a flip index is inside the {len(note)}-byte "
+                              f"note, got {args.flip}")
+    except DomainError as error:
+        print(f"error: {error}", file=sys.stderr)
         return 2
 
-    verb = "Encrypted" if is_encrypt else "Decrypted"
-    print(f"{verb} {source} -> {target} ({target.stat().st_size} bytes)")
-    print("Done.")
+    key = derive_key(args.password)
+    container = seal(note, key, NONCE)
+    opened = unseal(container, key)
+    checked = inspect(container)
+
+    legacy = legacy_encrypt(note, args.password)
+    legacy_tampered = legacy_decrypt(flip_byte(legacy, args.flip),
+                                     args.password)
+    try:
+        unseal(flip_byte(container, HEADER_SIZE + args.flip), key)
+    except DomainError as error:
+        refusal = str(error)
+    else:
+        refusal = ""
+
+    if not args.quiet:
+        print(f"  note       {len(note)} bytes -> sealed {len(container)} bytes "
+              f"({HEADER_SIZE} header + {TAG_SIZE} tag)")
+        print(f"  round trip identical: {opened == note}")
+        print(f"  nonce      {checked['nonce_hex']}")
+        print(f"  flip {args.flip}: legacy gives "
+              f"{legacy_tampered.decode('ascii', 'backslashreplace')!r}, "
+              f"sealed refuses: {refusal or 'no'}")
+
+    checks = []
+    failed: list = []
+    measured: dict = {}
+    if args.audit:
+        measured = measure(note, args.password)
+        checks = audit(measured)
+        if not args.quiet:
+            print()
+            for name, okay in checks:
+                print(f"  {'PASS' if okay else 'FAIL'}  {name}")
+        failed = problems(checks)
+
+    if args.json:
+        destination = Path(args.json)
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        payload = {
+            "note_bytes": len(note),
+            "password": args.password,
+            "flip": args.flip,
+            "container": checked,
+            "round_trip": opened == note,
+            "legacy_tampered": legacy_tampered.decode("ascii",
+                                                      "backslashreplace"),
+            "sealed_refusal": refusal,
+            "measurements": {name: _plain(value)
+                             for name, value in measured.items()},
+            "checks": [{"name": name, "ok": okay} for name, okay in checks],
+        }
+        destination.write_text(json.dumps(payload, indent=2) + "\n",
+                               encoding="ascii")
+        if not args.quiet:
+            print(f"  wrote the report to {destination}")
+
+    if failed:
+        print(f"  {len(failed)} check(s) failed", file=sys.stderr)
+        return 1
     return 0
 
 

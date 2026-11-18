@@ -1,4 +1,4 @@
-cryptography==50.0.1
+# Standard library only (hashlib, pathlib, argparse, dataclasses)
 
 # Test dependency:
 pytest==9.1.1

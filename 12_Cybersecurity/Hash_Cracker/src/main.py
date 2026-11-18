@@ -1,118 +1,103 @@
-"""Command line entry point for the Hash Cracker.
+"""Command line front end for the hash-cracking lab.
 
-Usage
------
-    python src/main.py --demo                              # crack bundled samples offline
-    python src/main.py --hash <hex> --algo sha256          # dictionary attack
-    python src/main.py --hash <hex> --mode bruteforce --charset digits --max-len 4
-    python src/main.py --hash <hex> --wordlist mine.txt    # own wordlist
-
-Ethics: only crack hashes you own or are explicitly authorized to test.
-Everything runs locally - no network access.
+Usage:
+    python src/main.py --demo
+    python src/main.py --demo --quiet
+    python src/main.py --file data/targets.csv --json out.json
+    python src/main.py --file data/targets.csv --audit
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import logging
 import sys
+from pathlib import Path
 
-from cracker import (
-    CHARSETS,
-    SUPPORTED_ALGOS,
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from cracker import (                                        # noqa: E402
     CrackerError,
-    crack,
-    hash_text,
-    render_result,
+    audit,
+    measure,
+    render_searches,
+    report,
     run_demo,
-    verify,
 )
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-LOG = logging.getLogger("hash_cracker")
+
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
-        description="Offline hash cracker (authorized hashes only)"
+        prog="crack-lab",
+        description="Attack bundled hashes offline and say what each result proves.",
     )
-    parser.add_argument("--hash", default=None, help="hex digest to crack")
-    parser.add_argument("--algo", default="sha256",
-                        choices=sorted(SUPPORTED_ALGOS), help="hash algorithm")
-    parser.add_argument("--mode", default="dictionary",
-                        choices=["dictionary", "bruteforce", "hybrid"],
-                        help="attack mode")
-    parser.add_argument("--wordlist", default=None, help="path to your wordlist")
-    parser.add_argument("--no-mutations", action="store_true",
-                        help="disable password mutations in dictionary mode")
-    parser.add_argument("--charset", default=None,
-                        choices=sorted(CHARSETS), help="brute-force character set")
-    parser.add_argument("--max-len", type=int, default=4,
-                        help="brute-force maximum length (default 4, hard cap 8)")
-    parser.add_argument("--min-len", type=int, default=1,
-                        help="brute-force minimum length")
-    parser.add_argument("--budget", type=float, default=10.0,
-                        help="time budget in seconds for each attack stage")
-    parser.add_argument("--json", action="store_true", help="emit JSON")
-    parser.add_argument("--hash-text", default=None,
-                        help="hash a string and print the digest, then exit")
-    parser.add_argument("--verify", nargs=2, metavar=("TEXT", "DIGEST"),
-                        default=None, help="check a candidate against a digest")
-    parser.add_argument("--demo", action="store_true", help="run the offline demo")
+    parser.add_argument("--demo", action="store_true", help="run the offline demo and exit")
+    parser.add_argument("--quiet", action="store_true", help="with --demo, print nothing")
+    parser.add_argument(
+        "--file",
+        default=None,
+        metavar="TARGETS_CSV",
+        help="target CSV; wordlist.txt is read from the same folder",
+    )
+    parser.add_argument("--json", default=None, metavar="PATH", help="write a JSON report")
+    parser.add_argument("--audit", action="store_true", help="re-run the checks; exit 1 on failure")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
-
+    args = build_parser().parse_args(argv)
     if args.demo:
-        return run_demo()
-
-    try:
-        if args.hash_text is not None:
-            digest = hash_text(args.hash_text, args.algo)
-            print(digest)
+        try:
+            return _run_demo(args.quiet, run_demo)
+        except CrackerError as exc:
+            if not args.quiet:
+                print(f"error: {exc}", file=sys.stderr)
             return 0
-
-        if args.verify is not None:
-            text, digest = args.verify
-            ok = verify(text, digest, args.algo)
-            print("MATCH" if ok else "NO MATCH")
-            return 0 if ok else 1
-
-        if not args.hash:
-            parser.error("provide --hash, --hash-text, --verify, or --demo")
-
-        if args.max_len > 8:
-            print("Error: --max-len capped at 8 to keep searches bounded",
-                  file=sys.stderr)
-            return 2
-
-        result = crack(
-            args.hash,
-            args.algo,
-            wordlist=args.wordlist,
-            use_mutations=not args.no_mutations,
-            charset=CHARSETS[args.charset] if args.charset else None,
-            max_length=args.max_len,
-            min_length=args.min_len,
-            time_budget_s=args.budget,
-            mode=args.mode,
-        )
+    try:
+        measured = measure(args.file)
     except CrackerError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
+        print(f"error: {exc}", file=sys.stderr)
         return 2
 
-    if args.json:
-        payload = result.to_dict()
-        payload["digest"] = args.hash
-        print(json.dumps(payload, indent=2))
-    else:
-        print(render_result(result, args.hash))
+    if args.audit:
+        results = audit(measured)
+        for name, ok in results:
+            print(f"{'PASS' if ok else 'FAIL'}  {name}")
+        failed = [name for name, ok in results if not ok]
+        if failed:
+            print(f"error: {len(failed)} check(s) failed", file=sys.stderr)
+            return 1
+        return 0
 
-    return 0 if result.found else 1
+    if args.json:
+        target = Path(args.json)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            json.dumps(report(measured), indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+    if not args.quiet:
+        print(render_searches(measured))
+        print(
+            f"found {measured['found']}, exhausted {measured['exhausted']}, "
+            f"inconclusive {measured['inconclusive']}"
+        )
+    return 0
 
 
 if __name__ == "__main__":

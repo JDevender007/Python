@@ -1,147 +1,109 @@
-<div align="center">
+# Hash Cracker
 
-# 🔓 Hash Cracker
+A wordlist attack returns one of three things, and the legacy tool has a name for only two of
+them:
 
-### An offline educational hash cracker with dictionary, mutation, and bounded brute-force attacks — local wordlist, no network.
+```python
+for line in open(wordlist):
+    if hashlib.sha256(line.encode()).hexdigest() == digest:
+        return line
+return None                              # "password is strong"
 
-![Python](https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![Status](https://img.shields.io/badge/Status-Completed-success?style=for-the-badge)
-![License](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)
-
-</div>
-
----
-
-# 📖 About
-
-Hash Cracker recovers the plaintext behind MD5, SHA-1, and SHA-256 digests using three attack modes: a bundled dictionary wordlist with password mutations (case flips, suffixes, leet speak), a bounded brute-force search over configurable character sets, and a hybrid of both.
-
-It is a **defensive/educational tool**: use it to understand why weak hashes fall, to recover a hash of your own forgotten password, or in CTF-style labs. Everything runs locally — there is no network code in this project.
-
----
-
-# ✨ Features
-
-- MD5, SHA-1, and SHA-256 support with known-answer tests
-- Dictionary attack with 100+ bundled words and smart mutations
-- Bounded brute-force (character sets, min/max length, hard cap at 8, time budget)
-- Hybrid mode: dictionary first, brute force second
-- Attempt counts, elapsed time, and candidates/second statistics
-- `--hash-text` and `--verify` helper modes for scripting
-- JSON output; exit code 1 when nothing is found
-- Fully offline demo that cracks four hidden secrets
-- 37 passing pytest tests
-
----
-
-# 📂 Folder Structure
-
-```text
-Hash_Cracker/
-│
-├── src/
-│   ├── main.py         # CLI: demo, crack, --hash-text, --verify, --json
-│   └── cracker.py      # hashing, mutations, brute force, crack orchestration
-│
-├── tests/
-│   └── test_cracker.py
-│
-├── data/
-│   └── wordlist.txt    # bundled offline wordlist (common passwords + words)
-│
-├── README.md
-├── requirements.txt
-└── .gitignore
+verdict = "strong" if recovered is None else "weak"
 ```
 
----
+**1. A miss from a partial search is not strength.** 117 candidates say nothing about an
+unbounded keyspace. Reporting `strong` after 117 guesses is a claim about the password that the
+work did not earn. The only negative a search can *prove* is the one a **complete** search
+proves: run all 10000 four-digit PINs, find nothing, and "not a 4-digit PIN" is a fact. The
+rebuild returns three verdicts -- `found`, `exhausted` (the search was complete, so the absence
+is a proof) and `inconclusive` (the search stopped while candidates remained) -- and the bundled
+targets hit all three: **3 found, 1 inconclusive, 1 exhausted**.
 
-# ⚙️ Installation
+**2. The salt is part of the hash.** `carol`'s digest is `sha256("s3cr3t" + "monkey")`, and
+`monkey` is line 16 of the wordlist the attack already read. The legacy loop hashes the bare
+word, misses, and declares a password that is *in the wordlist* to be strong. A field that is
+present in the record and ignored by the search is a false negative with no log line.
 
-```bash
-git clone https://github.com/JDevender007/Python.git
+**3. Work is counted, not timed.** The legacy counter increments once per line, so **126** lines
+are reported as 126 attempts when **117** distinct candidates were hashed: 6 comment lines and 3
+repeated words were counted as work nobody did. The throughput printed beside it comes from a
+clock, so two runs of the same demo print two different rates.
 
-cd 12_Cybersecurity/Hash_Cracker
+The rebuild reads the salt, validates each record's algorithm against its digest length (MD5 is
+32 hex characters, SHA-256 is 64), deduplicates the candidate list while keeping the attack
+order, and never samples the clock. `--demo` twice prints the same bytes.
 
-python -m venv .venv
+## What this project teaches
 
-.venv\Scripts\activate
+- A search has three outcomes, and only two of them are statements about the password
+- Why "not found" is inconclusive until the keyspace is exhausted
+- What a *complete* search can prove: absence inside a bounded space, and nothing more
+- A salt as part of the hashed input, and the false negative that ignoring it produces
+- Digest length as part of an algorithm's contract, validated before any comparison
+- Work as a count of distinct candidates, not a count of lines in a file
+- Comments and duplicate entries inflating an attempt counter that nobody audits
+- Why a clock in a report makes two runs of the same demo disagree
+- Order-preserving deduplication, so an attack is reproducible step for step
+- Auditing verdicts against an independent scan, with injectable search functions
 
-pip install -r requirements.txt
+## How to run
+
 ```
-
----
-
-# ▶️ Run
-
-```bash
-# Offline demo: four hidden secrets are hashed and recovered
 python src/main.py --demo
-
-# Dictionary attack against your own digest
-python src/main.py --hash <hex> --algo sha256 --mode dictionary
-
-# Bounded brute force over digits, up to 4 characters
-python src/main.py --hash <hex> --algo sha1 --mode bruteforce --charset digits --max-len 4
-
-# Your own wordlist, no mutations
-python src/main.py --hash <hex> --wordlist mine.txt --no-mutations
-
-# Helpers
-python src/main.py --hash-text "abc" --algo md5
-python src/main.py --verify "abc" 900150983cd24fb0d6963f7d28e17f72
+python src/main.py --demo --quiet
+python src/main.py --file data/targets.csv --json out.json
+python src/main.py --file data/targets.csv --audit
+python -m pytest tests -q
 ```
 
----
+`--file` names the target CSV; `wordlist.txt` is read from the same folder. Exit code `2` means
+the input was refused -- a missing column, an unknown algorithm or mode, a digest whose length
+does not match its algorithm, a non-hexadecimal digest, or a duplicated label.
 
-# ⚠️ Ethical Use
+## Project structure
 
-Only crack digests you own or have explicit authorization to test (your own forgotten passwords, lab exercises, CTF challenges). Unauthorized access to others' data is illegal. Brute force is deliberately capped (max length 8, time budget) to keep searches bounded.
-
----
-
-# 🛠 Technologies
-
-- Python
-- hashlib / hmac (standard library only)
-- itertools
-- argparse / json
-- pytest
-
----
-
-# 📚 Concepts Covered
-
-- Cryptographic hash functions and hex digests
-- Dictionary attacks and password mutation rules
-- Leet-speak and case permutation search spaces
-- Exhaustive search with bounded keyspace
-- Time budgets and progress statistics
-- Constant-time digest comparison
-- Test-driven development
-
----
-
-# ✅ Testing
-
-```bash
-python -m pytest tests/ -q
+```
+Hash_Cracker/
+├── README.md
+├── requirements.txt        # pytest==9.1.1
+├── .gitignore
+├── data/
+│   ├── targets.csv         # 5 targets: sha256, md5, salted, missing, PIN
+│   └── wordlist.txt        # 126 non-empty lines, 117 distinct candidates
+├── src/
+│   ├── cracker.py          # validation, search, verdicts, checks, demo
+│   └── main.py             # argparse only
+└── tests/
+    └── test_cracker.py     # 133 tests
 ```
 
-**37 tests passed** covering known hash vectors, wordlist parsing, mutation generation, brute-force enumeration, all three attack modes, error paths, and every CLI mode.
+## What the demo shows
+
+| label | algorithm | mode | verdict | attempts | recovered |
+| --- | --- | --- | --- | --: | --- |
+| alice | sha256 | wordlist | **found** | 9 | `sunshine` |
+| bob | md5 | wordlist | **found** | 32 | `michael` |
+| carol | sha256 | wordlist | **found** | 16 | `monkey` (with salt `s3cr3t`) |
+| dave | sha256 | wordlist | **inconclusive** | 117 | -- |
+| erin | sha256 | pin4 | **exhausted** | 10000 | -- |
+
+- `dave` misses after **117** candidates of an **unbounded** keyspace: nothing is proven
+- `erin` misses after **10000 of 10000** four-digit PINs: **100.00%** of that keyspace is
+  covered, so "not a 4-digit PIN" is established -- and that is all
+- `carol` is found only because the salt is prepended; the salt-blind legacy loop misses her and
+  calls the password strong
+- The legacy report calls **3** misses strong -- `carol`, `dave`, `erin` -- one of which is a
+  password that was in the wordlist all along
+- **126** lines are counted as attempts against **117** hashed candidates; the difference of
+  **9** is 6 comments and 3 repeated words
+- 18/18 audit checks pass, with negative controls that hand the audit a search which finds
+  nothing and watch the independent scan disagree
+
+## Requirements
+
+Python 3.10+, standard library only (`hashlib`, `csv`, `string`, `argparse`, `dataclasses`).
+Tests need pytest==9.1.1.
 
 ---
-
-# 👨‍💻 Author
-
-**Devender J**
-
-GitHub: **https://github.com/JDevender007**
-
----
-
-<div align="center">
-
-⭐ If you found this project useful, consider giving this repository a star.
-
-</div>
+**Devender J** -- https://github.com/JDevender007

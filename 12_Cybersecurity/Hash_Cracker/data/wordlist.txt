@@ -123,3 +123,8 @@ london
 paris
 tokyo
 newyork
+
+# --- appended from a second list ---
+sunshine
+monkey
+password

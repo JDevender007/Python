@@ -1,4 +1,4 @@
-# Standard library only (hashlib, hmac, itertools, argparse, json)
+# Standard library only (hashlib, csv, string, argparse, dataclasses)
 
 # Test dependency:
 pytest==9.1.1

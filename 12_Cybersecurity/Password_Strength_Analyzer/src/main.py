@@ -1,110 +1,104 @@
-"""Command line entry point for the Password Strength Analyzer.
+"""Command line front end for the password-strength lab.
 
-Usage
------
-    python src/main.py --demo                      # analyse bundled sample passwords
-    python src/main.py --password "correct horse"  # analyse one password
-    python src/main.py --stdin                     # read password from stdin
-    python src/main.py --password "x" --json       # machine-readable output
-
-Passwords are processed in memory only: never stored, never transmitted.
+Usage:
+    python src/main.py --demo
+    python src/main.py --demo --quiet
+    python src/main.py --file data/passwords.csv --json out.json
+    python src/main.py --file data/passwords.csv --audit
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import logging
 import sys
+from pathlib import Path
 
-from analyzer import analyze, mask, render_report
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-LOG = logging.getLogger("pwd_analyzer")
-
-BANNER = """
-========================================
- PASSWORD STRENGTH ANALYZER
-   local only - nothing is stored
-========================================
-"""
-
-# Obviously fake samples used by the demo (never real credentials).
-DEMO_SAMPLES = [
-    "password",
-    "123456",
-    "Sunshine1",
-    "Tr0ub4dor&3",
-    "correct-horse-battery-staple",
-    "G7$zqL!vNn2@wQe",
-]
+from analyzer import (                                       # noqa: E402
+    AnalyzerError,
+    audit,
+    measure,
+    render_rows,
+    report,
+    run_demo,
+)
 
 
-def run_demo() -> int:
-    """Analyse the bundled sample set and print a report for each."""
-    print(BANNER)
-    for sample in DEMO_SAMPLES:
-        report = analyze(sample)
-        print("-" * 56)
-        print(render_report(report, password=sample))
-        print()
-    print("Demo completed successfully.")
-    return 0
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Local password strength analyser")
-    source = parser.add_mutually_exclusive_group()
-    source.add_argument("--password", help="password to analyse (prefer --stdin)")
-    source.add_argument("--stdin", action="store_true", help="read the password from stdin")
-    source.add_argument("--demo", action="store_true", help="run the offline demo and exit")
-    parser.add_argument("--json", action="store_true", help="emit JSON instead of text")
-    parser.add_argument("--rate", type=float, default=None,
-                        help="override offline attack rate (guesses/second)")
+    parser = argparse.ArgumentParser(
+        prog="password-lab",
+        description="Score bundled passwords offline: random ceiling, guess bits, crack time.",
+    )
+    parser.add_argument("--demo", action="store_true", help="run the offline demo and exit")
+    parser.add_argument("--quiet", action="store_true", help="with --demo, print nothing")
+    parser.add_argument(
+        "--file",
+        default=None,
+        metavar="PASSWORDS_CSV",
+        help="CSV with label,password columns",
+    )
+    parser.add_argument("--json", default=None, metavar="PATH", help="write a JSON report")
+    parser.add_argument("--audit", action="store_true", help="re-run the checks; exit 1 on failure")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
-
+    args = build_parser().parse_args(argv)
     if args.demo:
-        return run_demo()
-
-    if args.password is not None:
-        password = args.password
-    elif args.stdin:
-        password = sys.stdin.read().rstrip("\n")
-    else:
-        parser.error("provide --password, --stdin, or --demo")
-
-    if not password:
-        print("Error: password must not be empty", file=sys.stderr)
-        return 2
-
-    rates = None
-    if args.rate is not None:
-        if args.rate <= 0:
-            print("Error: --rate must be positive", file=sys.stderr)
-            return 2
-        rates = {"custom": args.rate}
-
+        try:
+            return _run_demo(args.quiet, run_demo)
+        except AnalyzerError as exc:
+            if not args.quiet:
+                print(f"error: {exc}", file=sys.stderr)
+            return 0
     try:
-        report = analyze(password, rates=rates)
-    except ValueError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
+        measured = measure(args.file)
+    except AnalyzerError as exc:
+        print(f"error: {exc}", file=sys.stderr)
         return 2
 
-    print(BANNER)
-    if args.json:
-        payload = report.to_dict()
-        payload["password_masked"] = mask(password)
-        print(json.dumps(payload, indent=2))
-    else:
-        print(render_report(report, password=password))
+    if args.audit:
+        results = audit(measured)
+        for name, ok in results:
+            print(f"{'PASS' if ok else 'FAIL'}  {name}")
+        failed = [name for name, ok in results if not ok]
+        if failed:
+            print(f"error: {len(failed)} check(s) failed", file=sys.stderr)
+            return 1
+        return 0
 
-    # non-zero exit when the password is weak, so scripts can gate on it
-    return 0 if report.score >= 40 else 3
+    if args.json:
+        target = Path(args.json)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            json.dumps(report(measured), indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+    if not args.quiet:
+        print(render_rows(measured))
+        print(
+            f"weakest {measured['weakest'].label} "
+            f"({measured['weakest'].guess_bits} bits), strongest "
+            f"{measured['strongest'].label} ({measured['strongest'].guess_bits} bits)"
+        )
+    return 0
 
 
 if __name__ == "__main__":

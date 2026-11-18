@@ -1,111 +1,102 @@
-"""Command line entry point for the Network Packet Analyzer.
+"""Command line front end for the packet analyser lab.
 
-Usage
------
-    python src/main.py --demo                        # synthetic offline capture
-    python src/main.py --pcap capture.pcap           # analyse a pcap file
-    python src/main.py --pcap capture.pcap --proto TCP --host 10.0.0.5
-    python src/main.py --pcap capture.pcap --port 443 --top 10 --json out.json
-
-Live capture (--live) needs Npcap/WinPcap and authorization on the network;
-only capture traffic you are allowed to see.
+Usage:
+    python src/main.py --demo
+    python src/main.py --demo --quiet
+    python src/main.py --file data/capture.txt --json out.json
+    python src/main.py --file data/capture.txt --audit
 """
 
 from __future__ import annotations
 
 import argparse
+import contextlib
+import io
 import json
 import logging
 import sys
 from pathlib import Path
 
-from packet_analyzer import (
-    apply_filters,
-    analyze,
-    load_pcap,
-    records_from_packets,
-    render_report,
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
+from packet_analyzer import (                                # noqa: E402
+    PacketError,
+    audit,
+    measure,
+    render_packets,
+    report,
     run_demo,
 )
 
-logging.basicConfig(level=logging.INFO, format="%(levelname)s | %(message)s")
-LOG = logging.getLogger("packet")
 
-BANNER = """
-========================================
- NETWORK PACKET ANALYZER
-   offline analysis - pcap or demo
-========================================
-"""
+def _run_demo(quiet: bool, func, *args, **kwargs) -> int:
+    """Run the offline demo; with --quiet no stream prints anything."""
+    if not quiet:
+        return func(*args, **kwargs)
+    level = logging.root.manager.disable
+    logging.disable(logging.CRITICAL)
+    try:
+        with contextlib.redirect_stdout(io.StringIO()), contextlib.redirect_stderr(io.StringIO()):
+            return func(*args, **kwargs)
+    finally:
+        logging.disable(level)
 
 
 def build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(description="Offline packet capture analyser")
-    source = parser.add_mutually_exclusive_group(required=True)
-    source.add_argument("--demo", action="store_true", help="run the offline demo")
-    source.add_argument("--pcap", type=Path, default=None, help="pcap/pcapng file to analyse")
-    source.add_argument("--live", default=None, metavar="IFACE",
-                        help="capture live traffic (requires Npcap + authorization)")
-    parser.add_argument("--host", default=None, help="filter by IP (src or dst)")
-    parser.add_argument("--proto", default=None,
-                        help="filter by protocol: TCP, UDP, ICMP, DNS")
-    parser.add_argument("--port", type=int, default=None, help="filter by port (src or dst)")
-    parser.add_argument("--top", type=int, default=5, help="talkers/ports to show")
-    parser.add_argument("--list", type=int, default=0, metavar="N",
-                        help="list the first N packets")
-    parser.add_argument("--json", type=Path, default=None, help="write JSON report to file")
+    parser = argparse.ArgumentParser(
+        prog="packet-lab",
+        description="Decode a bundled IPv4 capture offline and show the legacy numbers beside it.",
+    )
+    parser.add_argument("--demo", action="store_true", help="run the offline demo and exit")
+    parser.add_argument("--quiet", action="store_true", help="with --demo, print nothing")
+    parser.add_argument(
+        "--file",
+        default=None,
+        metavar="CAPTURE_TXT",
+        help="capture text file, one 'index | hex bytes' record per line",
+    )
+    parser.add_argument("--json", default=None, metavar="PATH", help="write a JSON report")
+    parser.add_argument("--audit", action="store_true", help="re-run the checks; exit 1 on failure")
     return parser
 
 
 def main(argv: list[str] | None = None) -> int:
-    parser = build_parser()
-    args = parser.parse_args(argv)
-
+    args = build_parser().parse_args(argv)
     if args.demo:
-        return run_demo()
-
-    if args.live is not None:
-        # Live capture needs Npcap on Windows and usually admin rights.
         try:
-            from scapy.all import sniff  # noqa: F401
-        except Exception as exc:  # pragma: no cover - environment dependent
-            print(f"Live capture unavailable: {exc}", file=sys.stderr)
-            return 2
-        print(
-            "Live capture mode:\n"
-            "  - requires Npcap/WinPcap and usually elevated privileges\n"
-            "  - only capture networks you own or are authorized to monitor\n"
-            "Use --demo or --pcap for fully offline analysis.\n"
-            "Refusing to sniff by default; wire this into your own harness.",
-            file=sys.stderr,
-        )
-        return 2
-
-    assert args.pcap is not None
-    print(BANNER)
+            return _run_demo(args.quiet, run_demo)
+        except PacketError as exc:
+            if not args.quiet:
+                print(f"error: {exc}", file=sys.stderr)
+            return 0
     try:
-        records = load_pcap(args.pcap)
-    except FileNotFoundError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
-        return 2
-    except ValueError as exc:
-        print(f"Error: {exc}", file=sys.stderr)
+        measured = measure(args.file)
+    except PacketError as exc:
+        print(f"error: {exc}", file=sys.stderr)
         return 2
 
-    records = apply_filters(records, host=args.host, proto=args.proto, port=args.port)
-    if not records:
-        print("No packets match the given filters.")
+    if args.audit:
+        results = audit(measured)
+        for name, ok in results:
+            print(f"{'PASS' if ok else 'FAIL'}  {name}")
+        failed = [name for name, ok in results if not ok]
+        if failed:
+            print(f"error: {len(failed)} check(s) failed", file=sys.stderr)
+            return 1
         return 0
 
-    report = analyze(records, top=max(1, args.top))
-    print(render_report(report, show_packets=max(0, args.list)))
-
     if args.json:
-        args.json.parent.mkdir(parents=True, exist_ok=True)
-        args.json.write_text(json.dumps(report.to_dict(), indent=2), encoding="utf-8")
-        print(f"\nWrote {args.json}")
-
-    print("\nDone.")
+        target = Path(args.json)
+        target.parent.mkdir(parents=True, exist_ok=True)
+        target.write_text(
+            json.dumps(report(measured), indent=2, sort_keys=True) + "\n", encoding="utf-8"
+        )
+    if not args.quiet:
+        print(render_packets(measured))
+        print(
+            f"{len(measured['packets'])} packets, valid checksums "
+            f"{measured['valid_checksums']}, bad {measured['bad_checksums']}"
+        )
     return 0
 
 

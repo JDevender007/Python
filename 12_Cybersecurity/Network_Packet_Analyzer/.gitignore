@@ -1,38 +1,24 @@
-# Virtual Environment
-.venv/
-venv/
-
 # Python
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
+*.py[cod]
 
 # Tests
 .pytest_cache/
 
-# Captures - may contain sensitive traffic
-*.pcap
-*.pcapng
-
-# Demo artifacts
-data/
-
-# Reports
+# Local output
+output/
+*.log
 report.json
 
-# Secrets
+# Real captures never belong in a demo repository
+*.pcap
+*.pcapng
 .env
 
-# Logs
-logs/*.log
-
-# VS Code
+# Editors
 .vscode/
-
-# JetBrains
 .idea/
 
-# OS Files
+# OS
 Thumbs.db
 .DS_Store
